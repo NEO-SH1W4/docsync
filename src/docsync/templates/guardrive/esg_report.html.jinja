@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ report.title }}</title>
+    <style>
+        :root {
+            --primary-color: #00796b;
+            --secondary-color: #4db6ac;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --success-color: #4caf50;
+            --info-color: #2196f3;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+        
+        .metric-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .status-on_track { background: var(--success-color); color: white; }
+        .status-at_risk { background: var(--warning-color); color: white; }
+        .status-off_track { background: var(--danger-color); color: white; }
+        
+        .progress-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .recommendation-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            background: #fff;
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{{ report.title }}</h1>
+        <p>
+            <strong>Período:</strong> {{ report.period }} |
+            <strong>Gerado em:</strong> {{ report.generated_at }} |
+            <strong>Versão:</strong> {{ report.version }}
+        </p>
+    </header>
+
+    <section class="overview">
+        <h2>Sumário</h2>
+        <p>{{ report.overview }}</p>
+    </section>
+
+    <section class="metrics">
+        <h2>Métricas Principais</h2>
+        {% for metric in report.metrics %}
+        <div class="metric-card">
+            <div class="metric-header">
+                <h3>{{ metric.name }}</h3>
+                <span class="status-badge status-{{ metric.status }}">
+                    {{ metric.status }}
+                </span>
+            </div>
+            
+            <div class="metric-value">
+                {{ metric.value | format_metric(metric.type, metric.unit) }}
+                <small>{{ metric.trend }}</small>
+            </div>
+            
+            <p>{{ metric.description }}</p>
+            
+            <h4>Ações de Melhoria:</h4>
+            <ul>
+            {% for action in metric.improvement_actions %}
+                <li>{{ action }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </section>
+
+    <section class="objectives">
+        <h2>Objetivos</h2>
+        {% for objective in report.objectives %}
+        <div class="metric-card">
+            <h3>{{ objective.title }}</h3>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ objective.progress }}%"></div>
+            </div>
+            
+            <p><strong>Status:</strong> {{ objective.status }}</p>
+            <p><strong>Responsável:</strong> {{ objective.responsible }}</p>
+            
+            <p>{{ objective.description }}</p>
+            
+            <h4>Marcos:</h4>
+            <ul>
+            {% for milestone in objective.milestones %}
+                <li>
+                    {{ milestone.title }}
+                    ({{ milestone.status }}) -
+                    {{ milestone.date | format_date }}
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </section>
+
+    <section class="analysis">
+        <h2>Análise</h2>
+        {% for category, analysis in report.analysis.items() %}
+        <div class="metric-card">
+            <h3>{{ category }}</h3>
+            <p>{{ analysis.summary }}</p>
+            
+            <div class="analysis-grid">
+                <div>
+                    <h4>Pontos-Chave:</h4>
+                    <ul>
+                    {% for point in analysis.key_points %}
+                        <li>{{ point }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>Desafios:</h4>
+                    <ul>
+                    {% for challenge in analysis.challenges %}
+                        <li>{{ challenge }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>Oportunidades:</h4>
+                    <ul>
+                    {% for opportunity in analysis.opportunities %}
+                        <li>{{ opportunity }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>Riscos:</h4>
+                    <ul>
+                    {% for risk in analysis.risks %}
+                        <li>{{ risk }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+
+    <section class="recommendations">
+        <h2>Recomendações</h2>
+        {% for rec in report.recommendations %}
+        <div class="recommendation-card">
+            <h3>{{ rec.title }}</h3>
+            
+            <p><strong>Prioridade:</strong> {{ rec.priority }}</p>
+            <p><strong>Impacto:</strong> {{ rec.impact }}</p>
+            <p><strong>Timeline:</strong> {{ rec.timeline }}</p>
+            <p><strong>Custo:</strong> {{ rec.cost }}</p>
+            <p><strong>Responsável:</strong> {{ rec.responsible }}</p>
+            
+            <p>{{ rec.description }}</p>
+            
+            <h4>Passos:</h4>
+            <ol>
+            {% for step in rec.steps %}
+                <li>{{ step }}</li>
+            {% endfor %}
+            </ol>
+        </div>
+        {% endfor %}
+    </section>
+
+    <footer class="footer">
+        <p>Relatório gerado automaticamente pelo sistema GUARDRIVE ESG Reporting</p>
+    </footer>
+</body>
+</html>
+

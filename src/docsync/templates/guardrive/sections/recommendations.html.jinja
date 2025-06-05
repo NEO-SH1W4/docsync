@@ -1,0 +1,118 @@
+<section class="recommendations-section mb-5">
+    <h2 class="section-title">Recomendações</h2>
+    
+    <div class="recommendations-grid">
+        {% for rec in report.recommendations %}
+        <div class="recommendation-card card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="h5 mb-0">{{ rec.title }}</h3>
+                <span class="priority-badge {{ rec.priority | priority_class }}">
+                    {{ rec.priority }}
+                </span>
+            </div>
+            
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="recommendation-meta">
+                            <span class="meta-label">Impacto</span>
+                            <span class="meta-value">{{ rec.impact }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="recommendation-meta">
+                            <span class="meta-label">Timeline</span>
+                            <span class="meta-value">{{ rec.timeline }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="recommendation-meta">
+                            <span class="meta-label">Custo</span>
+                            <span class="meta-value">{{ rec.cost }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="recommendation-meta">
+                            <span class="meta-label">Responsável</span>
+                            <span class="meta-value">{{ rec.responsible }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recommendation-description mb-4">
+                    {{ rec.description }}
+                </div>
+                
+                {% if rec.steps %}
+                <div class="implementation-steps">
+                    <h4 class="h6">Etapas de Implementação</h4>
+                    <div class="steps-timeline">
+                        {% for step in rec.steps %}
+                        <div class="step-item">
+                            <div class="step-number">{{ loop.index }}</div>
+                            <div class="step-content">{{ step }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Estilos específicos -->
+<style>
+.priority-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+}
+
+.priority-high { background-color: #dc3545; color: white; }
+.priority-medium { background-color: #ffc107; color: black; }
+.priority-low { background-color: #28a745; color: white; }
+
+.steps-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.step-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+}
+
+.step-item:before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #dee2e6;
+}
+
+.step-number {
+    position: absolute;
+    left: -2.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+}
+
+.step-content {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-left: 0.5rem;
+}
+</style>
+

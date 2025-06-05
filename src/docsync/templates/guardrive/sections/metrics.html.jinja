@@ -1,0 +1,64 @@
+<section class="metrics-section mb-5">
+    <h2 class="section-title">Métricas ESG</h2>
+    
+    <div class="row g-4">
+        {% for metric in report.metrics %}
+        <div class="col-md-6 col-lg-4">
+            <div class="metric-card card h-100">
+                <div class="card-body">
+                    <h3 class="card-title h5">{{ metric.name }}</h3>
+                    
+                    <div class="metric-value-container mt-3">
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <div class="current-value h3 mb-0">
+                                {{ metric.value | format_metric(metric.type, metric.unit) }}
+                            </div>
+                            <div class="target text-muted">
+                                Meta: {{ metric.target }}
+                            </div>
+                        </div>
+                        
+                        <div class="progress mt-2" style="height: 8px;">
+                            <div class="progress-bar" 
+                                 role="progressbar" 
+                                 style="width: {{ metric.progress }}%"
+                                 aria-valuenow="{{ metric.progress }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-status mt-3">
+                        <span class="status-badge {{ metric.status | status_class }}">
+                            {{ metric.status | format_status }}
+                        </span>
+                        <span class="trend-indicator ms-2">
+                            {{ metric.trend | format_trend(metric.previous_value) }}
+                        </span>
+                    </div>
+                    
+                    <p class="metric-description mt-3">
+                        {{ metric.description }}
+                    </p>
+                    
+                    {% if metric.improvement_actions %}
+                    <div class="improvement-actions mt-3">
+                        <h4 class="h6">Ações de Melhoria:</h4>
+                        <ul class="list-unstyled">
+                            {% for action in metric.improvement_actions %}
+                            <li class="mb-1">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                {{ action }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+

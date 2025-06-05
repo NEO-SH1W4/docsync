@@ -1,0 +1,99 @@
+# {{ report.title }}
+
+**Período**: {{ report.period }}  
+**Gerado em**: {{ report.generated_at }}  
+**Versão**: {{ report.version }}
+
+## Sumário
+
+{{ report.overview }}
+
+## Métricas Principais
+
+{% for metric in report.metrics %}
+### {{ metric.name }}
+
+**Valor Atual**: {{ metric.value | format_metric(metric.type, metric.unit) }}  
+**Meta**: {{ metric.target }}  
+**Status**: {{ metric.status }}  
+**Tendência**: {{ metric.trend }}
+
+{{ metric.description }}
+
+**Ações de Melhoria**:
+{% for action in metric.improvement_actions %}
+- {{ action }}
+{% endfor %}
+
+{% endfor %}
+
+## Objetivos
+
+{% for objective in report.objectives %}
+### {{ objective.title }}
+
+**Progresso**: {{ objective.progress | to_percentage }}  
+**Status**: {{ objective.status }}  
+**Responsável**: {{ objective.responsible }}
+
+{{ objective.description }}
+
+**Marcos**:
+{% for milestone in objective.milestones %}
+- {{ milestone.title }} ({{ milestone.status }}) - {{ milestone.date | format_date }}
+{% endfor %}
+
+{% endfor %}
+
+## Análise
+
+{% for category, analysis in report.analysis.items() %}
+### {{ category }}
+
+{{ analysis.summary }}
+
+**Pontos-Chave**:
+{% for point in analysis.key_points %}
+- {{ point }}
+{% endfor %}
+
+**Desafios**:
+{% for challenge in analysis.challenges %}
+- {{ challenge }}
+{% endfor %}
+
+**Oportunidades**:
+{% for opportunity in analysis.opportunities %}
+- {{ opportunity }}
+{% endfor %}
+
+**Riscos**:
+{% for risk in analysis.risks %}
+- {{ risk }}
+{% endfor %}
+
+{% endfor %}
+
+## Recomendações
+
+{% for rec in report.recommendations %}
+### {{ rec.title }}
+
+**Prioridade**: {{ rec.priority }}  
+**Impacto**: {{ rec.impact }}  
+**Timeline**: {{ rec.timeline }}  
+**Custo**: {{ rec.cost }}  
+**Responsável**: {{ rec.responsible }}
+
+{{ rec.description }}
+
+**Passos**:
+{% for step in rec.steps %}
+1. {{ step }}
+{% endfor %}
+
+{% endfor %}
+
+---
+*Relatório gerado automaticamente pelo sistema GUARDRIVE ESG Reporting*
+

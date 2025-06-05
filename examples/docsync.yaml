@@ -1,0 +1,29 @@
+project:
+  name: exemplo-projeto
+  version: 1.0.0
+
+sync:
+  source_dirs:
+    - docs/
+    - src/
+  target_dirs:
+    - ../documentation/
+  patterns:
+    - "*.md"
+    - "*.rst"
+    - "*.ipynb"
+
+templates:
+  dir: templates/
+  defaults:
+    - readme.md.j2
+    - api.md.j2
+    - changelog.md.j2
+
+monitoring:
+  interval: 5  # segundos
+  ignore_patterns:
+    - "*.pyc"
+    - "__pycache__"
+    - ".git"
+

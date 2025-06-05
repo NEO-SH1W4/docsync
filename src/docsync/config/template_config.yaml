@@ -1,0 +1,84 @@
+# Template System Configuration
+# Defines the base structure for template management
+
+template_roots:
+  # Core DocSync templates (system level)
+  system:
+    path: templates/system
+    patterns:
+      - "*.md.j2"
+      - "*.html.j2"
+    cache: true
+    watch: false
+
+  # Project specific templates (user level)
+  project:
+    path: templates/project
+    patterns:
+      - "**/*.md.j2"
+      - "**/*.html.j2"
+    cache: true
+    watch: true
+
+# Template Processing
+processing:
+  extensions:
+    md: markdown
+    html: html
+    pdf: pdf
+  
+  filters:
+    - date_format
+    - version_format
+    - status_format
+    - metric_format
+    - emoji_format
+
+# Validation Rules
+validation:
+  required_blocks:
+    - title
+    - metadata
+    - content
+  
+  metadata_schema:
+    title: str
+    version: str
+    date: datetime
+    author: str
+    status: str
+
+# Output Configuration  
+output:
+  formats:
+    markdown:
+      extension: .md
+      processor: markdown
+      
+    html:
+      extension: .html
+      processor: jinja2
+      
+    pdf:
+      extension: .pdf
+      processor: weasyprint
+
+# Template Variables
+variables:
+  system:
+    app_name: DocSync
+    version: "0.1.0"
+    generator: "DocSync Template Engine"
+    
+  formatting:
+    date_format: "%Y-%m-%d %H:%M:%S"
+    version_format: "v{major}.{minor}.{patch}"
+
+# Plugin System
+plugins:
+  enabled: true
+  paths:
+    - plugins/core
+    - plugins/user
+  autoload: true
+

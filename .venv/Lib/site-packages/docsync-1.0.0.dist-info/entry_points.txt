@@ -1,0 +1,3 @@
+[console_scripts]
+docsync = docsync.cli:main
+docsync-monitor = docsync.monitor:main

@@ -1,0 +1,34 @@
+# Inclui todas as dependências base
+-r requirements.txt
+
+# Ferramentas de desenvolvimento interativo
+ipython==8.14.0          # Shell Python interativo aprimorado
+jupyter==1.0.0           # Notebooks para desenvolvimento e documentação
+debugpy==1.6.7           # Debugging remoto
+pip-tools==7.1.0         # Gerenciamento de dependências
+
+# Documentação
+mkdocs==1.4.3                    # Geração de documentação
+mkdocs-material==9.1.18          # Tema Material para MkDocs
+mkdocstrings==0.22.0             # Documentação automática de código
+mkdocstrings-python==1.1.2       # Suporte Python para mkdocstrings
+
+# Análise e debug
+memory-profiler==0.61.0          # Análise de uso de memória
+line-profiler==4.0.3             # Profiling linha a linha
+pyinstrument==4.5.1              # Profiling de performance
+
+# Qualidade de código
+black==23.7.0                    # Formatação de código
+isort==5.12.0                    # Ordenação de imports
+flake8==6.0.0                    # Linting
+flake8-docstrings==1.7.0         # Verificação de docstrings
+mypy==1.4.1                      # Verificação de tipos
+bandit==1.7.5                    # Análise de segurança
+# safety==2.3.5                  # Temporariamente removido devido a conflitos de dependências com packaging
+vulture==2.7                     # Detecção de código morto
+
+# Extras para teste
+pytest-sugar==0.9.7              # Interface melhorada para pytest
+pytest-watch==4.2.0              # Execução automática de testes
+pytest-clarity==1.0.1            # Mensagens de erro melhoradas

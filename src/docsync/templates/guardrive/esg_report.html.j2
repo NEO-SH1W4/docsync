@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ report.title }}</title>
+    <style>
+        {{ css_variables }}
+        
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height);
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius);
+        }
+        
+        .section {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .chart-container {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .metric {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+        }
+        
+        .metric-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        .metric-info {
+            flex: 1;
+        }
+        
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .status {
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius);
+            font-size: 0.875rem;
+            display: inline-block;
+        }
+        
+        .status-on_track { background-color: var(--success-color); color: white; }
+        .status-at_risk { background-color: var(--warning-color); color: white; }
+        .status-delayed { background-color: var(--danger-color); color: white; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            font-size: 0.875rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ report.title }}</h1>
+            <p>
+                <strong>Período:</strong> {{ report.period }} |
+                <strong>Versão:</strong> {{ report.version }} |
+                <strong>Gerado em:</strong> {{ report.generated_at }}
+            </p>
+        </div>
+        
+        {% if report.overview %}
+        <div class="section">
+            <h2>Visão Geral</h2>
+            <p>{{ report.overview }}</p>
+        </div>
+        {% endif %}
+        
+        <div class="section">
+            <h2>Métricas ESG</h2>
+            
+            <!-- Gráfico de Progresso -->
+            <div class="chart-container">
+                {{ charts.metrics_progress | safe }}
+            </div>
+            
+            <!-- Gráfico de Tendências -->
+            <div class="chart-container">
+                {{ charts.metrics_trend | safe }}
+            </div>
+            
+            {% for group in metrics | groupby('category') %}
+            <h3>{{ group.grouper | title }}</h3>
+            
+            {% for metric in group.list %}
+            <div class="metric">
+                <div class="metric-info">
+                    <h4>{{ metric.name }}</h4>
+                    <div class="metric-value">
+                        {{ metric | format_metric }}
+                        {% if metric.trend %}
+                        <span class="trend">{{ metric.trend }}</span>
+                        {% endif %}
+                    </div>
+                    <p>{{ metric.description }}</p>
+                    <div class="status status-{{ metric.status }}">
+                        {{ metric.status | format_status }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+        
+        <div class="section">
+            <h2>Objetivos e Progresso</h2>
+            
+            <!-- Gráfico de Objetivos -->
+            <div class="chart-container">
+                {{ charts.objectives | safe }}
+            </div>
+            
+            {% for obj in objectives %}
+            <div class="objective">
+                <h3>{{ obj.title }}</h3>
+                <p>{{ obj.description }}</p>
+                
+                <div class="progress">
+                    {{ obj.progress | format_progress }}
+                </div>
+                
+                <div class="status status-{{ obj.status }}">
+                    {{ obj.status | format_status }}
+                </div>
+                
+                {% if obj.milestones %}
+                <h4>Marcos</h4>
+                <table>
+                    <tr>
+                        <th>Marco</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                    </tr>
+                    {% for ms in obj.milestones %}
+                    <tr>
+                        <td>{{ ms.title }}</td>
+                        <td>{{ ms.date | format_date }}</td>
+                        <td>
+                            <div class="status status-{{ ms.status }}">
+                                {{ ms.status | format_status }}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="section">
+            <h2>Análise de Impacto</h2>
+            {% for category, info in analysis.items() %}
+            <h3>{{ category }}</h3>
+            <p>{{ info.summary }}</p>
+            
+            <h4>Pontos-chave</h4>
+            <ul>
+                {% for point in info.key_points %}
+                <li>{{ point }}</li>
+                {% endfor %}
+            </ul>
+            
+            <h4>Desafios</h4>
+            <ul>
+                {% for challenge in info.challenges %}
+                <li>{{ challenge }}</li>
+                {% endfor %}
+            </ul>
+            
+            <h4>Oportunidades</h4>
+            <ul>
+                {% for opportunity in info.opportunities %}
+                <li>{{ opportunity }}</li>
+                {% endfor %}
+            </ul>
+            {% endfor %}
+        </div>
+        
+        <div class="section">
+            <h2>Recomendações</h2>
+            {% for rec in recommendations %}
+            <div class="recommendation">
+                <h3>{{ rec.title }}</h3>
+                <p>{{ rec.description }}</p>
+                
+                <table>
+                    <tr>
+                        <th>Prioridade</th>
+                        <td>{{ rec.priority | format_priority }}</td>
+                    </tr>
+                    <tr>
+                        <th>Impacto</th>
+                        <td>{{ rec.impact }}</td>
+                    </tr>
+                    <tr>
+                        <th>Timeline</th>
+                        <td>{{ rec.timeline }}</td>
+                    </tr>
+                </table>
+                
+                {% if rec.steps %}
+                <h4>Passos</h4>
+                <ol>
+                    {% for step in rec.steps %}
+                    <li>{{ step }}</li>
+                    {% endfor %}
+                </ol>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="footer">
+            <p>Relatório gerado automaticamente pelo DocSync - {{ report.generated_at }}</p>
+        </div>
+    </div>
+</body>
+</html>
+

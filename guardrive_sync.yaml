@@ -1,0 +1,135 @@
+# Configuração de Sincronização do GUARDRIVE
+# Versão: 1.0.0
+# Data: 2025-06-03
+
+# Configuração Principal
+templates_dir: "templates"
+output_dir: "output"
+backup_dir: "backups"
+temp_dir: "temp"
+log_level: "INFO"
+
+# Configuração ESG
+esg:
+  metrics_enabled: true
+  custom_templates: {}
+  output_format: "markdown"
+  validation_level: "strict"
+
+# Configuração de Sincronização Geral
+sync:
+  watch_paths: []
+  ignore_patterns: 
+    - ".git"
+    - "__pycache__"
+    - "*.pyc"
+    - "*.tmp"
+    - "*.temp"
+    - ".venv"
+  auto_sync: true
+  sync_interval: 300  # 5 minutos
+  real_time_sync: true
+  conflict_handling: "ask"
+  retry_attempts: 3
+  retry_delay: 60
+  checksum_verification: true
+  preserve_timestamps: true
+  sync_metadata: true
+  sync_permissions: true
+  max_file_size: 104857600  # 100MB
+
+# Configuração GUARDRIVE
+guardrive:
+  enabled: true
+  base_path: "C:\\Users\\João\\Desktop\\PROJETOS\\GUARDRIVE\\GUARDRIVE_V1\\1. GUARDRIVE_DOCS_DEV"
+  docs_path: "GUARDRIVE_DOCS"
+  dev_path: "2.AREA_DEV"
+  
+  # Mapeamentos de Caminhos
+  path_mappings:
+    # Documentação Técnica
+    - source_path: "GUARDRIVE_DOCS/01_TECHNICAL"
+      target_path: "2.AREA_DEV/04_Material DEV#1 (Criado no Claude)/technical"
+      doc_type: "technical"
+      bidirectional: true
+      ignore_patterns: [".git", "__pycache__", "*.pyc"]
+
+    # Documentação de Negócios
+    - source_path: "GUARDRIVE_DOCS/02_BUSINESS"
+      target_path: "2.AREA_DEV/01_Documentos_burocráticos"
+      doc_type: "business"
+      bidirectional: true
+      ignore_patterns: [".git", "*.tmp"]
+
+    # Documentação de Produto
+    - source_path: "GUARDRIVE_DOCS/03_PRODUCT"
+      target_path: "2.AREA_DEV/00_Sistema Veicular Inteligente com Blockchain e Tokenização ESG"
+      doc_type: "product"
+      bidirectional: true
+      ignore_patterns: [".git", "*.tmp"]
+
+    # Assets
+    - source_path: "GUARDRIVE_DOCS/04_ASSETS"
+      target_path: "2.AREA_DEV/02_Protótipo da Marca"
+      doc_type: "asset"
+      bidirectional: true
+      ignore_patterns: ["*.psd", "*.ai"]
+
+  # Configuração de Manipuladores de Documentos
+  doc_handlers:
+    markdown:
+      file_extensions: ["md", "markdown"]
+      preserve_metadata: true
+      convert_formats: false
+      validate_links: true
+      check_references: true
+
+    technical:
+      file_extensions: ["rst", "txt", "pdf"]
+      preserve_metadata: true
+      convert_formats: true
+      validate_links: true
+      check_references: true
+
+    design:
+      file_extensions: ["drawio", "svg", "png", "jpg"]
+      preserve_metadata: true
+      convert_formats: false
+      validate_links: false
+      check_references: false
+
+    code:
+      file_extensions: ["py", "rs", "js", "ts", "json"]
+      preserve_metadata: true
+      convert_formats: false
+      validate_links: true
+      check_references: true
+
+  # Configuração de Controle de Versão
+  version_control:
+    enabled: true
+    provider: "git"
+    backup_enabled: true
+    backup_interval: 3600  # 1 hora
+    retention_days: 30
+    commit_message_template: "doc: {action} - {path}"
+
+  # Configuração de Resolução de Conflitos
+  conflict_resolution: "manual"
+  
+  # Agendamento de Sincronização (formato cron)
+  sync_schedule: "*/15 * * * *"  # A cada 15 minutos
+  
+  # Nível de Validação
+  validation_level: "strict"
+
+# Configurações de Segurança Adicionais
+security:
+  encryption_enabled: true
+  require_authentication: true
+  audit_logging: true
+  backup_before_sync: true
+  max_sync_attempts: 3
+  secure_temp_files: true
+  delete_temp_after: true
+

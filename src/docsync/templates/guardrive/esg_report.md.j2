@@ -1,0 +1,220 @@
+# {{ report.title }}
+
+**Período**: {{ report.period }}  
+**Versão**: {{ report.version }}  
+**Gerado em**: {{ report.generated_at }}
+
+{% if report.overview %}
+## Visão Geral
+
+{{ report.overview }}
+{% endif %}
+
+## Métricas ESG
+
+![Progresso das Métricas]({{ charts.metrics_progress_png }})
+
+![Tendência das Métricas]({{ charts.metrics_trend_png }})
+
+{% for group in metrics | groupby('category') %}
+### {{ group.grouper | title }}
+
+| Métrica | Valor | Meta | Status | Tendência |
+|---------|-------|------|---------|-----------|
+{% for metric in group.list %}
+| {{ metric.name }} | {{ metric | format_metric }} | {{ metric.target }} | {{ metric.status | format_status }} | {{ metric.trend }} |
+{% endfor %}
+
+{% for metric in group.list %}
+#### {{ metric.name }}
+
+{{ metric.description }}
+
+- **Valor Atual**: {{ metric | format_metric }}
+- **Meta**: {{ metric.target }}
+- **Status**: {{ metric.status | format_status }}
+- **Tendência**: {{ metric.trend }}
+
+{% if metric.improvement_actions %}
+**Ações de Melhoria**:
+{% for action in metric.improvement_actions %}
+- {{ action }}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+{% endfor %}
+
+## Objetivos e Progresso
+
+![Objetivos e Milestones]({{ charts.objectives_png }})
+
+{% for obj in objectives %}
+### {{ obj.title }}
+
+{{ obj.description }}
+
+**Progresso**: {{ obj.progress | format_progress }}  
+**Status**: {{ obj.status | format_status }}  
+**Responsável**: {{ obj.responsible }}
+
+{% if obj.milestones %}
+#### Marcos
+
+| Marco | Data | Status |
+|-------|------|--------|
+{% for ms in obj.milestones %}
+| {{ ms.title }} | {{ ms.date | format_date }} | {{ ms.status | format_status }} |
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
+## Análise de Impacto
+
+{% for category, info in analysis.items() %}
+### {{ category }}
+
+{{ info.summary }}
+
+**Pontos-chave**:
+{% for point in info.key_points %}
+- {{ point }}
+{% endfor %}
+
+**Desafios**:
+{% for challenge in info.challenges %}
+- {{ challenge }}
+{% endfor %}
+
+**Oportunidades**:
+{% for opportunity in info.opportunities %}
+- {{ opportunity }}
+{% endfor %}
+
+{% endfor %}
+
+## Recomendações
+
+{% for rec in recommendations %}
+### {{ rec.title }}
+
+{{ rec.description }}
+
+- **Prioridade**: {{ rec.priority | format_priority }}
+- **Impacto**: {{ rec.impact }}
+- **Timeline**: {{ rec.timeline }}
+- **Responsável**: {{ rec.responsible }}
+
+{% if rec.steps %}
+**Passos**:
+{% for step in rec.steps %}
+1. {{ step }}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
+---
+*Relatório gerado automaticamente pelo DocSync*
+
+# {{ report.title }}
+
+**Período**: {{ report.period }}
+**Versão**: {{ report | format_version }}
+
+## Visão Geral
+
+{{ report.overview }}
+
+## Métricas ESG
+
+{% for category in metrics | groupby('category') %}
+### {{ category.grouper | title }}
+
+| Métrica | Valor | Meta | Status | Tendência |
+|---------|-------|------|--------|-----------|
+{% for metric in category.list %}
+| {{ metric.name }} | {{ metric | format_esg_metric }} | {{ metric.target }} | {{ metric.status | format_status }} | {{ metric.trend }} |
+{% endfor %}
+
+{% endfor %}
+
+## Objetivos ESG
+
+{% for objective in objectives %}
+### {{ objective.title }}
+
+{{ objective.description }}
+
+**Progresso**: {{ objective.progress }}%
+**Status**: {{ objective.status | format_status }}
+
+{% if objective.milestones %}
+#### Marcos
+{% for milestone in objective.milestones %}
+- {{ milestone.description }}: {{ milestone.status | format_status }}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
+## Análise de Impacto
+
+{% for category, analysis in analysis.items() %}
+### {{ category }}
+
+{{ analysis.summary }}
+
+**Pontos Principais**:
+{% for point in analysis.key_points %}
+- {{ point }}
+{% endfor %}
+
+{% if analysis.challenges %}
+**Desafios**:
+{% for challenge in analysis.challenges %}
+- {{ challenge }}
+{% endfor %}
+{% endif %}
+
+{% if analysis.opportunities %}
+**Oportunidades**:
+{% for opportunity in analysis.opportunities %}
+- {{ opportunity }}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
+## Recomendações
+
+{% for recommendation in recommendations %}
+### {{ recommendation.title }}
+
+{{ recommendation.description }}
+
+**Prioridade**: {{ recommendation.priority }}
+**Impacto Estimado**: {{ recommendation.impact }}
+**Prazo Sugerido**: {{ recommendation.timeline }}
+
+{% if recommendation.steps %}
+**Passos de Implementação**:
+{% for step in recommendation.steps %}
+1. {{ step }}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
+## Próximos Passos
+
+1. Revisão das métricas não atingidas
+2. Implementação das recomendações prioritárias
+3. Atualização dos objetivos para o próximo período
+4. Monitoramento contínuo dos indicadores
+
+---
+Relatório ESG gerado por DocSync v{{ version }}
+Última atualização: {{ date | format_date }}
+

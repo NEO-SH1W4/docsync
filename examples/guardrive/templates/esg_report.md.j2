@@ -1,0 +1,25 @@
+{# GUARDRIVE ESG Report Template #}
+{% extends "system/base.md.j2" %}
+
+{% block content %}
+# {{ report.title }}
+
+**Período**: {{ report.period }}
+**Versão**: {{ report.version }}
+**Gerado em**: {{ report.generated_at }}
+
+## Métricas ESG
+
+{% for group in metrics | groupby('category') %}
+### {{ group.grouper | title }}
+
+| Métrica | Valor | Meta | Status |
+|---------|-------|------|--------|
+{% for metric in group.list %}
+| {{ metric.name }} | {{ metric | format_metric }} | {{ metric.target }} | {{ metric.status | status_format }} |
+{% endfor %}
+{% endfor %}
+
+{# ... resto do template específico do GUARDRIVE ... #}
+{% endblock %}
+
