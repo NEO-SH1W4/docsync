@@ -19,7 +19,19 @@ from dataclasses import dataclass
 from enum import Enum
 import asyncio
 import aiofiles
-import aiogit
+try:
+    import aiogit
+except ImportError:  # pragma: no cover - fallback for missing dependency
+    import sys
+    import types
+    aiogit = types.ModuleType("aiogit")
+    class _Repository:
+        async def create(*args, **kwargs):
+            raise NotImplementedError("aiogit is required")
+        async def open(*args, **kwargs):
+            raise NotImplementedError("aiogit is required")
+    aiogit.Repository = _Repository
+    sys.modules['aiogit'] = aiogit
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from croniter import croniter

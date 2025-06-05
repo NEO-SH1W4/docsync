@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 import asyncio
 from pathlib import Path
@@ -284,7 +286,6 @@ class DocSync:
 """
 DOCSYNC - Sistema de Sincronização Quântica de Documentação
 """
-from __future__ import annotations
 import asyncio
 import logging.config
 import os

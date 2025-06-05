@@ -5,6 +5,7 @@ Utility modules for the DOCSYNC package providing configuration, filtering, and 
 from .config import *  # noqa
 from .filter_registry import *  # noqa
 from .filters import *  # noqa
+from .logger import setup_logger
 
 __all__ = (
     'load_config',  # from config
@@ -14,5 +15,6 @@ __all__ = (
     'Filter',  # from filters
     'FilterChain',
     'FilterResult'
+    , 'setup_logger'
 )
 

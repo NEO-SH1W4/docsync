@@ -118,26 +118,3 @@ DEFAULT_CONFIG = {
     "file_patterns": ["*.md", "*.txt", "*.rst"],
     "ignore_patterns": [".*", "*.tmp", "*.bak", "__pycache__"]
 }
-
-# config.py
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
-from pathlib import Path
-
-@dataclass
-class NotionMapping:
-    source_path: Path
-    target_id: str
-    sync_type: str = 'bidirectional'
-    filters: List[str] = field(default_factory=list)
-
-@dataclass
-class NotionConfig:
-    token: str
-    workspace_id: str
-    base_url: str = 'https://api.notion.com/v1'
-    sync_interval: int = 300
-    mappings: List[NotionMapping] = field(default_factory=list)
-    cache_ttl: int = 3600
-    max_retries: int = 3
-    retry_delay: int = 60

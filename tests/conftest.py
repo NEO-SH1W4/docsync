@@ -368,41 +368,6 @@ def mock_sync_target(test_data_dir: Path):
     sync_dir.mkdir(parents=True, exist_ok=True)
     return sync_dir
 
-import pytest
-import tempfile
-import shutil
-import yaml
-from pathlib import Path
-from typing import Dict, Any
-
-@pytest.fixture(scope="session")
-def test_data_dir():
-    """
-    Cria diretório temporário para dados de teste que persiste durante toda a sessão
-    """
-    test_dir = tempfile.mkdtemp()
-    yield test_dir
-    shutil.rmtree(test_dir)
-
-@pytest.fixture
-def setup_test_files(test_data_dir):
-    """
-    Configura arquivos de teste padrão
-    """
-    def _create_files(files_dict: Dict[str, Any]):
-        created_files = {}
-        for fname, content in files_dict.items():
-            fpath = Path(test_data_dir) / fname
-            fpath.parent.mkdir(parents=True, exist_ok=True)
-            
-            if isinstance(content, dict):
-                fpath.write_text(yaml.dump(content))
-            else:
-                fpath.write_text(str(content))
-            
-            created_files[fname] = fpath
-        return created_files
-    return _create_files
 
 @pytest.fixture
 def mock_quantum_state():

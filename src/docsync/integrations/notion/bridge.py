@@ -21,35 +21,8 @@ import json
 from .client import NotionClient
 from .types import NotionPage, NotionDatabase
 from .config import NotionConfig, NotionMapping
-from ...core.base import DocumentSynchronizer, DocSyncError
-
-logger = logging.getLogger(__name__)
-
-class NotionBridge:
-    '''Ponte principal para integração com Notion.'''
-    
-    def __init__(self, config: NotionConfig, sync_manager: Optional[DocumentSynchronizer] = None):
-        self.config = config
-        self.client = NotionClient(config)
-        self.sync_manager = sync_manager or DocumentSynchronizer(str(Path.cwd()))
-        self.cache: Dict[str, Dict] = {}
-        self._sync_lock = asyncio.Lock()
-
-# bridge.py - Atualização com lógica de sincronização
-
-import logging
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime
-import asyncio
-from pathlib import Path
-import hashlib
-import json
-
-from .client import NotionClient
-from .types import NotionPage, NotionDatabase
-from .config import NotionConfig, NotionMapping
-from ...core.sync import SyncManager
-from ...core.exceptions import SyncError
+from ...sync_manager import SyncManager
+from ...exceptions import SyncError, DocSyncError
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +31,7 @@ class NotionBridge:
     
     def __init__(self, config: NotionConfig, sync_manager: Optional[SyncManager] = None):
         self.config = config
+        from .client import NotionClient  # import here to ease patching in tests
         self.client = NotionClient(config)
         self.sync_manager = sync_manager
         self.cache: Dict[str, Dict] = {}
@@ -68,8 +42,11 @@ class NotionBridge:
         logger.info('Inicializando ponte com Notion...')
         try:
             # Verificar conexão
-            if not await self.client.verify_connection():
-            raise DocSyncError('Não foi possível conectar ao Notion')
+            check = self.client.verify_connection()
+            if asyncio.iscoroutine(check):
+                check = await check
+            if not check:
+                raise DocSyncError('Não foi possível conectar ao Notion')
             
             # Mapear estruturas
             for mapping in self.config.mappings:
@@ -85,7 +62,10 @@ class NotionBridge:
         '''Configura mapeamento entre sistema de arquivos e Notion.'''
         try:
             # Verificar existência da página/database no Notion
-            target = await self.client.get_page(mapping.target_id)
+            page = self.client.get_page(mapping.target_id)
+            if asyncio.iscoroutine(page):
+                page = await page
+            target = page
             
             # Verificar estrutura local
             if not mapping.source_path.exists():

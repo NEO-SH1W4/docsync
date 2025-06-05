@@ -10,7 +10,7 @@ from rich.logging import RichHandler
 from .config import load_config
 from .utils.logger import setup_logger
 from .utils.validation import validate_path
-from .utils.manager import SyncManager
+from .sync_manager import SyncManager
 from .plugins.base import DocumentFormat
 
 

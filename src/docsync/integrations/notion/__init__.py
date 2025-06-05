@@ -49,13 +49,8 @@ import logging
 
 from .bridge import NotionBridge
 from .client import NotionClient
-from .config import NotionConfig
+from .config import NotionConfig, NotionMapping
 from .types import NotionPage, NotionDatabase
-from .sync_monitor import (
-    NotionSyncMonitor,
-    SyncStats,
-    SyncFileHandler
-)
 
 __version__ = '0.1.0'
 __author__ = 'DOCSYNC Team'
@@ -91,13 +86,16 @@ TIMEOUTS = {
 }
 
 __all__ = [
-    'NotionSyncMonitor',
     'NotionBridge',
     'NotionConfig',
     'NotionMapping',
     'NotionClient',
     'NotionPage',
     'NotionDatabase',
-    'SyncStats',
-    'SyncFileHandler',
 ]
+
+try:  # Import optional monitoring helpers lazily
+    from .sync_monitor import NotionSyncMonitor, SyncStats, SyncFileHandler
+    __all__ += ['NotionSyncMonitor', 'SyncStats', 'SyncFileHandler']
+except Exception:  # pragma: no cover - optional features not available
+    pass
