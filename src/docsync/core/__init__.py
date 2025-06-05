@@ -1,6 +1,4 @@
-"""
-Core functionality for DocSync system.
-"""
+"""Public interface for the :mod:`docsync.core` package."""
 
 from .base import (
     DocSync,
@@ -19,12 +17,4 @@ __all__ = [
     "TemplateError",
     "generate_esg_report",
 ]
-
-"""
-Módulo principal do DocSync.
-"""
-
-from .sync import DocSync
-
-__all__ = ["DocSync"]
 
