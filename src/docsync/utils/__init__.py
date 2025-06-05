@@ -6,6 +6,7 @@ from .config import *  # noqa
 from .filter_registry import *  # noqa
 from .filters import register_filters  # noqa
 from .validators import validate_esg_data  # noqa
+from .validation import validate_path  # noqa
 from .logger import setup_logger
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     'register_filters',
     'validate_esg_data',
     'setup_logger',
+    'validate_path',
 ]
 

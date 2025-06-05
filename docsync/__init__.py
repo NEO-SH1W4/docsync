@@ -1,7 +1,13 @@
 """Compatibility wrapper that exposes ``src.docsync`` as ``docsync``."""
 
 from importlib import import_module
+from pathlib import Path
 import sys
+
+# Ensure the real package location is importable when running without installing
+SRC_PATH = Path(__file__).resolve().parent.parent / "src"
+if str(SRC_PATH) not in sys.path:
+    sys.path.insert(0, str(SRC_PATH))
 
 _real_pkg = import_module("src.docsync")
 globals().update({k: getattr(_real_pkg, k) for k in getattr(_real_pkg, "__all__", [])})
