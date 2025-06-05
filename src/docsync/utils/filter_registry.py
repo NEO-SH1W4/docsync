@@ -44,6 +44,15 @@ class FilterRegistry:
             
         self._filters[name] = filter_func
         logger.debug(f"Filtro registrado: {name}")
+
+    def register_filter(self, func: Callable) -> Callable:
+        """Decorator para registrar facilmente um filtro."""
+        self.register(func.__name__, func)
+        return func
+
+    def get_registered_filters(self) -> Dict[str, Callable]:
+        """Retorna filtros atualmente registrados."""
+        return self._filters.copy()
         
     def setup_environment(self, env: Environment) -> None:
         """

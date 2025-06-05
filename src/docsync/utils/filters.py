@@ -1,6 +1,4 @@
-"""
-Custom Jinja2 filters for template rendering.
-"""
+"""Custom Jinja2 filters for template rendering."""
 
 from datetime import datetime
 from typing import Any, Optional
@@ -221,4 +219,11 @@ FILTERS = {
     "format_trend": format_trend,
     "format_progress": format_progress,
 }
+
+def register_filters(env):
+    """Register built-in filters into a Jinja2 Environment."""
+    for name, func in FILTERS.items():
+        env.filters[name] = func
+
+__all__ = ["register_filters"]
 

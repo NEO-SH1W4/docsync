@@ -300,9 +300,13 @@ class DocProcessor:
             'errors': 0
         }
 
-    def process_file(self, file_path: str) -> Optional[dict]:
+    def process_file(self, file_path: str | Path) -> Optional[dict]:
         """Process a file with caching."""
         try:
+            if isinstance(file_path, Path):
+                file_str = str(file_path)
+            else:
+                file_str = file_path
             current_time = time.time()
             
             # Check cache first
@@ -315,9 +319,9 @@ class DocProcessor:
                 self.stats['cache_misses'] += 1
 
             # Process file based on extension
-            if file_path.endswith('.md'):
+            if file_str.endswith('.md'):
                 result = self._process_markdown(file_path)
-            elif file_path.endswith(('.yaml', '.yml')):
+            elif file_str.endswith(('.yaml', '.yml')):
                 result = self._process_yaml(file_path)
             else:
                 return None
@@ -367,9 +371,10 @@ class DocProcessor:
             })
 
         return {
+            'type': 'markdown',
             'metadata': metadata,
             'headers': headers,
-            'code_blocks': code_blocks,
+            'code_blocks': len(code_blocks),
             'file_path': file_path,
             'last_modified': os.path.getmtime(file_path)
         }
@@ -384,8 +389,8 @@ class DocProcessor:
                 return {
                     'type': 'dict',
                     'keys': list(data.keys()),
-                    'children': {k: analyze_structure(v, f"{path}.{k}") 
-                               for k, v in data.items()}
+                    'nested': {k: analyze_structure(v, f"{path}.{k}")
+                              for k, v in data.items()}
                 }
             elif isinstance(data, list):
                 return {
@@ -400,6 +405,7 @@ class DocProcessor:
                 }
 
         return {
+            'type': 'yaml',
             'content': content,
             'structure': analyze_structure(content),
             'file_path': file_path,
@@ -412,15 +418,16 @@ class DocProcessor:
 
 class AIEnhancedMonitor(FileSystemEventHandler):
     """Intelligent file monitoring with pattern detection."""
-    
-    def __init__(self, processor: DocProcessor, patterns: Set[str] = None):
-        self.processor = processor
-        self.patterns = patterns or {'.md', '.yaml', '.yml'}
+
+    def __init__(self, processor: DocProcessor | None = None, patterns: Set[str] = None, ignore_patterns: Set[str] = None):
+        self.processor = processor or DocProcessor()
+        self.patterns = patterns or {'*.md', '*.yaml', '*.yml'}
+        self.ignore_patterns = ignore_patterns or set()
         self.file_history: Dict[str, List[float]] = {}
         self.stats = {
             'events_processed': 0,
             'files_monitored': 0,
-            'patterns_detected': 0
+            'patterns_detected': set(),
         }
         self._lock = Lock()
 
@@ -443,9 +450,14 @@ class AIEnhancedMonitor(FileSystemEventHandler):
                 self.file_history[path] = [t for t in self.file_history[path] 
                                          if current_time - t < 3600]
                 
-                # Detect patterns
-                if len(self.file_history[path]) >= 3:
-                    self.stats['patterns_detected'] += 1
+                ext = Path(path).suffix.lstrip('.').lower()
+                if ext in {'md', 'markdown'}:
+                    key = 'markdown'
+                elif ext in {'yaml', 'yml'}:
+                    key = 'yaml'
+                else:
+                    key = ext
+                self.stats['patterns_detected'].add(key)
 
                 # Process file
                 try:
@@ -455,7 +467,10 @@ class AIEnhancedMonitor(FileSystemEventHandler):
 
     def _should_process(self, path: str) -> bool:
         """Check if file should be processed based on extension."""
-        return any(path.endswith(pat) for pat in self.patterns)
+        import fnmatch
+        if any(fnmatch.fnmatch(path, pat) for pat in self.ignore_patterns):
+            return False
+        return any(fnmatch.fnmatch(path, pat) for pat in self.patterns)
 
     def get_stats(self) -> dict:
         """Return monitoring statistics."""
@@ -464,10 +479,10 @@ class AIEnhancedMonitor(FileSystemEventHandler):
             stats['processor_stats'] = self.processor.get_stats()
             return stats
 
-def setup_monitoring(path: str, patterns: Set[str] = None) -> Tuple[Observer, AIEnhancedMonitor]:
+def setup_monitoring(path: str, patterns: Set[str] = None, ignore_patterns: Set[str] = None) -> Tuple[Observer, AIEnhancedMonitor]:
     """Set up file monitoring for a directory."""
     processor = DocProcessor()
-    monitor = AIEnhancedMonitor(processor, patterns)
+    monitor = AIEnhancedMonitor(processor, patterns, ignore_patterns)
     
     observer = Observer()
     observer.schedule(monitor, path, recursive=True)
