@@ -1,0 +1,24 @@
+# GitHub Topics (máximo 20)
+# Copie e cole estes topics no GitHub para máxima visibilidade
+
+python
+documentation
+notion
+synchronization
+ai
+machine-learning
+enterprise
+devops
+ci-cd
+docker
+markdown
+templates
+esg
+reporting
+automation
+real-time
+api
+cli
+open-source
+collaboration
+
