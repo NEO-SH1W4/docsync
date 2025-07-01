@@ -69,7 +69,7 @@ class NotionBridge:
         try:
             # Verificar conexão
             if not await self.client.verify_connection():
-            raise DocSyncError('Não foi possível conectar ao Notion')
+                raise DocSyncError('Não foi possível conectar ao Notion')
             
             # Mapear estruturas
             for mapping in self.config.mappings:

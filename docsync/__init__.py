@@ -1,20 +1,61 @@
+"""
+DOCSYNC - Sistema de Sincronização de Documentação
+==================================================
+
+Sistema inteligente para sincronização e gerenciamento de documentação
+com recursos avançados de monitoramento e processamento.
+"""
+
+from __future__ import annotations
+
 import asyncio
 import hashlib
-import json
-from dataclasses import dataclass
+import logging.config
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 import structlog
 import yaml
-from watchdog.events import FileSystemEvent
+from watchdog.events import FileSystemEvent, FileSystemEventHandler
+from watchdog.observers import Observer
+
+# Configuração do logging estruturado
+logging.config.dictConfig({
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "json": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.processors.JSONRenderer(),
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "json",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": "docsync.log",
+            "formatter": "json",
+        },
+    },
+    "loggers": {
+        "": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+        },
+    },
+})
 
 logger = structlog.get_logger()
 
 
 class QuantumState(Enum):
+    """Estados quânticos do sistema."""
     COHERENT = "coherent"
     ENTANGLED = "entangled"
     SUPERPOSED = "superposed"
@@ -23,384 +64,21 @@ class QuantumState(Enum):
 
 @dataclass
 class ConsciousnessState:
-    awareness_level: float  # 0.0 to 1.0
-    learning_rate: float
-    memory_coherence: float
-    evolution_factor: float
-    timestamp: datetime
-
-
-class DocSync:
-    def __init__(self, config_path: str):
-        self.config = self._load_config(config_path)
-        self.quantum_state = QuantumState.COHERENT
-        self.consciousness = ConsciousnessState(
-            awareness_level=0.8,
-            learning_rate=0.1,
-            memory_coherence=0.95,
-            evolution_factor=0.05,
-            timestamp=datetime.now(),
-        )
-        self.logger = logger.bind(
-            quantum_state=self.quantum_state.value,
-            consciousness_level=self.consciousness.awareness_level,
-        )
-
-    async def _validate_and_sync_file(self, file_path: Path, event_type: str) -> bool:
-        """
-        Implementa validação quântica e sincronização de arquivos.
-
-        Args:
-            file_path: Caminho do arquivo
-            event_type: Tipo de evento (created, modified, deleted)
-
-        Returns:
-            bool: True se a validação e sincronização foram bem-sucedidas
-        """
-        try:
-            # Atualizar estado quântico
-            self.quantum_state = QuantumState.SUPERPOSED
-
-            # Log estruturado do início da operação
-            self.logger.info(
-                "iniciando_validacao_arquivo",
-                file_path=str(file_path),
-                event_type=event_type,
-                quantum_state=self.quantum_state.value,
-            )
-
-            # Verificar coerência quântica do arquivo
-            file_quantum_signature = await self._calculate_quantum_signature(file_path)
-
-            # Validar através da consciência
-            validation_result = await self._consciousness_validate(
-                file_path, file_quantum_signature, event_type
-            )
-
-            if not validation_result:
-                self.logger.warning(
-                    "falha_validacao_consciencia",
-                    file_path=str(file_path),
-                    consciousness_level=self.consciousness.awareness_level,
-                )
-                return False
-
-            # Sincronizar com estado quântico
-            await self._quantum_sync(file_path, file_quantum_signature)
-
-            # Evoluir consciência
-            self._evolve_consciousness(validation_result)
-
-            # Atualizar estado quântico final
-            self.quantum_state = QuantumState.COHERENT
-
-            self.logger.info(
-                "sincronizacao_concluida",
-                file_path=str(file_path),
-                quantum_state=self.quantum_state.value,
-                consciousness_level=self.consciousness.awareness_level,
-            )
-
-            return True
-
-        except Exception as e:
-            self.quantum_state = QuantumState.COLLAPSED
-            self.logger.error(
-                "erro_sincronizacao",
-                error=str(e),
-                file_path=str(file_path),
-                quantum_state=self.quantum_state.value,
-            )
-            return False
-
-    async def _register_new_file(self, file_path: Path) -> bool:
-        """
-        Registra e valida novos arquivos no sistema.
-
-        Args:
-            file_path: Caminho do novo arquivo
-
-        Returns:
-            bool: True se o registro foi bem-sucedido
-        """
-        try:
-            self.logger.info(
-                "iniciando_registro_arquivo",
-                file_path=str(file_path),
-                quantum_state=self.quantum_state.value,
-            )
-
-            # Verificar se o arquivo se enquadra nos padrões permitidos
-            if not self._check_file_patterns(file_path):
-                self.logger.warning("arquivo_padrao_invalido", file_path=str(file_path))
-                return False
-
-            # Gerar estado quântico inicial
-            initial_quantum_state = await self._generate_quantum_state(file_path)
-
-            # Registrar na consciência do sistema
-            consciousness_registration = await self._consciousness_register(
-                file_path, initial_quantum_state
-            )
-
-            if not consciousness_registration:
-                self.logger.warning(
-                    "falha_registro_consciencia", file_path=str(file_path)
-                )
-                return False
-
-            # Adicionar à matriz quântica
-            await self._add_to_quantum_matrix(file_path, initial_quantum_state)
-
-            self.logger.info(
-                "registro_concluido",
-                file_path=str(file_path),
-                quantum_state=self.quantum_state.value,
-            )
-
-            return True
-
-        except Exception as e:
-            self.logger.error("erro_registro", error=str(e), file_path=str(file_path))
-            return False
-
-    async def _handle_deleted_file(self, file_path: Path) -> bool:
-        """
-        Gerencia a remoção segura de arquivos do sistema.
-
-        Args:
-            file_path: Caminho do arquivo deletado
-
-        Returns:
-            bool: True se a remoção foi processada com sucesso
-        """
-        try:
-            self.logger.info(
-                "iniciando_remocao_arquivo",
-                file_path=str(file_path),
-                quantum_state=self.quantum_state.value,
-            )
-
-            # Preservar estado quântico antes da remoção
-            quantum_backup = await self._backup_quantum_state(file_path)
-
-            # Notificar consciência sobre remoção
-            consciousness_removal = await self._consciousness_remove(
-                file_path, quantum_backup
-            )
-
-            if not consciousness_removal:
-                self.logger.warning(
-                    "falha_remocao_consciencia", file_path=str(file_path)
-                )
-                return False
-
-            # Remover da matriz quântica
-            await self._remove_from_quantum_matrix(file_path)
-
-            # Manter registro histórico
-            await self._archive_quantum_state(file_path, quantum_backup)
-
-            self.logger.info(
-                "remocao_concluida",
-                file_path=str(file_path),
-                quantum_state=self.quantum_state.value,
-            )
-
-            return True
-
-        except Exception as e:
-            self.logger.error("erro_remocao", error=str(e), file_path=str(file_path))
-            return False
-
-    async def _handle_directory_event(self, event: FileSystemEvent) -> None:
-        """
-        Processa eventos de diretório mantendo a coerência quântica.
-
-        Args:
-            event: Evento do sistema de arquivos
-        """
-        try:
-            self.logger.info(
-                "processando_evento_diretorio",
-                event_type=event.event_type,
-                src_path=event.src_path,
-                quantum_state=self.quantum_state.value,
-            )
-
-            path = Path(event.src_path)
-
-            # Mapear evento para ação apropriada
-            if event.event_type == "created":
-                await self._register_new_file(path)
-            elif event.event_type == "modified":
-                await self._validate_and_sync_file(path, "modified")
-            elif event.event_type == "deleted":
-                await self._handle_deleted_file(path)
-
-            # Atualizar consciência do sistema
-            self._update_system_consciousness(event)
-
-            self.logger.info(
-                "evento_processado",
-                event_type=event.event_type,
-                src_path=event.src_path,
-                quantum_state=self.quantum_state.value,
-            )
-
-        except Exception as e:
-            self.logger.error(
-                "erro_processamento_evento",
-                error=str(e),
-                event_type=event.event_type,
-                src_path=event.src_path,
-            )
-
-    # Métodos auxiliares de consciência e estado quântico
-    async def _calculate_quantum_signature(self, file_path: Path) -> str:
-        """Calcula a assinatura quântica do arquivo."""
-        content = await self._read_file_content(file_path)
-        return hashlib.sha256(content.encode()).hexdigest()
-
-    async def _consciousness_validate(
-        self, file_path: Path, signature: str, event_type: str
-    ) -> bool:
-        """Validação através da consciência do sistema."""
-        # Implementar lógica de validação baseada na consciência
-        return True
-
-    def _evolve_consciousness(self, validation_result: bool) -> None:
-        """Evolui o estado de consciência do sistema."""
-        if validation_result:
-            self.consciousness.awareness_level = min(
-                1.0,
-                self.consciousness.awareness_level + self.consciousness.learning_rate,
-            )
-        self.consciousness.timestamp = datetime.now()
-
-    async def _quantum_sync(self, file_path: Path, signature: str) -> None:
-        """Sincronização com estado quântico."""
-        # Implementar lógica de sincronização quântica
-        pass
-
-    def _check_file_patterns(self, file_path: Path) -> bool:
-        """Verifica se o arquivo segue os padrões permitidos."""
-        patterns = self.config.get("file_patterns", {})
-        # Implementar verificação de padrões
-        return True
-
-    async def _generate_quantum_state(self, file_path: Path) -> Dict[str, Any]:
-        """Gera estado quântico inicial para novo arquivo."""
-        # Implementar geração de estado quântico
-        return {}
-
-    async def _consciousness_register(
-        self, file_path: Path, quantum_state: Dict[str, Any]
-    ) -> bool:
-        """Registra arquivo na consciência do sistema."""
-        # Implementar registro na consciência
-        return True
-
-    def _update_system_consciousness(self, event: FileSystemEvent) -> None:
-        """Atualiza a consciência do sistema com base em eventos."""
-        # Implementar atualização de consciência
-        pass
-
-
-"""
-DOCSYNC - Sistema de Sincronização Quântica de Documentação
-"""
-from __future__ import annotations
-
-import asyncio
-import logging.config
-import os
-import sys
-from dataclasses import dataclass, field
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
-
-import structlog
-import yaml
-from watchdog.events import FileSystemEvent, FileSystemEventHandler
-from watchdog.observers import Observer
-
-# Configuração do logging
-logging.config.dictConfig(
-    {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "json": {
-                "()": structlog.stdlib.ProcessorFormatter,
-                "processor": structlog.processors.JSONRenderer(),
-            },
-        },
-        "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
-                "formatter": "json",
-            },
-            "file": {
-                "class": "logging.FileHandler",
-                "filename": "docsync.log",
-                "formatter": "json",
-            },
-        },
-        "loggers": {
-            "": {
-                "handlers": ["console", "file"],
-                "level": "INFO",
-            },
-        },
-    }
-)
-
-logger = structlog.get_logger()
-
-
-@dataclass
-class QuantumState:
-    """Estado quântico do sistema de documentação."""
-
-    entanglement_level: float = 1.0
-    coherence_status: bool = True
-    last_sync: datetime = field(default_factory=datetime.now)
-    quantum_hash: str = field(default="")
-
-    def validate(self) -> bool:
-        """Valida o estado quântico atual."""
-        return (
-            self.entanglement_level > 0.8
-            and self.coherence_status
-            and (datetime.now() - self.last_sync).total_seconds() < 3600
-        )
-
-
-@dataclass
-class ConsciousnessState:
     """Estado de consciência do sistema."""
-
-    awareness_level: float = 1.0
-    pattern_recognition: bool = True
-    learning_active: bool = True
-    evolution_stage: int = 1
-
-    def evolve(self) -> None:
-        """Evolui o estado de consciência."""
-        if self.learning_active:
-            self.awareness_level = min(1.0, self.awareness_level + 0.1)
-            self.evolution_stage += 1
+    awareness_level: float = 0.8
+    learning_rate: float = 0.1
+    memory_coherence: float = 0.95
+    evolution_factor: float = 0.05
+    timestamp: datetime = field(default_factory=datetime.now)
 
 
 class DocSync:
     """Classe principal do sistema DOCSYNC."""
-
+    
     def __init__(self, config_path: Union[str, Path]):
         self.config_path = Path(config_path)
-        self.config: Dict[str, Any] = self._load_config()
-        self.quantum_state = QuantumState()
+        self.config = self._load_config()
+        self.quantum_state = QuantumState.COHERENT
         self.consciousness = ConsciousnessState()
         self.observer = Observer()
         self.event_queue: asyncio.Queue = asyncio.Queue()
@@ -409,7 +87,7 @@ class DocSync:
     def _load_config(self) -> Dict[str, Any]:
         """Carrega configuração do sistema."""
         try:
-            with open(self.config_path) as f:
+            with open(self.config_path, encoding='utf-8') as f:
                 config = yaml.safe_load(f)
             logger.info("config_loaded", path=str(self.config_path))
             return config
@@ -449,15 +127,18 @@ class DocSync:
 
     async def _handle_event(self, event: FileSystemEvent) -> None:
         """Processa um evento do sistema de arquivos."""
-        logger.info("handling_event", event_type=event.event_type, path=event.src_path)
-
-        # Validação quântica
-        if not self.quantum_state.validate():
-            logger.warning("quantum_state_invalid")
-            await self._restore_quantum_state()
-
+        logger.info(
+            "handling_event", 
+            event_type=event.event_type, 
+            path=event.src_path
+        )
+        
         # Evolução da consciência
-        self.consciousness.evolve()
+        self.consciousness.awareness_level = min(
+            1.0, 
+            self.consciousness.awareness_level + 0.01
+        )
+        self.consciousness.timestamp = datetime.now()
 
         # Processamento do evento
         if event.is_directory:
@@ -470,7 +151,7 @@ class DocSync:
         try:
             path = Path(event.src_path)
             if event.event_type == "modified":
-                await self._validate_and_sync_file(path)
+                await self._validate_and_sync_file(path, "modified")
             elif event.event_type == "created":
                 await self._register_new_file(path)
             elif event.event_type == "deleted":
@@ -478,26 +159,72 @@ class DocSync:
         except Exception as e:
             logger.error("file_event_failed", error=str(e))
 
-    async def _restore_quantum_state(self) -> None:
-        """Restaura o estado quântico do sistema."""
-        logger.info("restoring_quantum_state")
-        self.quantum_state = QuantumState()
-        # Implementar lógica de restauração quântica
+    async def _handle_directory_event(self, event: FileSystemEvent) -> None:
+        """Processa evento relacionado a diretório."""
+        logger.info(
+            "directory_event_processed",
+            event_type=event.event_type,
+            path=event.src_path
+        )
+
+    async def _validate_and_sync_file(self, file_path: Path, event_type: str) -> bool:
+        """Valida e sincroniza arquivo."""
+        try:
+            logger.info(
+                "validating_file",
+                file_path=str(file_path),
+                event_type=event_type
+            )
+            # Implementar lógica de validação
+            return True
+        except Exception as e:
+            logger.error("validation_failed", error=str(e))
+            return False
+
+    async def _register_new_file(self, file_path: Path) -> bool:
+        """Registra novo arquivo no sistema."""
+        try:
+            logger.info("registering_file", file_path=str(file_path))
+            # Implementar lógica de registro
+            return True
+        except Exception as e:
+            logger.error("registration_failed", error=str(e))
+            return False
+
+    async def _handle_deleted_file(self, file_path: Path) -> bool:
+        """Processa arquivo deletado."""
+        try:
+            logger.info("handling_deleted_file", file_path=str(file_path))
+            # Implementar lógica de remoção
+            return True
+        except Exception as e:
+            logger.error("deletion_handling_failed", error=str(e))
+            return False
 
     def start(self) -> None:
         """Inicia o sistema DOCSYNC."""
         try:
-            # Iniciar observador de arquivos
-            path = self.config["directories"][0]["path"]
-            self.observer.schedule(
-                DocSyncEventHandler(self.event_queue), path, recursive=True
-            )
+            # Configurar observador
+            directories = self.config.get("directories", [])
+            if not directories:
+                raise ValueError("Nenhum diretório configurado")
+                
+            for directory in directories:
+                path = directory.get("path", ".")
+                self.observer.schedule(
+                    DocSyncEventHandler(self.event_queue), 
+                    path, 
+                    recursive=True
+                )
+            
             self.observer.start()
+            logger.info("docsync_started", directories=len(directories))
 
             # Iniciar loop de eventos
             loop = asyncio.get_event_loop()
             loop.create_task(self._process_events())
             loop.run_forever()
+            
         except KeyboardInterrupt:
             self.stop()
         except Exception as e:
@@ -525,16 +252,13 @@ class DocSyncEventHandler(FileSystemEventHandler):
         )
 
 
-def main() -> None:
-    """Função principal do CLI."""
-    try:
-        config_path = sys.argv[1] if len(sys.argv) > 1 else "config.yaml"
-        docsync = DocSync(config_path)
-        docsync.start()
-    except Exception as e:
-        logger.error("main_failed", error=str(e))
-        sys.exit(1)
+# Exportações públicas
+__all__ = [
+    "DocSync", 
+    "QuantumState", 
+    "ConsciousnessState", 
+    "DocSyncEventHandler"
+]
 
+__version__ = "1.0.0"
 
-if __name__ == "__main__":
-    main()

@@ -25,7 +25,7 @@ class NotionHeading(NotionBlock):
         return cls(type='heading', content=text, level=level)
     
     def to_markdown(self) -> str:
-        return f'{'#' * self.level} {self.content}'
+        return f"{'#' * self.level} {self.content}"
     
     def to_notion_block(self) -> Dict:
         return {
@@ -102,10 +102,10 @@ class NotionTable(NotionBlock):
         return cls(type='table', content='', headers=headers, rows=rows)
     
     def to_markdown(self) -> str:
-        header = f'| {' | '.join(self.headers)} |'
-        separator = f'|{'---|' * len(self.headers)}'
+        header = f"| {' | '.join(self.headers)} |"
+        separator = f"|{'---|' * len(self.headers)}"
         rows = ['| ' + ' | '.join(row) + ' |' for row in self.rows]
-        return '\\n'.join([header, separator] + rows)
+        return '\n'.join([header, separator] + rows)
     
     def to_notion_block(self) -> Dict:
         return {
