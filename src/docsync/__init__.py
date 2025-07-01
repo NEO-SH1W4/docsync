@@ -22,8 +22,8 @@ This package provides tools for:
 __version__ = "0.1.0"
 
 from docsync.core import (
-    DocumentSynchronizer,
     DocSyncError,
+    DocumentSynchronizer,
     ReportGenerationError,
     TemplateError,
     generate_esg_report,
@@ -36,4 +36,3 @@ __all__ = [
     "TemplateError",
     "generate_esg_report",
 ]
-

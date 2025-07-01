@@ -13,12 +13,12 @@ Author: DocSync Team
 Date: 2025-06-03
 """
 
-import os
 import logging
-from pathlib import Path
-from typing import Dict, Any, Optional, Union, List
+import os
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 import yaml
 from yaml.parser import ParserError
@@ -26,25 +26,31 @@ from yaml.parser import ParserError
 # Configuração do logging
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class ESGConfig:
     """Configuração para geração de relatórios ESG."""
+
     metrics_enabled: bool = True
     custom_templates: Dict[str, str] = field(default_factory=dict)
     output_format: str = "markdown"
     validation_level: str = "strict"
 
+
 class DocumentType(Enum):
     """Tipos de documentos suportados."""
+
     TECHNICAL = "technical"
     BUSINESS = "business"
     PRODUCT = "product"
     ASSET = "asset"
     META = "meta"
 
+
 @dataclass
 class VersionControlConfig:
     """Configuração para controle de versão de documentos."""
+
     enabled: bool = True
     provider: str = "git"
     backup_enabled: bool = True
@@ -52,27 +58,37 @@ class VersionControlConfig:
     retention_days: int = 30
     commit_message_template: str = "doc: {action} - {path}"
 
+
 @dataclass
 class PathMappingConfig:
     """Configuração para mapeamento de caminhos entre GUARDRIVE_DOCS e AREA_DEV."""
+
     source_path: str = field(default="")
     target_path: str = field(default="")
     doc_type: DocumentType = field(default=DocumentType.TECHNICAL)
     bidirectional: bool = True
-    ignore_patterns: List[str] = field(default_factory=lambda: [".git", "__pycache__", "*.pyc"])
+    ignore_patterns: List[str] = field(
+        default_factory=lambda: [".git", "__pycache__", "*.pyc"]
+    )
+
 
 @dataclass
 class DocumentHandlerConfig:
     """Configuração para manipulação de diferentes tipos de documentos."""
-    file_extensions: List[str] = field(default_factory=lambda: ["md", "rst", "txt", "pdf"])
+
+    file_extensions: List[str] = field(
+        default_factory=lambda: ["md", "rst", "txt", "pdf"]
+    )
     preserve_metadata: bool = True
     convert_formats: bool = False
     validate_links: bool = True
     check_references: bool = True
 
+
 @dataclass
 class GuardriveConfig:
     """Configuração específica para integração com GUARDRIVE."""
+
     enabled: bool = True
     base_path: str = field(default="")
     docs_path: str = field(default="GUARDRIVE_DOCS")
@@ -84,9 +100,11 @@ class GuardriveConfig:
     sync_schedule: str = "*/15 * * * *"  # Formato cron
     validation_level: str = "strict"
 
+
 @dataclass
 class SyncConfig:
     """Configuração para sincronização de documentação."""
+
     watch_paths: List[str] = field(default_factory=list)
     ignore_patterns: List[str] = field(default_factory=list)
     auto_sync: bool = True
@@ -101,9 +119,11 @@ class SyncConfig:
     sync_permissions: bool = True
     max_file_size: int = 100 * 1024 * 1024  # 100MB em bytes
 
+
 @dataclass
 class Config:
     """Configuração principal do DocSync."""
+
     esg: ESGConfig = field(default_factory=ESGConfig)
     sync: SyncConfig = field(default_factory=SyncConfig)
     guardrive: GuardriveConfig = field(default_factory=GuardriveConfig)
@@ -113,13 +133,14 @@ class Config:
     backup_dir: str = "backups"
     temp_dir: str = "temp"
 
+
 # Configurações padrão
 DEFAULT_CONFIG = {
     "esg": {
         "metrics_enabled": True,
         "custom_templates": {},
         "output_format": "markdown",
-        "validation_level": "strict"
+        "validation_level": "strict",
     },
     "sync": {
         "watch_paths": [],
@@ -134,7 +155,7 @@ DEFAULT_CONFIG = {
         "preserve_timestamps": True,
         "sync_metadata": True,
         "sync_permissions": True,
-        "max_file_size": 104857600
+        "max_file_size": 104857600,
     },
     "guardrive": {
         "enabled": True,
@@ -148,7 +169,7 @@ DEFAULT_CONFIG = {
                 "preserve_metadata": True,
                 "convert_formats": False,
                 "validate_links": True,
-                "check_references": True
+                "check_references": True,
             }
         },
         "version_control": {
@@ -157,18 +178,19 @@ DEFAULT_CONFIG = {
             "backup_enabled": True,
             "backup_interval": 3600,
             "retention_days": 30,
-            "commit_message_template": "doc: {action} - {path}"
+            "commit_message_template": "doc: {action} - {path}",
         },
         "conflict_resolution": "manual",
         "sync_schedule": "*/15 * * * *",
-        "validation_level": "strict"
+        "validation_level": "strict",
     },
     "templates_dir": "templates",
     "output_dir": "output",
     "backup_dir": "backups",
     "temp_dir": "temp",
-    "log_level": "INFO"
+    "log_level": "INFO",
 }
+
 
 def load_config(config_path: Union[str, Path, None] = None) -> Dict[str, Any]:
     """
@@ -194,7 +216,7 @@ def load_config(config_path: Union[str, Path, None] = None) -> Dict[str, Any]:
         config_path = Path(config_path)
         try:
             if config_path.exists():
-                with open(config_path, 'r', encoding='utf-8') as f:
+                with open(config_path, "r", encoding="utf-8") as f:
                     file_config = yaml.safe_load(f)
                     if file_config:
                         _deep_update(config, file_config)
@@ -216,13 +238,19 @@ def load_config(config_path: Union[str, Path, None] = None) -> Dict[str, Any]:
 
     return config
 
+
 def _deep_update(base_dict: Dict[str, Any], update_dict: Dict[str, Any]) -> None:
     """Atualiza um dicionário recursivamente."""
     for key, value in update_dict.items():
-        if key in base_dict and isinstance(base_dict[key], dict) and isinstance(value, dict):
+        if (
+            key in base_dict
+            and isinstance(base_dict[key], dict)
+            and isinstance(value, dict)
+        ):
             _deep_update(base_dict[key], value)
         else:
             base_dict[key] = value
+
 
 def _apply_env_vars(config: Dict[str, Any]) -> None:
     """Aplica variáveis de ambiente à configuração."""
@@ -232,7 +260,7 @@ def _apply_env_vars(config: Dict[str, Any]) -> None:
         "DOCSYNC_LOG_LEVEL": ("log_level", str),
         "DOCSYNC_ESG_METRICS_ENABLED": ("esg.metrics_enabled", bool),
         "DOCSYNC_SYNC_INTERVAL": ("sync.sync_interval", int),
-        "DOCSYNC_AUTO_SYNC": ("sync.auto_sync", bool)
+        "DOCSYNC_AUTO_SYNC": ("sync.auto_sync", bool),
     }
 
     for env_var, (config_path, type_conv) in env_mappings.items():
@@ -240,25 +268,26 @@ def _apply_env_vars(config: Dict[str, Any]) -> None:
             try:
                 value = os.environ[env_var]
                 if type_conv == bool:
-                    value = value.lower() in ('true', '1', 'yes')
+                    value = value.lower() in ("true", "1", "yes")
                 elif type_conv == int:
                     value = int(value)
-                
+
                 # Atualiza configuração
-                parts = config_path.split('.')
+                parts = config_path.split(".")
                 current = config
                 for part in parts[:-1]:
                     current = current[part]
                 current[parts[-1]] = value
-                
+
                 logger.debug(f"Aplicada variável de ambiente {env_var}")
             except (ValueError, KeyError) as e:
                 logger.warning(f"Erro ao processar variável de ambiente {env_var}: {e}")
 
+
 def _validate_config(config: Dict[str, Any]) -> None:
     """
     Valida a configuração carregada.
-    
+
     Raises:
         ValueError: Se a configuração for inválida
     """
@@ -270,14 +299,16 @@ def _validate_config(config: Dict[str, Any]) -> None:
         "log_level": str,
         "esg": dict,
         "sync": dict,
-        "guardrive": dict
+        "guardrive": dict,
     }
 
     for field, expected_type in required_fields.items():
         if field not in config:
             raise ValueError(f"Campo obrigatório ausente: {field}")
         if not isinstance(config[field], expected_type):
-            raise ValueError(f"Tipo inválido para {field}: esperado {expected_type}, recebido {type(config[field])}")
+            raise ValueError(
+                f"Tipo inválido para {field}: esperado {expected_type}, recebido {type(config[field])}"
+            )
 
     # Valida níveis específicos
     valid_log_levels = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
@@ -292,34 +323,40 @@ def _validate_config(config: Dict[str, Any]) -> None:
     # Valida configuração ESG
     if not isinstance(config["esg"].get("metrics_enabled"), bool):
         raise ValueError("esg.metrics_enabled deve ser booleano")
-        
+
     # Valida configuração de sincronização
     if not isinstance(config["sync"].get("sync_interval"), int):
         raise ValueError("sync.sync_interval deve ser inteiro")
-    
+
     # Valida configuração do GUARDRIVE
     guardrive_config = config.get("guardrive", {})
     if guardrive_config.get("enabled"):
         if not guardrive_config.get("base_path"):
-            raise ValueError("guardrive.base_path é obrigatório quando guardrive está habilitado")
-        
+            raise ValueError(
+                "guardrive.base_path é obrigatório quando guardrive está habilitado"
+            )
+
         # Valida caminhos do GUARDRIVE
         docs_path = Path(guardrive_config["base_path"]) / guardrive_config["docs_path"]
         dev_path = Path(guardrive_config["base_path"]) / guardrive_config["dev_path"]
-        
+
         if not docs_path.exists():
             logger.warning(f"Diretório GUARDRIVE_DOCS não encontrado: {docs_path}")
         if not dev_path.exists():
             logger.warning(f"Diretório AREA_DEV não encontrado: {dev_path}")
-            
+
         # Valida mapeamentos de caminhos
         for mapping in guardrive_config.get("path_mappings", []):
             if not mapping.get("source_path") or not mapping.get("target_path"):
-                raise ValueError("Mapeamentos de caminho devem ter source_path e target_path")
-                
+                raise ValueError(
+                    "Mapeamentos de caminho devem ter source_path e target_path"
+                )
+
         # Valida configuração de controle de versão
         vc_config = guardrive_config.get("version_control", {})
         if vc_config.get("enabled") and not vc_config.get("provider"):
-            raise ValueError("Provider de controle de versão é obrigatório quando habilitado")
-            
+            raise ValueError(
+                "Provider de controle de versão é obrigatório quando habilitado"
+            )
+
     logger.info("Configuração validada com sucesso")

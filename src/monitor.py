@@ -13,9 +13,11 @@ from watchdog.observers import Observer
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class MonitorConfig:
     """Configuration for file monitoring."""
+
     paths: List[Path]
     patterns: List[str] = None
     ignore_patterns: List[str] = None
@@ -23,8 +25,14 @@ class MonitorConfig:
     def __post_init__(self):
         """Convert string paths to Path objects and set defaults."""
         self.paths = [Path(p) if isinstance(p, str) else p for p in self.paths]
-        self.patterns = self.patterns or ["*.txt", "*.md"]  # Default patterns from tests
-        self.ignore_patterns = self.ignore_patterns or ["*.tmp"]  # Default ignore pattern
+        self.patterns = self.patterns or [
+            "*.txt",
+            "*.md",
+        ]  # Default patterns from tests
+        self.ignore_patterns = self.ignore_patterns or [
+            "*.tmp"
+        ]  # Default ignore pattern
+
 
 class FileMonitor(FileSystemEventHandler):
     """Monitor file system changes with thread-safe tracking."""
@@ -96,23 +104,21 @@ class FileMonitor(FileSystemEventHandler):
             self._modified_files.clear()
             return modified
 
-def create_monitor(paths: List[str], 
-                  patterns: List[str] = None,
-                  ignore_patterns: List[str] = None) -> FileMonitor:
+
+def create_monitor(
+    paths: List[str], patterns: List[str] = None, ignore_patterns: List[str] = None
+) -> FileMonitor:
     """Create and configure a FileMonitor instance.
-    
+
     Args:
         paths: List of paths to monitor
         patterns: List of file patterns to include (default: ["*.txt", "*.md"])
         ignore_patterns: List of file patterns to ignore (default: ["*.tmp"])
-    
+
     Returns:
         Configured FileMonitor instance
     """
     config = MonitorConfig(
-        paths=paths,
-        patterns=patterns,
-        ignore_patterns=ignore_patterns
+        paths=paths, patterns=patterns, ignore_patterns=ignore_patterns
     )
     return FileMonitor(config)
-

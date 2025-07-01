@@ -50,15 +50,11 @@ import logging
 from .bridge import NotionBridge
 from .client import NotionClient
 from .config import NotionConfig
-from .types import NotionPage, NotionDatabase
-from .sync_monitor import (
-    NotionSyncMonitor,
-    SyncStats,
-    SyncFileHandler
-)
+from .sync_monitor import NotionSyncMonitor, SyncFileHandler, SyncStats
+from .types import NotionDatabase, NotionPage
 
-__version__ = '0.1.0'
-__author__ = 'DOCSYNC Team'
+__version__ = "0.1.0"
+__author__ = "DOCSYNC Team"
 
 # Configuração padrão de logging
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -69,35 +65,27 @@ DEFAULT_ERROR_RETRY_INTERVAL = 60  # segundos
 DEFAULT_REFRESH_RATE = 4  # atualizações por segundo
 
 # Tipos de evento suportados
-SUPPORTED_EVENTS = {
-    'created',
-    'modified',
-    'deleted'
-}
+SUPPORTED_EVENTS = {"created", "modified", "deleted"}
 
 # Estados de sincronização
 SYNC_STATES = {
-    'initializing': 'Iniciando...',
-    'running': 'Em execução',
-    'error': 'Erro',
-    'stopped': 'Parado'
+    "initializing": "Iniciando...",
+    "running": "Em execução",
+    "error": "Erro",
+    "stopped": "Parado",
 }
 
 # Configurações de timeout
-TIMEOUTS = {
-    'connect': 10,  # segundos
-    'read': 30,
-    'write': 30
-}
+TIMEOUTS = {"connect": 10, "read": 30, "write": 30}  # segundos
 
 __all__ = [
-    'NotionSyncMonitor',
-    'NotionBridge',
-    'NotionConfig',
-    'NotionMapping',
-    'NotionClient',
-    'NotionPage',
-    'NotionDatabase',
-    'SyncStats',
-    'SyncFileHandler',
+    "NotionSyncMonitor",
+    "NotionBridge",
+    "NotionConfig",
+    "NotionMapping",
+    "NotionClient",
+    "NotionPage",
+    "NotionDatabase",
+    "SyncStats",
+    "SyncFileHandler",
 ]

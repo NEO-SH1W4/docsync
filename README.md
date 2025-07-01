@@ -10,6 +10,19 @@ DOCSYNC é um sistema avançado de sincronização de documentação que impleme
 - Segurança quantum-resistant
 - Auditoria contínua
 
+## 📊 Análise de Mercado
+
+Para uma análise completa do potencial de mercado, custos de desenvolvimento e viabilidade do projeto, consulte:
+- **[Análise de Mercado e Viabilidade - DOCSYNC](./ANALISE_MERCADO_VIABILIDADE.md)** - Documento detalhado com estimativas de tempo, custos, projeções de receita e análise competitiva
+- **[Template de Análise de Mercado](./templates/business/TEMPLATE_ANALISE_MERCADO.md)** - Template genérico para análises similares de outros projetos
+
+### Resumo Executivo da Análise:
+- **Mercado Total Addressable:** $45+ bilhões
+- **Investimento Necessário:** ~$1.6M para desenvolvimento completo
+- **Tempo para MVP:** 4-6 meses
+- **Break-even Projetado:** Ano 2-3
+- **ROI Estimado (5 anos):** 450-1,200%
+
 ## Requisitos
 - Python >= 3.9
 - Git

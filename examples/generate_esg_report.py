@@ -9,11 +9,13 @@ Este script demonstra a geração de relatórios ESG com:
 """
 
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
+
 from docsync.core import DocumentSynchronizer
 from docsync.exceptions import DocSyncError
 
@@ -181,11 +183,13 @@ Este script demonstra a geração de relatórios ESG com:
 """
 
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
+
 from docsync.core import DocumentSynchronizer
 from docsync.exceptions import DocSyncError
 
@@ -380,7 +384,9 @@ Exemplo de geração de relatório ESG usando DocSync.
 """
 
 from pathlib import Path
+
 from docsync.core import DocSync
+
 
 def main():
     try:

@@ -1,9 +1,10 @@
 # notion_content_types.py
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Union
-from datetime import datetime
-import re
 import json
+import re
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Dict, List, Optional, Union
+
 
 @dataclass
 class NotionBlock:

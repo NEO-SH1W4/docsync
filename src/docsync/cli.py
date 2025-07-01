@@ -15,11 +15,13 @@ from .core import DocSync
 console = Console()
 logger = logging.getLogger(__name__)
 
+
 @click.group()
 @click.version_option(version=__version__)
 def cli():
     """DocSync - Sistema de sincronização e gerenciamento de documentação."""
     pass
+
 
 @cli.command()
 @click.argument(
@@ -42,6 +44,7 @@ def sync(path: Path, config: Optional[Path] = None):
         console.print(f"❌ Erro: {e}", style="red")
         raise click.Abort()
 
+
 def main():
     """Ponto de entrada principal."""
     try:
@@ -49,4 +52,3 @@ def main():
     except Exception as e:
         console.print(f"❌ Erro fatal: {e}", style="red")
         raise click.Abort()
-

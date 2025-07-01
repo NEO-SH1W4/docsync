@@ -3,23 +3,26 @@ Exemplo de uso do plugin RMarkdown.
 """
 
 from pathlib import Path
+
 from rich.console import Console
 from rich.panel import Panel
+
 from docsync import DocSync
 from docsync.plugins.formats import RMarkdownFormat
 
 console = Console()
+
 
 def main():
     """Executa exemplo de processamento RMarkdown."""
     try:
         # Inicializar DocSync
         doc_sync = DocSync(".")
-        
+
         # Registrar plugin RMarkdown
         rmd = RMarkdownFormat()
         doc_sync.register_plugin(rmd)
-        
+
         # Arquivo de exemplo
         example = """---
 title: "Análise ESG"
@@ -52,21 +55,21 @@ metrics %>%
   labs(title = "Métricas ESG vs Metas")
 ```
 """
-        
+
         # Criar arquivo
         input_path = Path("example.rmd")
         input_path.write_text(example)
-        
+
         # Renderizar documento
         console.print(Panel("🔄 Processando documento RMarkdown"))
         output_path = rmd.render_document(input_path)
-        
+
         console.print(f"\n✨ Documento gerado: {output_path}")
-        
+
     except Exception as e:
         console.print(f"\n❌ Erro: {e}", style="red")
         raise
 
+
 if __name__ == "__main__":
     main()
-

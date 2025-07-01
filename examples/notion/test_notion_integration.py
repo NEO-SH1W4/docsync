@@ -3,64 +3,63 @@ import asyncio
 import logging
 import os
 from pathlib import Path
-from docsync.integrations.notion import (
-    NotionBridge,
-    NotionConfig,
-    NotionMapping
-)
+
+from docsync.integrations.notion import NotionBridge, NotionConfig, NotionMapping
 
 # Configurar logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
 logger = logging.getLogger(__name__)
 
+
 async def test_notion_connection():
-    '''Teste básico de conexão com o Notion'''
+    """Teste básico de conexão com o Notion"""
     try:
         # Tentar carregar token do ambiente
-        token = os.getenv('NOTION_TOKEN')
+        token = os.getenv("NOTION_TOKEN")
         if not token:
-            logger.error('NOTION_TOKEN não encontrado nas variáveis de ambiente')
+            logger.error("NOTION_TOKEN não encontrado nas variáveis de ambiente")
             return False
 
         # Criar configuração de teste
         config = NotionConfig(
             token=token,
-            workspace_id='GENESIS_LAB',
+            workspace_id="GENESIS_LAB",
             mappings=[
                 NotionMapping(
-                    source_path=Path('./test_docs'),
-                    target_id='test_page_id'  # Será usado apenas para teste
+                    source_path=Path("./test_docs"),
+                    target_id="test_page_id",  # Será usado apenas para teste
                 )
-            ]
+            ],
         )
 
         # Criar bridge
         bridge = NotionBridge(config)
 
         # Tentar inicializar
-        logger.info('Testando conexão com Notion...')
+        logger.info("Testando conexão com Notion...")
         await bridge.initialize()
-        
-        logger.info('✓ Conexão estabelecida com sucesso!')
+
+        logger.info("✓ Conexão estabelecida com sucesso!")
         return True
 
     except Exception as e:
-        logger.error(f'✗ Erro ao testar conexão: {e}')
+        logger.error(f"✗ Erro ao testar conexão: {e}")
         return False
 
+
 async def test_document_sync():
-    '''Teste de sincronização de documento'''
+    """Teste de sincronização de documento"""
     try:
         # Criar diretório e arquivo de teste
-        test_dir = Path('./test_docs')
+        test_dir = Path("./test_docs")
         test_dir.mkdir(exist_ok=True)
-        
-        test_file = test_dir / 'test.md'
-        test_file.write_text('''# Documento de Teste
+
+        test_file = test_dir / "test.md"
+        test_file.write_text(
+            """# Documento de Teste
         
 Este é um documento de teste para a integração DOCSYNC-Notion.
 
@@ -76,18 +75,19 @@ Este é um documento de teste para a integração DOCSYNC-Notion.
 def hello_world():
     print('Hello from DOCSYNC!')
 `
-''')
+"""
+        )
 
         # Configurar Notion
         config = NotionConfig(
-            token=os.getenv('NOTION_TOKEN'),
-            workspace_id='GENESIS_LAB',
+            token=os.getenv("NOTION_TOKEN"),
+            workspace_id="GENESIS_LAB",
             mappings=[
                 NotionMapping(
                     source_path=test_dir,
-                    target_id=os.getenv('NOTION_TEST_PAGE_ID', 'test_page_id')
+                    target_id=os.getenv("NOTION_TEST_PAGE_ID", "test_page_id"),
                 )
-            ]
+            ],
         )
 
         # Criar bridge
@@ -95,54 +95,56 @@ def hello_world():
         await bridge.initialize()
 
         # Tentar sincronizar
-        logger.info('Testando sincronização...')
+        logger.info("Testando sincronização...")
         await bridge.sync()
-        
-        logger.info('✓ Sincronização concluída com sucesso!')
+
+        logger.info("✓ Sincronização concluída com sucesso!")
         return True
 
     except Exception as e:
-        logger.error(f'✗ Erro durante sincronização: {e}')
+        logger.error(f"✗ Erro durante sincronização: {e}")
         return False
     finally:
         # Limpar arquivos de teste
         if test_dir.exists():
-            for file in test_dir.glob('*'):
+            for file in test_dir.glob("*"):
                 file.unlink()
             test_dir.rmdir()
 
+
 async def run_all_tests():
-    '''Executa todos os testes'''
-    logger.info('Iniciando testes de integração com Notion...\n')
+    """Executa todos os testes"""
+    logger.info("Iniciando testes de integração com Notion...\n")
 
     # Teste 1: Conexão
-    logger.info('=== Teste de Conexão ===')
+    logger.info("=== Teste de Conexão ===")
     if await test_notion_connection():
-        logger.info('✓ Teste de conexão passou!\n')
+        logger.info("✓ Teste de conexão passou!\n")
     else:
-        logger.error('✗ Teste de conexão falhou!\n')
+        logger.error("✗ Teste de conexão falhou!\n")
         return
 
     # Teste 2: Sincronização
-    logger.info('=== Teste de Sincronização ===')
+    logger.info("=== Teste de Sincronização ===")
     if await test_document_sync():
-        logger.info('✓ Teste de sincronização passou!\n')
+        logger.info("✓ Teste de sincronização passou!\n")
     else:
-        logger.error('✗ Teste de sincronização falhou!\n')
+        logger.error("✗ Teste de sincronização falhou!\n")
         return
 
-    logger.info('=== Resumo dos Testes ===')
-    logger.info('✓ Todos os testes completados com sucesso!')
+    logger.info("=== Resumo dos Testes ===")
+    logger.info("✓ Todos os testes completados com sucesso!")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # Verificar variáveis de ambiente necessárias
-    required_vars = ['NOTION_TOKEN']
+    required_vars = ["NOTION_TOKEN"]
     missing_vars = [var for var in required_vars if not os.getenv(var)]
-    
+
     if missing_vars:
         logger.error(f'Erro: Variáveis de ambiente ausentes: {", ".join(missing_vars)}')
-        logger.error('Por favor, configure as variáveis de ambiente necessárias:')
-        logger.error('  export NOTION_TOKEN=seu_token_aqui')
+        logger.error("Por favor, configure as variáveis de ambiente necessárias:")
+        logger.error("  export NOTION_TOKEN=seu_token_aqui")
         exit(1)
 
     # Executar testes

@@ -1,13 +1,15 @@
 # test_notion_content_types.py
 import pytest
+
 from docsync.integrations.notion.notion_content_types import (
     NotionBlock,
-    NotionHeading,
-    NotionCodeBlock,
-    NotionTable,
     NotionCallout,
-    NotionContentConverter
+    NotionCodeBlock,
+    NotionContentConverter,
+    NotionHeading,
+    NotionTable,
 )
+
 
 # Fixtures para testes
 @pytest.fixture

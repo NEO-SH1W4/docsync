@@ -10,18 +10,18 @@ Classes
 NotionBridge: Interface principal de sincronização
 """
 
-import logging
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime
 import asyncio
-from pathlib import Path
 import hashlib
 import json
+import logging
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
+from ...core.base import DocSyncError, DocumentSynchronizer
 from .client import NotionClient
-from .types import NotionPage, NotionDatabase
 from .config import NotionConfig, NotionMapping
-from ...core.base import DocumentSynchronizer, DocSyncError
+from .types import NotionDatabase, NotionPage
 
 logger = logging.getLogger(__name__)
 
@@ -37,19 +37,19 @@ class NotionBridge:
 
 # bridge.py - Atualização com lógica de sincronização
 
-import logging
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime
 import asyncio
-from pathlib import Path
 import hashlib
 import json
+import logging
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
-from .client import NotionClient
-from .types import NotionPage, NotionDatabase
-from .config import NotionConfig, NotionMapping
-from ...core.sync import SyncManager
 from ...core.exceptions import SyncError
+from ...core.sync import SyncManager
+from .client import NotionClient
+from .config import NotionConfig, NotionMapping
+from .types import NotionDatabase, NotionPage
 
 logger = logging.getLogger(__name__)
 

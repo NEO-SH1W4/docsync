@@ -1,19 +1,23 @@
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
+
 
 def read(fname):
     """Lê o conteúdo de um arquivo."""
     with open(os.path.join(os.path.dirname(__file__), fname)) as f:
         return f.read()
 
+
 def read_requirements(fname):
     """Lê requisitos de um arquivo, ignorando comentários e linhas vazias."""
     requirements = []
     for line in read(fname).splitlines():
         line = line.strip()
-        if line and not line.startswith('#') and not line.startswith('-r'):
+        if line and not line.startswith("#") and not line.startswith("-r"):
             requirements.append(line)
     return requirements
+
 
 setup(
     # Metadados do pacote
@@ -27,13 +31,11 @@ setup(
     license="MIT",
     keywords="notion sync markdown documentation quantum",
     url="https://github.com/guardrive/docsync",
-    
     # Configuração do pacote
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     include_package_data=True,
     python_requires=">=3.9",
-    
     # Dependências
     install_requires=read_requirements("requirements.txt"),
     extras_require={
@@ -58,7 +60,6 @@ setup(
             "mypy==1.4.1",
         ],
     },
-    
     # Entry points para CLI
     entry_points={
         "console_scripts": [
@@ -66,7 +67,6 @@ setup(
             "docsync-monitor=docsync.monitor:main",
         ],
     },
-    
     # Dados do pacote
     package_data={
         "docsync": [
@@ -74,7 +74,6 @@ setup(
             "config/*.yaml",
         ],
     },
-    
     # Classificadores
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -93,7 +92,6 @@ setup(
         "Environment :: Console",
         "Natural Language :: Portuguese (Brazilian)",
     ],
-    
     # Informações de projeto
     project_urls={
         "Bug Reports": "https://github.com/guardrive/docsync/issues",
