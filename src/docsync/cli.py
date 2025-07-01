@@ -1,5 +1,5 @@
 """
-Interface de linha de comando do DocSync.
+DocSync command line interface.
 """
 
 import logging
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 @click.group()
 @click.version_option(version=__version__)
 def cli():
-    """DocSync - Sistema de sincronização e gerenciamento de documentação."""
+    """DocSync - Documentation synchronization and management system."""
 
 
 @cli.command()
@@ -30,23 +30,23 @@ def cli():
     "--config",
     "-c",
     type=click.Path(exists=True, file_okay=True, dir_okay=False, path_type=Path),
-    help="Arquivo de configuração YAML",
+    help="YAML configuration file",
 )
 def sync(path: Path, config: Optional[Path] = None):
-    """Sincroniza diretório de documentação."""
+    """Synchronize documentation directory."""
     try:
-        # doc_sync = DocSync(path, config_path=config)  # TODO: Implementar comando
-        # TODO: Implementar sincronização
-        console.print("✨ Sincronização concluída!")
+        # doc_sync = DocSync(path, config_path=config)  # TODO: Implement command
+        # TODO: Implement synchronization
+        console.print("✨ Synchronization completed!")
     except Exception as e:
-        console.print(f"❌ Erro: {e}", style="red")
+        console.print(f"❌ Error: {e}", style="red")
         raise click.Abort()
 
 
 def main():
-    """Ponto de entrada principal."""
+    """Main entry point."""
     try:
         cli()
     except Exception as e:
-        console.print(f"❌ Erro fatal: {e}", style="red")
+        console.print(f"❌ Fatal error: {e}", style="red")
         raise click.Abort()

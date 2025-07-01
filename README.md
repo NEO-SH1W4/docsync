@@ -7,155 +7,157 @@
 ![Status](https://img.shields.io/badge/status-beta-orange.svg)
 ![Contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 
-**Sistema avançado de sincronização e gerenciamento de documentação técnica**
+**Advanced technical documentation synchronization and management system**
 
-*Sincronização bidirecional entre arquivos locais e Notion com processamento AI-enhanced*
+*Bidirectional sync between local files and Notion with AI-enhanced processing*
+
+[🇧🇷 Português](./docs/pt-br/README.md) | 🇺🇸 English
 
 </div>
 
-## ✨ Principais Características
+## ✨ Key Features
 
-🔄 **Sincronização Bidirecional**: Mantém arquivos locais e Notion sempre em sincronia  
-🤖 **Processamento AI**: Análise e melhoria automática de documentação  
-📊 **Templates ESG**: Sistema flexível para relatórios e documentação profissional  
-⚡ **Real-time**: Monitoramento e sincronização em tempo real  
-🛡️ **Backup Automático**: Sistema robusto de versionamento e backup  
-🎨 **CLI Rica**: Interface intuitiva com Rich para melhor experiência  
+🔄 **Bidirectional Sync**: Keep local files and Notion always in sync  
+🤖 **AI Processing**: Automatic documentation analysis and improvement  
+📊 **ESG Templates**: Flexible system for professional reports and documentation  
+⚡ **Real-time**: Live monitoring and synchronization  
+🛡️ **Auto Backup**: Robust versioning and backup system  
+🎨 **Rich CLI**: Intuitive interface with Rich for better UX  
 
-## 📊 Potencial de Mercado
+## 📊 Market Potential
 
-- **TAM**: $45+ bilhões (mercado de documentação técnica)
-- **MVP**: 4-6 meses de desenvolvimento  
-- **ROI Projetado**: 450-1,200% em 5 anos
+- **TAM**: $45+ billion (technical documentation market)
+- **MVP Timeline**: 4-6 months development  
+- **Projected ROI**: 450-1,200% over 5 years
 
-📋 [Ver análise completa de mercado](./ANALISE_MERCADO_VIABILIDADE.md)
+📋 [View complete market analysis](./ANALISE_MERCADO_VIABILIDADE.md)
 
-## 🚀 Instalação Rápida
+## 🚀 Quick Installation
 
 ```bash
-# Via pip (recomendado)
+# Via pip (recommended)
 pip install docsync
 
-# Ou desenvolvimento local
+# Or local development
 git clone https://github.com/NEO-SH1W4/docsync.git
 cd docsync
 pip install -e ".[dev]"
 ```
 
-## 💡 Uso Rápido
+## 💡 Quick Start
 
-### 1. Configuração Básica
+### 1. Basic Setup
 ```python
 from docsync import DocSync
 
-# Inicializar projeto
+# Initialize project
 sync = DocSync()
 sync.configure()
 ```
 
-### 2. Integração com Notion
+### 2. Notion Integration
 ```python
 from docsync.integrations.notion import NotionBridge, NotionConfig
 
 config = NotionConfig(
-    token='seu_token_notion',
-    workspace_id='seu_workspace'
+    token='your_notion_token',
+    workspace_id='your_workspace'
 )
 
 bridge = NotionBridge(config)
 await bridge.sync()
 ```
 
-### 3. CLI Interativa
+### 3. Interactive CLI
 ```bash
-# Sincronizar diretório
+# Sync directory
 docsync sync ./docs --config config.yaml
 
-# Gerar relatório ESG
+# Generate ESG report
 docsync generate --template esg-report --output ./reports
 ```
 
-## 🧩 Integrações Suportadas
+## 🧩 Supported Integrations
 
-| Plataforma | Status | Descrição |
-|------------|--------|------------|
-| 🎯 **Notion** | ✅ Completo | Sincronização bidirecional com páginas e databases |
-| 📝 **Markdown** | ✅ Completo | Processamento avançado de arquivos markdown |
-| 🔗 **Git** | ✅ Completo | Integração com repositórios para versionamento |
-| 🌐 **APIs** | 🚧 Beta | Documentação automática de APIs REST |
-| 📊 **Analytics** | 📋 Planejado | Métricas de qualidade e uso da documentação |
+| Platform | Status | Description |
+|----------|--------|-------------|
+| 🎯 **Notion** | ✅ Complete | Bidirectional sync with pages and databases |
+| 📝 **Markdown** | ✅ Complete | Advanced markdown file processing |
+| 🔗 **Git** | ✅ Complete | Repository integration for versioning |
+| 🌐 **APIs** | 🚧 Beta | Automatic REST API documentation |
+| 📊 **Analytics** | 📋 Planned | Documentation quality and usage metrics |
 
-## 📚 Documentação
+## 📚 Documentation
 
-- 🏃‍♂️ [**Guia de Início Rápido**](./QUICKSTART.md)
-- 🎯 [**Integração com Notion**](./examples/notion/GUIDE.md)
-- 🤝 [**Como Contribuir**](./CONTRIBUTING.md)
+- 🏃‍♂️ [**Quick Start Guide**](./QUICKSTART.md)
+- 🎯 [**Notion Integration**](./examples/notion/GUIDE.md)
+- 🤝 [**Contributing Guide**](./CONTRIBUTING.md)
 - 📋 [**Changelog**](./CHANGELOG.md)
-- 💼 [**Análise de Negócio**](./ANALISE_MERCADO_VIABILIDADE.md)
+- 💼 [**Business Analysis**](./ANALISE_MERCADO_VIABILIDADE.md)
 
-## 🛠️ Para Desenvolvedores
+## 🛠️ For Developers
 
-### Qualidade de Código
+### Code Quality
 ```bash
-# Formatação e linting
+# Formatting and linting
 black . && isort . && flake8
 
-# Testes com cobertura
+# Tests with coverage
 pytest --cov=docsync --cov-report=html
 
 # Type checking
 mypy src/
 ```
 
-### Estrutura do Projeto
+### Project Structure
 ```
 docsync/
-├── src/docsync/          # Código principal
-│   ├── core/             # Motor de sincronização
-│   ├── integrations/     # Integrações (Notion, etc.)
-│   ├── templates/        # Sistema de templates
-│   └── utils/            # Utilitários e filtros
-├── templates/            # Templates de documentos
-├── examples/             # Exemplos práticos
-└── tests/                # Testes unitários
+├── src/docsync/          # Main code
+│   ├── core/             # Sync engine
+│   ├── integrations/     # Integrations (Notion, etc.)
+│   ├── templates/        # Template system
+│   └── utils/            # Utilities and filters
+├── templates/            # Document templates
+├── examples/             # Practical examples
+└── tests/                # Unit tests
 ```
 
-## 🤝 Contribuição
+## 🤝 Contributing
 
-Contribuições são muito bem-vindas! Este projeto tem potencial para impactar positivamente a comunidade de desenvolvedores.
+Contributions are very welcome! This project has the potential to positively impact the developer community.
 
-1. 🍴 Fork o projeto
-2. 🌟 Crie sua feature branch
-3. ✅ Adicione testes
-4. 📝 Atualize documentação
-5. 🚀 Abra um Pull Request
+1. 🍴 Fork the project
+2. 🌟 Create your feature branch
+3. ✅ Add tests
+4. 📝 Update documentation
+5. 🚀 Open a Pull Request
 
-Veja o [guia completo de contribuição](./CONTRIBUTING.md).
+See the [complete contribution guide](./CONTRIBUTING.md).
 
 ## 🎯 Roadmap
 
 ### v0.2.0 (Q1 2025)
-- 🔗 Integração GitHub/GitLab
-- 🧠 IA aprimorada para análise de documentos
-- 🧩 Sistema de plugins
+- 🔗 GitHub/GitLab integration
+- 🧠 Enhanced AI for document analysis
+- 🧩 Plugin system
 
 ### v0.3.0 (Q2 2025)
-- 🌐 Interface web
-- 📊 Dashboard de analytics
-- 👥 Suporte multi-tenant
+- 🌐 Web interface
+- 📊 Analytics dashboard
+- 👥 Multi-tenant support
 
 ### v1.0.0 (Q3 2025)
-- 🏢 Recursos enterprise
-- 📞 Suporte profissional
-- 🚀 Release de produção
+- 🏢 Enterprise features
+- 📞 Professional support
+- 🚀 Production release
 
-## 📜 Licença
+## 📜 License
 
-Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🌟 Reconhecimentos
+## 🌟 Acknowledgments
 
-Criado com ❤️ para a comunidade de desenvolvedores. Se este projeto te ajudou, considere dar uma ⭐!
+Built with ❤️ for the developer community. If this project helped you, consider giving it a ⭐!
 
 ---
 

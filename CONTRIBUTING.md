@@ -1,92 +1,94 @@
-# Contribuindo com o DocSync
+# Contributing to DocSync
 
-Primeiramente, obrigado por considerar contribuir com o DocSync! 🎉
+First off, thank you for considering contributing to DocSync! 🎉
 
-Este documento fornece diretrizes e informações importantes para contribuir com o projeto.
+This document provides guidelines and important information for contributing to the project.
 
-## 📋 Índice
+**[🇧🇷 Português](./docs/pt-br/CONTRIBUTING.md) | 🇺🇸 English**
 
-- [Código de Conduta](#código-de-conduta)
-- [Como Posso Contribuir?](#como-posso-contribuir)
-- [Reportando Bugs](#reportando-bugs)
-- [Sugerindo Melhorias](#sugerindo-melhorias)
+## 📋 Table of Contents
+
+- [Code of Conduct](#code-of-conduct)
+- [How Can I Contribute?](#how-can-i-contribute)
+- [Reporting Bugs](#reporting-bugs)
+- [Suggesting Enhancements](#suggesting-enhancements)
 - [Pull Requests](#pull-requests)
-- [Estilo de Código](#estilo-de-código)
+- [Code Style](#code-style)
 - [Commits](#commits)
-- [Testes](#testes)
-- [Setup de Desenvolvimento](#setup-de-desenvolvimento)
-- [Recursos Úteis](#recursos-úteis)
+- [Testing](#testing)
+- [Development Setup](#development-setup)
+- [Useful Resources](#useful-resources)
 
-## 📜 Código de Conduta
+## 📜 Code of Conduct
 
-Este projeto segue um Código de Conduta que todos os contribuidores devem observar. Por favor, leia [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+This project follows a Code of Conduct that all contributors must observe. Please read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-## 🤝 Como Posso Contribuir?
+## 🤝 How Can I Contribute?
 
-### 🐛 Reportando Bugs
+### 🐛 Reporting Bugs
 
-1. Verifique se o bug já não foi reportado
-2. Use o template de issue para bugs
-3. Inclua passos detalhados para reprodução
-4. Forneça informações do ambiente (OS, Python version, etc.)
-5. Adicione logs e screenshots relevantes
+1. Check if the bug hasn't already been reported
+2. Use the bug issue template
+3. Include detailed steps to reproduce
+4. Provide environment information (OS, Python version, etc.)
+5. Add relevant logs and screenshots
 
-### 💡 Sugerindo Melhorias
+### 💡 Suggesting Enhancements
 
-1. Primeiro discuta a melhoria via issue
-2. Use o template de feature request
-3. Descreva o problema que sua sugestão resolve
-4. Explique como sua sugestão beneficia o projeto
-5. Inclua exemplos de uso
-6. Considere compatibilidade retroativa
+1. First discuss the enhancement via issue
+2. Use the feature request template
+3. Describe the problem your suggestion solves
+4. Explain how your suggestion benefits the project
+5. Include usage examples
+6. Consider backward compatibility
 
 ## 🔄 Pull Requests
 
-1. Fork o repositório
-2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
-3. Implemente suas mudanças
-4. Adicione ou atualize testes
-5. Atualize a documentação
-6. Execute os testes (`pytest`)
-7. Commit usando mensagens claras
-8. Push para sua branch (`git push origin feature/MinhaFeature`)
-9. Abra um Pull Request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/MyFeature`)
+3. Implement your changes
+4. Add or update tests
+5. Update documentation
+6. Run tests (`pytest`)
+7. Commit using clear messages
+8. Push to your branch (`git push origin feature/MyFeature`)
+9. Open a Pull Request
 
-### Checklist PR
+### PR Checklist
 
-- [ ] Testes adicionados/atualizados
-- [ ] Documentação atualizada
-- [ ] Código formatado (black)
-- [ ] Imports ordenados (isort)
-- [ ] Tipos verificados (mypy)
-- [ ] Changelog atualizado
-- [ ] Versão incrementada se necessário
-- [ ] 100% de cobertura em código novo
+- [ ] Tests added/updated
+- [ ] Documentation updated
+- [ ] Code formatted (black)
+- [ ] Imports sorted (isort)
+- [ ] Types checked (mypy)
+- [ ] Changelog updated
+- [ ] Version incremented if needed
+- [ ] 100% coverage on new code
 
-## 💻 Estilo de Código
+## 💻 Code Style
 
 ### Python
 
 - Use Python 3.9+
-- Seguimos [PEP 8](https://www.python.org/dev/peps/pep-0008/)
-- Usamos [Black](https://black.readthedocs.io/) para formatação
-- Tipos estáticos com [mypy](http://mypy-lang.org/)
-- Docstrings no formato Google
-- Type hints em todas as funções
+- Follow [PEP 8](https://www.python.org/dev/peps/pep-0008/)
+- Use [Black](https://black.readthedocs.io/) for formatting
+- Static types with [mypy](http://mypy-lang.org/)
+- Google-style docstrings
+- Type hints on all functions
 
 ```python
 def calculate_metric(value: float, target: float) -> float:
-    """Calcula a diferença percentual entre valor e meta.
+    """Calculate percentage difference between value and target.
 
     Args:
-        value: Valor atual da métrica
-        target: Valor alvo da métrica
+        value: Current metric value
+        target: Target metric value
 
     Returns:
-        float: Diferença percentual
+        float: Percentage difference
 
     Raises:
-        ValueError: Se target for zero
+        ValueError: If target is zero
     """
     if target == 0:
         raise ValueError("Target cannot be zero")
@@ -95,7 +97,7 @@ def calculate_metric(value: float, target: float) -> float:
 
 ### Imports
 
-Usamos `isort` com as seguintes configurações:
+We use `isort` with the following configuration:
 
 ```toml
 [tool.isort]
@@ -105,41 +107,41 @@ multi_line_output = 3
 
 ## 📝 Commits
 
-Seguimos o padrão [Conventional Commits](https://www.conventionalcommits.org/):
+We follow [Conventional Commits](https://www.conventionalcommits.org/) standard:
 
-- `feat`: Nova funcionalidade
-- `fix`: Correção de bug
-- `docs`: Documentação
-- `style`: Formatação
-- `refactor`: Refatoração
-- `test`: Testes
-- `chore`: Manutenção
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation
+- `style`: Formatting
+- `refactor`: Refactoring
+- `test`: Tests
+- `chore`: Maintenance
 
-Exemplo:
+Example:
 ```
-feat(templates): Adiciona suporte a temas customizados
+feat(templates): Add custom theme support
 
-- Implementa sistema de temas
-- Adiciona documentação
-- Inclui testes
+- Implement theme system
+- Add documentation
+- Include tests
 ```
 
-## ✅ Testes
+## ✅ Testing
 
-- Use `pytest` para testes
-- Mantenha cobertura acima de 80%
-- Inclua testes de integração quando necessário
-- Use fixtures para código repetitivo
-- Mocks para recursos externos
+- Use `pytest` for testing
+- Maintain coverage above 80%
+- Include integration tests when necessary
+- Use fixtures for repetitive code
+- Mock external resources
 
 ```python
 @pytest.fixture
 def doc_sync():
-    """Fixture que fornece instância configurada do DocSync."""
+    """Fixture that provides configured DocSync instance."""
     return DocSync(templates_path="tests/fixtures/templates")
 
 def test_generate_report(doc_sync):
-    """Testa geração básica de relatório."""
+    """Test basic report generation."""
     result = doc_sync.generate_report(
         template_name="test",
         data={"title": "Test"}
@@ -147,138 +149,53 @@ def test_generate_report(doc_sync):
     assert result.success
 ```
 
-## 🛠️ Setup de Desenvolvimento
+## 🛠️ Development Setup
 
 ```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/docsync.git
+# Clone the repository
+git clone https://github.com/NEO-SH1W4/docsync.git
 cd docsync
 
-# Crie e ative ambiente virtual
+# Create and activate virtual environment
 python -m venv .venv
 source .venv/bin/activate  # Linux/macOS
 .venv\Scripts\activate     # Windows
 
-# Instale dependências
+# Install dependencies
 pip install -e ".[dev]"
 
-# Instale pre-commit hooks
+# Install pre-commit hooks
 pre-commit install
 
-# Execute testes
+# Run tests
 pytest
 ```
 
-## 📦 Gestão de Dependências
+## 📦 Dependency Management
 
-- Use `pyproject.toml` para dependências
-- Mantenha dependências atualizadas
-- Documente breaking changes
+- Use `pyproject.toml` for dependencies
+- Keep dependencies updated
+- Document breaking changes
 
-## 🔍 Processo de Review
+## 🔍 Review Process
 
-1. Dois aprovadores necessários
-2. CI deve passar
-3. Documentação atualizada
-4. Cobertura de testes mantida/melhorada
+1. Two approvers required
+2. CI must pass
+3. Documentation updated
+4. Test coverage maintained/improved
 
-## 📚 Recursos Úteis
+## 📚 Useful Resources
 
-- [Documentação](https://docsync.readthedocs.io)
-- [Issues](https://github.com/seu-usuario/docsync/issues)
-- [Pull Requests](https://github.com/seu-usuario/docsync/pulls)
+- [Documentation](https://github.com/NEO-SH1W4/docsync#readme)
+- [Issues](https://github.com/NEO-SH1W4/docsync/issues)
+- [Pull Requests](https://github.com/NEO-SH1W4/docsync/pulls)
 - [Changelog](CHANGELOG.md)
 
-## ❓ Dúvidas?
+## ❓ Questions?
 
-- Abra uma issue
-- Envie um email para dev@example.com
-- Consulte a documentação
+- Open an issue
+- Email us at dev@example.com
+- Check the documentation
 
-Obrigado por contribuir! 🎉
-
-# Contribuindo para o DocSync
-
-Primeiramente, obrigado por considerar contribuir para o DocSync! 🎉
-
-## Como Contribuir
-
-### Reportando Bugs
-1. Verifique se o bug já não foi reportado
-2. Abra uma issue clara e descritiva
-3. Inclua passos para reprodução
-4. Adicione logs e screenshots relevantes
-
-### Sugerindo Melhorias
-1. Primeiro discuta a melhoria via issue
-2. Explique o comportamento atual e o desejado
-3. Inclua exemplos de uso
-4. Considere compatibilidade retroativa
-
-### Código
-1. Fork o repositório
-2. Crie uma branch (`git checkout -b feature/sua-feature`)
-3. Implemente suas mudanças
-4. Adicione ou atualize testes
-5. Atualize a documentação
-6. Commit usando mensagens claras
-7. Push para seu fork
-8. Abra um Pull Request
-
-## Padrões de Código
-
-### Python
-- Use Python 3.9+
-- Siga PEP 8
-- Docstrings em todas as funções/classes
-- Type hints em todas as funções
-- 100% de cobertura em código novo
-
-### Testes
-- Pytest para testes
-- Fixtures reutilizáveis
-- Mocks para recursos externos
-- Testes de integração quando necessário
-
-### Documentação
-- Docstrings completas
-- README atualizado
-- Exemplos práticos
-- Comentários claros e necessários
-
-## Processo de Review
-1. Dois approvals necessários
-2. CI deve passar
-3. Documentação atualizada
-4. Cobertura de testes mantida/melhorada
-
-## Setup de Desenvolvimento
-```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/docsync.git
-cd docsync
-
-# Crie e ative ambiente virtual
-python -m venv .venv
-source .venv/bin/activate  # Linux/macOS
-.venv\Scripts\activate     # Windows
-
-# Instale dependências
-pip install -e ".[dev]"
-
-# Instale pre-commit hooks
-pre-commit install
-
-# Execute testes
-pytest
-```
-
-## Recursos Úteis
-- [Documentação](https://docsync.readthedocs.io)
-- [Issues](https://github.com/seu-usuario/docsync/issues)
-- [Pull Requests](https://github.com/seu-usuario/docsync/pulls)
-- [Changelog](CHANGELOG.md)
-
-## Dúvidas?
-Abra uma issue ou envie um email para dev@example.com
+Thank you for contributing! 🎉
 
