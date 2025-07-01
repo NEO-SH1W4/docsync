@@ -1,4 +1,4 @@
-# Guia Rápido - DOCSYNC para GUARDRIVE
+# Guia Rápido - docsync para GUARDRIVE
 
 Este guia fornece os passos essenciais para começar a usar o sistema de sincronização de documentação GUARDRIVE.
 

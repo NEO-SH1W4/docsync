@@ -1,7 +1,7 @@
-# DOCSYNC
+# docsync
 
 ## Visão Geral
-DOCSYNC é um sistema avançado de sincronização de documentação que implementa protocolos quantum-secure, validações metacognitivas e monitoramento em tempo real. O projeto visa garantir a integridade e consistência da documentação através de múltiplas dimensões de realidade.
+docsync é um sistema avançado de sincronização de documentação que implementa protocolos quantum-secure, validações metacognitivas e monitoramento em tempo real. O projeto visa garantir a integridade e consistência da documentação através de múltiplas dimensões de realidade.
 
 ## Características Principais
 - Sincronização quântica instantânea
@@ -13,7 +13,7 @@ DOCSYNC é um sistema avançado de sincronização de documentação que impleme
 ## 📊 Análise de Mercado
 
 Para uma análise completa do potencial de mercado, custos de desenvolvimento e viabilidade do projeto, consulte:
-- **[Análise de Mercado e Viabilidade - DOCSYNC](./ANALISE_MERCADO_VIABILIDADE.md)** - Documento detalhado com estimativas de tempo, custos, projeções de receita e análise competitiva
+- **[Análise de Mercado e Viabilidade - docsync](./ANALISE_MERCADO_VIABILIDADE.md)** - Documento detalhado com estimativas de tempo, custos, projeções de receita e análise competitiva
 - **[Template de Análise de Mercado](./templates/business/TEMPLATE_ANALISE_MERCADO.md)** - Template genérico para análises similares de outros projetos
 
 ### Resumo Executivo da Análise:
@@ -32,8 +32,8 @@ Para uma análise completa do potencial de mercado, custos de desenvolvimento e 
 
 ```powershell
 # Clone o repositório
-git clone https://github.com/NEO-SH1W4/DOCSYNC.git
-cd DOCSYNC
+git clone https://github.com/NEO-SH1W4/docsync.git
+cd docsync
 
 # Crie e ative o ambiente virtual
 python -m venv venv
@@ -76,9 +76,9 @@ flake8
 
 ## Contato
 - NEO-SH1W4
-- Link do Projeto: [https://github.com/NEO-SH1W4/DOCSYNC](https://github.com/NEO-SH1W4/DOCSYNC)
+- Link do Projeto: [https://github.com/NEO-SH1W4/docsync](https://github.com/NEO-SH1W4/docsync)
 
-# DOCSYNC
+# docsync
 
 Sistema de sincronização bidirecional entre arquivos locais e Notion.
 
@@ -137,7 +137,7 @@ mypy .
 
 ## Overview
 
-A integração DOCSYNC-Notion permite sincronização bidirecional entre seus documentos locais e o Notion, oferecendo:
+A integração docsync-Notion permite sincronização bidirecional entre seus documentos locais e o Notion, oferecendo:
 
 - Sincronização automática de documentação
 - Versionamento unificado
@@ -289,13 +289,13 @@ jobs:
 "@ | Out-File -Encoding utf8 examples\notion\GUIDE.md
 
 @"
-# DOCSYNC
+# docsync
 
 Sistema avançado de sincronização e gerenciamento de documentação técnica.
 
 ## Novidade: Integração com Notion! 🎉
 
-Agora o DOCSYNC oferece integração completa com o Notion, permitindo:
+Agora o docsync oferece integração completa com o Notion, permitindo:
 - Sincronização bidirecional de documentação
 - Análise de qualidade em tempo real
 - Versionamento unificado
