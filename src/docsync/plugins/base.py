@@ -4,7 +4,7 @@ Classes base para plugins do DocSync.
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 
 @dataclass
@@ -49,7 +49,6 @@ class DocumentFormat:
 
     def cleanup(self) -> None:
         """Limpa recursos do plugin."""
-        pass
 
     def can_handle(self, file_path: Path) -> bool:
         """

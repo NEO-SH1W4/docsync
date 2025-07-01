@@ -5,25 +5,19 @@ import asyncio
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional, Set
 
-import aiohttp
 from rich.console import Console
 from rich.layout import Layout
 from rich.live import Live
 from rich.panel import Panel
 from rich.table import Table
 from watchdog.events import (
-    FileCreatedEvent,
-    FileDeletedEvent,
-    FileModifiedEvent,
     FileSystemEventHandler,
 )
 from watchdog.observers import Observer
 
 from docsync.integrations.notion import (
     NotionBridge,
-    NotionClient,
     NotionConfig,
     NotionMapping,
 )

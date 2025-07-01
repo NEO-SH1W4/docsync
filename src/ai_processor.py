@@ -5,11 +5,17 @@ Fornece análise, sugestões e melhorias para documentação técnica.
 
 import json
 import logging
+import os
+import re
+import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from threading import Lock
+from typing import Dict, List, Optional, Set, Tuple
 
 import yaml
+from watchdog.events import FileModifiedEvent, FileSystemEventHandler
+from watchdog.observers import Observer
 
 
 class DocumentProcessor:
@@ -294,23 +300,6 @@ if __name__ == "__main__":
         analysis = processor.analyze_document(test_doc)
         print(json.dumps(analysis, indent=2))
 
-"""
-AI-enhanced document processing and monitoring module.
-Handles markdown and YAML file processing with caching and intelligent monitoring.
-"""
-
-import os
-import re
-import time
-from datetime import datetime, timedelta
-from pathlib import Path
-from threading import Lock
-from typing import Dict, List, Optional, Set, Tuple
-
-import yaml
-from watchdog.events import FileModifiedEvent, FileSystemEventHandler
-from watchdog.observers import Observer
-
 
 class DocProcessor:
     """Processes documents with caching and metadata extraction."""
@@ -371,7 +360,7 @@ class DocProcessor:
             if len(parts) >= 1:
                 try:
                     metadata = yaml.safe_load(parts[0])
-                except:
+                except Exception:
                     pass
 
         # Extract headers

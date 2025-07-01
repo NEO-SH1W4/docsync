@@ -10,7 +10,6 @@ import click
 from rich.console import Console
 
 from . import __version__
-from .core import DocSync
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -20,7 +19,6 @@ logger = logging.getLogger(__name__)
 @click.version_option(version=__version__)
 def cli():
     """DocSync - Sistema de sincronização e gerenciamento de documentação."""
-    pass
 
 
 @cli.command()
@@ -37,7 +35,7 @@ def cli():
 def sync(path: Path, config: Optional[Path] = None):
     """Sincroniza diretório de documentação."""
     try:
-        doc_sync = DocSync(path, config_path=config)
+        # doc_sync = DocSync(path, config_path=config)  # TODO: Implementar comando
         # TODO: Implementar sincronização
         console.print("✨ Sincronização concluída!")
     except Exception as e:

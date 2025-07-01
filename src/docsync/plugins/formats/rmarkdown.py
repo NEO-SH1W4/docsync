@@ -3,7 +3,6 @@ Plugin para suporte a documentos RMarkdown.
 """
 
 import logging
-import subprocess
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -64,7 +63,6 @@ class RMarkdownFormat(DocumentFormat):
 
     def cleanup(self) -> None:
         """Limpa recursos do plugin."""
-        pass
 
     def can_handle(self, file_path: Path) -> bool:
         """
@@ -109,7 +107,6 @@ class RMarkdownFormat(DocumentFormat):
             file_path: Caminho do arquivo
             content: Conteúdo e metadados
         """
-        import rpy2.robjects as robjects
         from rpy2.robjects.packages import importr
 
         yaml = importr("yaml")
@@ -173,21 +170,21 @@ class RMarkdownFormat(DocumentFormat):
         # Extrair citações e links
         r_code = f"""
         refs <- list()
-        
+
         # Extrair citações
         citations <- stringr::str_extract_all(
             readLines("{str(file_path)}"),
             "@[[:alnum:]_-]+"
         )
         refs$citations <- unlist(citations)
-        
+
         # Extrair links
         links <- stringr::str_extract_all(
             readLines("{str(file_path)}"),
             "\\[([^]]+)\\]\\(([^)]+)\\)"
         )
         refs$links <- unlist(links)
-        
+
         refs
         """
 

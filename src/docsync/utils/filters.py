@@ -3,7 +3,7 @@ Custom Jinja2 filters for template rendering.
 """
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 
 def format_metric(value: Any, metric_type: str, unit: Optional[str] = None) -> str:
@@ -47,7 +47,7 @@ def to_percentage(value: float) -> str:
         return "0.0%"
 
 
-def format_date(value: str) -> str:
+def format_date(value: Union[str, datetime], format_str: str = "%d/%m/%Y") -> str:
     """Format date string to dd/mm/yyyy."""
     if not value:
         return ""
@@ -57,12 +57,14 @@ def format_date(value: str) -> str:
             # Try different formats
             for fmt in ["%Y-%m-%d", "%d/%m/%Y", "%Y-%m-%d %H:%M:%S"]:
                 try:
-                    date = datetime.strptime(value, fmt)
-                    return date.strftime("%d/%m/%Y")
+                    date_obj = datetime.strptime(value, fmt)
+                    return date_obj.strftime(format_str)
                 except ValueError:
                     continue
         except Exception:
             return value
+    elif isinstance(value, datetime):
+        return value.strftime(format_str)
 
     return str(value)
 
@@ -76,50 +78,14 @@ def format_status(value: str) -> str:
         "completed": "✨ Concluído",
         "in_progress": "🔄 Em andamento",
         "not_started": "⏳ Não iniciado",
+        "pending": "⏳ Pendente",
+        "cancelled": "⛔ Cancelado",
     }
     return status_map.get(value, value)
 
 
-"""
-Filtros customizados do Jinja2 para formatação de relatórios.
-"""
-
-from datetime import datetime
-from typing import Optional, Union
-
-
-def format_date(value: Union[str, datetime], format: str = "%d/%m/%Y") -> str:
-    """Formata data para exibição.
-
-    Args:
-        value: Data a ser formatada (string ou datetime)
-        format: Formato de saída desejado
-
-    Returns:
-        str: Data formatada
-    """
-    if isinstance(value, str):
-        try:
-            value = datetime.strptime(value, "%Y-%m-%d")
-        except ValueError:
-            try:
-                value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-            except ValueError:
-                return value
-
-    return value.strftime(format)
-
-
 def format_esg_metric(value: Union[int, float], unit: Optional[str] = None) -> str:
-    """Formata valor de métrica ESG.
-
-    Args:
-        value: Valor numérico da métrica
-        unit: Unidade de medida opcional
-
-    Returns:
-        str: Valor formatado com unidade
-    """
+    """Formata valor de métrica ESG."""
     if isinstance(value, float):
         formatted = f"{value:,.2f}"
     else:
@@ -131,53 +97,15 @@ def format_esg_metric(value: Union[int, float], unit: Optional[str] = None) -> s
     return formatted
 
 
-def format_status(status: str) -> str:
-    """Formata status com emoji apropriado.
-
-    Args:
-        status: Status a ser formatado
-
-    Returns:
-        str: Status com emoji
-    """
-    status_map = {
-        "on_track": "✅ No Prazo",
-        "at_risk": "⚠️ Em Risco",
-        "delayed": "❌ Atrasado",
-        "completed": "✨ Concluído",
-        "in_progress": "🔄 Em Andamento",
-        "pending": "⏳ Pendente",
-        "cancelled": "⛔ Cancelado",
-    }
-
-    return status_map.get(status, status)
-
-
 def format_version(version: str) -> str:
-    """Formata número de versão.
-
-    Args:
-        version: Número da versão
-
-    Returns:
-        str: Versão formatada
-    """
+    """Formata número de versão."""
     if not version.startswith("v"):
         version = f"v{version}"
-
     return version
 
 
 def format_trend(value: float, previous: float) -> str:
-    """Formata tendência com seta.
-
-    Args:
-        value: Valor atual
-        previous: Valor anterior
-
-    Returns:
-        str: Seta indicando tendência
-    """
+    """Formata tendência com seta."""
     if value > previous:
         return "↗️ Aumento"
     elif value < previous:
@@ -188,17 +116,7 @@ def format_trend(value: float, previous: float) -> str:
 def format_progress(
     value: int, width: int = 50, fill: str = "=", empty: str = " "
 ) -> str:
-    """Gera barra de progresso ASCII.
-
-    Args:
-        value: Porcentagem de progresso (0-100)
-        width: Largura da barra
-        fill: Caractere para preenchimento
-        empty: Caractere para espaço vazio
-
-    Returns:
-        str: Barra de progresso ASCII
-    """
+    """Gera barra de progresso ASCII."""
     filled = int(width * value / 100)
     bar = fill * filled
     if value < 100:
@@ -215,4 +133,6 @@ FILTERS = {
     "format_version": format_version,
     "format_trend": format_trend,
     "format_progress": format_progress,
+    "format_metric": format_metric,
+    "to_percentage": to_percentage,
 }

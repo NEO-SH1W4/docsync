@@ -21,9 +21,8 @@ PropertyType: Tipos de propriedades
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum, auto
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from enum import Enum
+from typing import Any, Dict, List, Optional
 
 
 class NotionObjectType(Enum):
@@ -372,8 +371,6 @@ class NotionError(Exception):
 class NotionAuthError(NotionError):
     """Erro de autenticação"""
 
-    pass
-
 
 class NotionRateLimitError(NotionError):
     """Erro de limite de taxa"""
@@ -386,13 +383,9 @@ class NotionRateLimitError(NotionError):
 class NotionValidationError(NotionError):
     """Erro de validação"""
 
-    pass
-
 
 class NotionSyncError(NotionError):
     """Erro de sincronização"""
-
-    pass
 
 
 # -----------------------------------------------------------------------------

@@ -18,7 +18,7 @@ import os
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 
 import yaml
 from yaml.parser import ParserError
@@ -302,12 +302,13 @@ def _validate_config(config: Dict[str, Any]) -> None:
         "guardrive": dict,
     }
 
-    for field, expected_type in required_fields.items():
-        if field not in config:
-            raise ValueError(f"Campo obrigatório ausente: {field}")
-        if not isinstance(config[field], expected_type):
+    for field_name, expected_type in required_fields.items():
+        if field_name not in config:
+            raise ValueError(f"Campo obrigatório ausente: {field_name}")
+        if not isinstance(config[field_name], expected_type):
             raise ValueError(
-                f"Tipo inválido para {field}: esperado {expected_type}, recebido {type(config[field])}"
+                f"Tipo inválido para {field_name}: esperado {expected_type}, "
+                f"recebido {type(config[field_name])}"
             )
 
     # Valida níveis específicos

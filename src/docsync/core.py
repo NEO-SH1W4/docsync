@@ -4,9 +4,8 @@ DocSync Core - Sistema de sincronização e gerenciamento de documentação.
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
-from rich.logging import RichHandler
 
 from .config import load_config
 from .plugins.base import DocumentFormat

@@ -16,8 +16,6 @@ logger = logging.getLogger(__name__)
 class TemplateError(Exception):
     """Exception raised for template rendering errors."""
 
-    pass
-
 
 class TemplateRenderer:
     """Handles template rendering with custom filters."""

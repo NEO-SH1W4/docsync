@@ -5,8 +5,6 @@ DOCSYNC Notion Tests Configuration
 Configuração e fixtures comuns para testes do módulo Notion.
 """
 
-import asyncio
-import json
 import logging
 import os
 import shutil

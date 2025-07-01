@@ -14,7 +14,7 @@ import asyncio
 import hashlib
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 from urllib.parse import urljoin
 
@@ -35,7 +35,6 @@ from .types import (
     NotionObjectType,
     NotionPage,
     NotionRateLimitError,
-    PropertyType,
 )
 
 logger = logging.getLogger(__name__)

@@ -14,19 +14,13 @@ from rich.logging import RichHandler
 class DocSyncError(Exception):
     """Base exception for DocSync errors."""
 
-    pass
-
 
 class ReportGenerationError(DocSyncError):
     """Error during report generation."""
 
-    pass
-
 
 class TemplateError(DocSyncError):
     """Error in template processing."""
-
-    pass
 
 
 class DocSync:

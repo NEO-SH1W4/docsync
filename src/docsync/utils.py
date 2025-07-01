@@ -9,7 +9,7 @@ import shutil
 import stat
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set
 
 import yaml
 
@@ -29,13 +29,9 @@ class ValidationResult:
 class StructureError(Exception):
     """Exceção para erros de estrutura."""
 
-    pass
-
 
 class PermissionError(Exception):
     """Exceção para erros de permissão."""
-
-    pass
 
 
 def validate_structure(

@@ -12,7 +12,7 @@ NotionMapping: Mapeamento entre diretório local e página/database Notion
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 
 @dataclass
@@ -120,27 +120,4 @@ DEFAULT_CONFIG = {
     "ignore_patterns": [".*", "*.tmp", "*.bak", "__pycache__"],
 }
 
-# config.py
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Dict, List, Optional
-
-
-@dataclass
-class NotionMapping:
-    source_path: Path
-    target_id: str
-    sync_type: str = "bidirectional"
-    filters: List[str] = field(default_factory=list)
-
-
-@dataclass
-class NotionConfig:
-    token: str
-    workspace_id: str
-    base_url: str = "https://api.notion.com/v1"
-    sync_interval: int = 300
-    mappings: List[NotionMapping] = field(default_factory=list)
-    cache_ttl: int = 3600
-    max_retries: int = 3
-    retry_delay: int = 60
+# Configurações finalizadas acima

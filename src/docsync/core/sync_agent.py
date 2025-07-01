@@ -66,7 +66,6 @@ class SyncAgent(ABC):
         Returns:
             Dict com resultado da sincronização
         """
-        pass
 
     @abstractmethod
     async def resolve_conflict(
@@ -81,7 +80,6 @@ class SyncAgent(ABC):
         Returns:
             Dict com resultado da resolução
         """
-        pass
 
     @abstractmethod
     async def check_version(self, doc_path: Path) -> Dict[str, Any]:
@@ -93,7 +91,6 @@ class SyncAgent(ABC):
         Returns:
             Dict com informações de versão
         """
-        pass
 
     async def get_state(self) -> Dict[str, Any]:
         """Retorna estado atual do agente."""

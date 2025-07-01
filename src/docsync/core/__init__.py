@@ -3,13 +3,13 @@ Core functionality for DocSync system.
 """
 
 from .base import (
-    DocSync,
     DocSyncError,
     DocumentSynchronizer,
     ReportGenerationError,
     TemplateError,
     generate_esg_report,
 )
+from .sync import DocSync
 
 __all__ = [
     "DocSync",
@@ -19,11 +19,3 @@ __all__ = [
     "TemplateError",
     "generate_esg_report",
 ]
-
-"""
-Módulo principal do DocSync.
-"""
-
-from .sync import DocSync
-
-__all__ = ["DocSync"]

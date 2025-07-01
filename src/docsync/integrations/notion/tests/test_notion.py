@@ -38,21 +38,14 @@ Pré-requisitos:
 
 import asyncio
 from datetime import datetime
-from pathlib import Path
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
 from docsync.integrations.notion import (
     NotionAuthError,
-    NotionBlock,
     NotionBridge,
     NotionClient,
-    NotionConfig,
-    NotionDatabase,
-    NotionError,
-    NotionMapping,
-    NotionPage,
     NotionRateLimitError,
 )
 
@@ -363,14 +356,14 @@ Multi-idioma: 你好, привет, مرحبا
     async def test_markdown_conversion(self, notion_client):
         """Testa conversão markdown → blocos"""
         markdown = """# Título
-        
+
         Parágrafo com **negrito** e _itálico_.
-        
+
         ```python
         def test():
             pass
         ```
-        
+
         - Item 1
         - Item 2
         """
@@ -469,7 +462,7 @@ class TestNotionBridge:
 
         with patch.object(
             notion_bridge.client, "get_page", AsyncMock(return_value=notion_version)
-        ) as mock_get:
+        ):  # mock_get not used
             with patch.object(
                 notion_bridge.client, "update_page", AsyncMock()
             ) as mock_update:

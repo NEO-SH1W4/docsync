@@ -10,14 +10,11 @@ Date: 2025-06-03
 
 import asyncio
 import hashlib
-import logging
-import os
-import shutil
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, Optional, Set
 
 import aiofiles
 import aiogit
