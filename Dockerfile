@@ -2,7 +2,7 @@
 # Multi-stage build for optimized production image
 
 # Stage 1: Build Dependencies
-FROM python:3.11-slim-bullseye AS builder
+FROM python:3.13-slim-bullseye AS builder
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -35,7 +35,7 @@ RUN pip install --upgrade pip setuptools wheel && \
     rm -rf dist/ build/ src/
 
 # Stage 2: Production Image
-FROM python:3.11-slim-bullseye AS production
+FROM python:3.13-slim-bullseye AS production
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
