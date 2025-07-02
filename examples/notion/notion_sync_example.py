@@ -7,7 +7,8 @@ from docsync.integrations.notion import NotionBridge, NotionConfig, NotionMappin
 
 # Configurar logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
 
@@ -48,7 +49,7 @@ async def main():
     except KeyboardInterrupt:
         logging.info("Encerrando sincronização...")
     except Exception as e:
-        logging.error(f"Erro durante sincronização: {e}")
+        logging.exception(f"Erro durante sincronização: {e}")
         raise
 
 

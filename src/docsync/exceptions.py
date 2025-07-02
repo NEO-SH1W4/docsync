@@ -1,6 +1,4 @@
-"""
-Exceções customizadas para o DocSync.
-"""
+"""Exceções customizadas para o DocSync."""
 
 
 class DocSyncError(Exception):

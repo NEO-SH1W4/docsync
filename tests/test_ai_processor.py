@@ -2,7 +2,6 @@
 Testes unitários para o módulo ai_processor.
 """
 
-import os
 import tempfile
 from pathlib import Path
 from unittest import TestCase, main
@@ -40,10 +39,10 @@ def test():
 
         result = self.processor.process_file(filepath)
 
-        self.assertEqual(result["type"], "markdown")
-        self.assertEqual(len(result["headers"]), 2)
-        self.assertEqual(result["code_blocks"], 1)
-        self.assertEqual(result["metadata"]["title"], "Test Document")
+        assert result["type"] == "markdown"
+        assert len(result["headers"]) == 2
+        assert result["code_blocks"] == 1
+        assert result["metadata"]["title"] == "Test Document"
 
     def test_process_yaml(self):
         """Testa processamento de arquivo YAML."""
@@ -62,9 +61,9 @@ config:
 
         result = self.processor.process_file(filepath)
 
-        self.assertEqual(result["type"], "yaml")
-        self.assertEqual(result["structure"]["type"], "dict")
-        self.assertIn("config", result["structure"]["nested"])
+        assert result["type"] == "yaml"
+        assert result["structure"]["type"] == "dict"
+        assert "config" in result["structure"]["nested"]
 
     def test_cache_functionality(self):
         """Testa funcionalidade de cache."""
@@ -75,14 +74,14 @@ config:
 
         # Primeira leitura
         self.processor.process_file(filepath)
-        initial_stats = self.processor.get_stats()
+        self.processor.get_stats()
 
         # Segunda leitura (deve usar cache)
         self.processor.process_file(filepath)
         final_stats = self.processor.get_stats()
 
-        self.assertEqual(final_stats["cache_hits"], 1)
-        self.assertEqual(final_stats["processed_files"], 1)
+        assert final_stats["cache_hits"] == 1
+        assert final_stats["processed_files"] == 1
 
 
 class TestAIEnhancedMonitor(TestCase):
@@ -91,7 +90,8 @@ class TestAIEnhancedMonitor(TestCase):
     def setUp(self):
         """Configuração dos testes."""
         self.monitor = AIEnhancedMonitor(
-            patterns=["*.md", "*.yaml"], ignore_patterns=["*.tmp"]
+            patterns=["*.md", "*.yaml"],
+            ignore_patterns=["*.tmp"],
         )
         self.temp_dir = tempfile.mkdtemp()
 
@@ -107,8 +107,8 @@ class TestAIEnhancedMonitor(TestCase):
         self.monitor.on_modified(event)
 
         stats = self.monitor.get_stats()
-        self.assertEqual(stats["events_processed"], 1)
-        self.assertIn("markdown", stats["patterns_detected"])
+        assert stats["events_processed"] == 1
+        assert "markdown" in stats["patterns_detected"]
 
     def test_ignore_patterns(self):
         """Testa padrões de ignore."""
@@ -122,7 +122,7 @@ class TestAIEnhancedMonitor(TestCase):
         self.monitor.on_modified(event)
 
         stats = self.monitor.get_stats()
-        self.assertEqual(stats["events_processed"], 0)
+        assert stats["events_processed"] == 0
 
     def test_pattern_matching(self):
         """Testa correspondência de padrões."""
@@ -137,8 +137,8 @@ class TestAIEnhancedMonitor(TestCase):
         self.monitor.on_modified(event)
 
         stats = self.monitor.get_stats()
-        self.assertEqual(stats["events_processed"], 1)
-        self.assertIn("yaml", stats["patterns_detected"])
+        assert stats["events_processed"] == 1
+        assert "yaml" in stats["patterns_detected"]
 
 
 if __name__ == "__main__":

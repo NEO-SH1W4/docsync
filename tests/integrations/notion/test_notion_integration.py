@@ -1,7 +1,6 @@
 # test_notion_integration.py
-from datetime import datetime
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -11,7 +10,6 @@ from docsync.integrations.notion import (
     NotionConfig,
     NotionDatabase,
     NotionMapping,
-    NotionPage,
 )
 
 
@@ -47,7 +45,7 @@ async def test_notion_bridge_initialization(notion_bridge):
 @pytest.mark.asyncio
 async def test_notion_client_connection(mock_client, notion_config):
     client = NotionClient(notion_config)
-    assert await client.verify_connection() == True
+    assert await client.verify_connection() is True
 
 
 @pytest.mark.asyncio

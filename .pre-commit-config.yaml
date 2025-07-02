@@ -17,7 +17,14 @@ repos:
       - id: isort
         args: [--profile=black, --line-length=88]
 
-  # Linting
+  # Linting - Primary (Ruff)
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.1.15
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+
+  # Linting - Secondary (Flake8 for compatibility)
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:

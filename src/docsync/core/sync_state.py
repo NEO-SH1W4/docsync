@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 
 class SyncState(Enum):
@@ -27,15 +27,15 @@ class SyncVersion:
         version: int,
         timestamp: datetime,
         agent_id: str,
-        metadata: Optional[Dict[str, Any]] = None,
-    ):
+        metadata: Optional[dict[str, Any]] = None,
+    ) -> None:
         self.doc_path = doc_path
         self.version = version
         self.timestamp = timestamp
         self.agent_id = agent_id
         self.metadata = metadata or {}
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Converte para dicionário."""
         return {
             "doc_path": str(self.doc_path),
@@ -46,7 +46,7 @@ class SyncVersion:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "SyncVersion":
+    def from_dict(cls, data: dict[str, Any]) -> "SyncVersion":
         """Cria instância a partir de dicionário."""
         return cls(
             doc_path=Path(data["doc_path"]),
@@ -60,7 +60,7 @@ class SyncVersion:
 class SyncStateManager:
     """Gerencia estados de sincronização."""
 
-    def __init__(self, state_dir: Path):
+    def __init__(self, state_dir: Path) -> None:
         """Inicializa gerenciador de estados.
 
         Args:
@@ -74,30 +74,32 @@ class SyncStateManager:
         self.state_dir.mkdir(parents=True, exist_ok=True)
 
         # Carregar estados salvos
-        self.states: Dict[str, Dict[str, Any]] = {}
+        self.states: dict[str, dict[str, Any]] = {}
         if self.state_file.exists():
             self.states = self._load_states()
 
-    def _load_states(self) -> Dict[str, Dict[str, Any]]:
+    def _load_states(self) -> dict[str, dict[str, Any]]:
         """Carrega estados salvos."""
         try:
             with open(self.state_file) as f:
                 return json.load(f)
         except Exception as e:
-            self.logger.error("Failed to load states: %s", e)
+            self.logger.exception("Failed to load states: %s", e)
             return {}
 
-    def _save_states(self):
+    def _save_states(self) -> None:
         """Salva estados."""
         try:
             with open(self.state_file, "w") as f:
                 json.dump(self.states, f, indent=2)
         except Exception as e:
-            self.logger.error("Failed to save states: %s", e)
+            self.logger.exception("Failed to save states: %s", e)
 
     def get_doc_state(
-        self, doc_path: Path, agent_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self,
+        doc_path: Path,
+        agent_id: Optional[str] = None,
+    ) -> dict[str, Any]:
         """Obtém estado de um documento.
 
         Args:
@@ -123,8 +125,8 @@ class SyncStateManager:
         agent_id: str,
         state: SyncState,
         version: Optional[SyncVersion] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ):
+        metadata: Optional[dict[str, Any]] = None,
+    ) -> None:
         """Atualiza estado de um documento.
 
         Args:
@@ -147,10 +149,13 @@ class SyncStateManager:
 
         self._save_states()
         self.logger.info(
-            "Updated state for doc %s agent %s: %s", doc_path, agent_id, state.value
+            "Updated state for doc %s agent %s: %s",
+            doc_path,
+            agent_id,
+            state.value,
         )
 
-    def get_doc_versions(self, doc_path: Path) -> List[SyncVersion]:
+    def get_doc_versions(self, doc_path: Path) -> list[SyncVersion]:
         """Obtém histórico de versões de um documento.
 
         Args:
@@ -163,7 +168,7 @@ class SyncStateManager:
         state = self.states.get(doc_key, {})
 
         versions = []
-        for agent_id, agent_state in state.items():
+        for _agent_id, agent_state in state.items():
             if agent_state.get("version"):
                 version = SyncVersion.from_dict(agent_state["version"])
                 versions.append(version)

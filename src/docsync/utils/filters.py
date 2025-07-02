@@ -1,14 +1,11 @@
-"""
-Custom Jinja2 filters for template rendering.
-"""
+"""Custom Jinja2 filters for template rendering."""
 
 from datetime import datetime
 from typing import Any, Optional, Union
 
 
 def format_metric(value: Any, metric_type: str, unit: Optional[str] = None) -> str:
-    """
-    Format a metric value based on its type and unit.
+    """Format a metric value based on its type and unit.
 
     Args:
         value: The metric value to format
@@ -84,12 +81,9 @@ def format_status(value: str) -> str:
     return status_map.get(value, value)
 
 
-def format_esg_metric(value: Union[int, float], unit: Optional[str] = None) -> str:
+def format_esg_metric(value: float, unit: Optional[str] = None) -> str:
     """Formata valor de métrica ESG."""
-    if isinstance(value, float):
-        formatted = f"{value:,.2f}"
-    else:
-        formatted = f"{value:,d}"
+    formatted = f"{value:,.2f}" if isinstance(value, float) else f"{value:,d}"
 
     if unit:
         formatted = f"{formatted} {unit}"
@@ -108,13 +102,16 @@ def format_trend(value: float, previous: float) -> str:
     """Formata tendência com seta."""
     if value > previous:
         return "↗️ Aumento"
-    elif value < previous:
+    if value < previous:
         return "↘️ Redução"
     return "➡️ Estável"
 
 
 def format_progress(
-    value: int, width: int = 50, fill: str = "=", empty: str = " "
+    value: int,
+    width: int = 50,
+    fill: str = "=",
+    empty: str = " ",
 ) -> str:
     """Gera barra de progresso ASCII."""
     filled = int(width * value / 100)

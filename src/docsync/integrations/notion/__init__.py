@@ -1,5 +1,4 @@
-"""
-DOCSYNC Notion Integration
+"""DOCSYNC Notion Integration.
 =========================
 
 Módulo de integração entre DOCSYNC e Notion, permitindo sincronização
@@ -79,13 +78,13 @@ SYNC_STATES = {
 TIMEOUTS = {"connect": 10, "read": 30, "write": 30}  # segundos
 
 __all__ = [
-    "NotionSyncMonitor",
     "NotionBridge",
-    "NotionConfig",
-    "NotionMapping",
     "NotionClient",
-    "NotionPage",
+    "NotionConfig",
     "NotionDatabase",
-    "SyncStats",
+    "NotionMapping",
+    "NotionPage",
+    "NotionSyncMonitor",
     "SyncFileHandler",
+    "SyncStats",
 ]

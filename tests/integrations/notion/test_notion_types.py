@@ -1,8 +1,6 @@
 # test_notion_types.py
 from datetime import datetime
 
-import pytest
-
 from docsync.integrations.notion.types import NotionDatabase, NotionPage
 
 

@@ -1,11 +1,8 @@
-"""
-DocSync Core - Sistema de sincronização e gerenciamento de documentação.
-"""
+"""DocSync Core - Sistema de sincronização e gerenciamento de documentação."""
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
-
+from typing import Any, Optional, Union
 
 from .config import load_config
 from .plugins.base import DocumentFormat
@@ -23,9 +20,8 @@ class DocSync:
         config_path: Optional[Union[str, Path]] = None,
         templates_path: Optional[Union[str, Path]] = None,
         logger: Optional[logging.Logger] = None,
-    ):
-        """
-        Inicializa o sistema DocSync.
+    ) -> None:
+        """Inicializa o sistema DocSync.
 
         Args:
             base_path: Diretório base de trabalho
@@ -55,13 +51,12 @@ class DocSync:
         self.sync_manager = SyncManager(self.base_path, self.config)
 
         # Registro de plugins
-        self._plugins: Dict[str, DocumentFormat] = {}
+        self._plugins: dict[str, DocumentFormat] = {}
 
         self.logger.info("✨ DocSync inicializado com sucesso")
 
     def register_plugin(self, plugin: DocumentFormat) -> None:
-        """
-        Registra um plugin de formato de documento.
+        """Registra um plugin de formato de documento.
 
         Args:
             plugin: Instância do plugin
@@ -69,24 +64,23 @@ class DocSync:
         try:
             # Inicializar plugin
             plugin.initialize(
-                self.config.get("plugins", {}).get(plugin.metadata.name, {})
+                self.config.get("plugins", {}).get(plugin.metadata.name, {}),
             )
 
             # Registrar plugin
             self._plugins[plugin.metadata.name] = plugin
             self.logger.info(
-                f"✨ Plugin registrado: {plugin.metadata.name} v{plugin.metadata.version}"
+                f"✨ Plugin registrado: {plugin.metadata.name} v{plugin.metadata.version}",
             )
 
         except Exception as e:
-            self.logger.error(
-                f"❌ Erro ao registrar plugin {plugin.metadata.name}: {e}"
+            self.logger.exception(
+                f"❌ Erro ao registrar plugin {plugin.metadata.name}: {e}",
             )
             raise
 
     def unregister_plugin(self, name: str) -> None:
-        """
-        Remove registro de um plugin.
+        """Remove registro de um plugin.
 
         Args:
             name: Nome do plugin
@@ -97,12 +91,11 @@ class DocSync:
                 del self._plugins[name]
                 self.logger.info(f"🗑️ Plugin removido: {name}")
             except Exception as e:
-                self.logger.error(f"❌ Erro ao remover plugin {name}: {e}")
+                self.logger.exception(f"❌ Erro ao remover plugin {name}: {e}")
                 raise
 
     def get_plugin(self, name: str) -> Optional[DocumentFormat]:
-        """
-        Obtém plugin pelo nome.
+        """Obtém plugin pelo nome.
 
         Args:
             name: Nome do plugin
@@ -113,8 +106,7 @@ class DocSync:
         return self._plugins.get(name)
 
     def find_plugin_for_file(self, file_path: Path) -> Optional[DocumentFormat]:
-        """
-        Encontra plugin capaz de processar arquivo.
+        """Encontra plugin capaz de processar arquivo.
 
         Args:
             file_path: Caminho do arquivo
@@ -128,10 +120,12 @@ class DocSync:
         return None
 
     def process_document(
-        self, file_path: Path, plugin_name: Optional[str] = None, **kwargs
-    ) -> Dict[str, Any]:
-        """
-        Processa documento usando plugin apropriado.
+        self,
+        file_path: Path,
+        plugin_name: Optional[str] = None,
+        **kwargs,
+    ) -> dict[str, Any]:
+        """Processa documento usando plugin apropriado.
 
         Args:
             file_path: Caminho do arquivo
@@ -149,11 +143,13 @@ class DocSync:
         if plugin_name:
             plugin = self.get_plugin(plugin_name)
             if not plugin:
-                raise ValueError(f"Plugin não encontrado: {plugin_name}")
+                msg = f"Plugin não encontrado: {plugin_name}"
+                raise ValueError(msg)
         else:
             plugin = self.find_plugin_for_file(file_path)
             if not plugin:
-                raise ValueError(f"Nenhum plugin pode processar: {file_path}")
+                msg = f"Nenhum plugin pode processar: {file_path}"
+                raise ValueError(msg)
 
         try:
             # Processar documento
@@ -167,14 +163,16 @@ class DocSync:
             return result
 
         except Exception as e:
-            self.logger.error(f"❌ Erro ao processar {file_path}: {e}")
+            self.logger.exception(f"❌ Erro ao processar {file_path}: {e}")
             raise
 
     def sync_directories(
-        self, source: Union[str, Path], target: Union[str, Path], **kwargs
-    ) -> Dict[str, int]:
-        """
-        Sincroniza diretórios.
+        self,
+        source: Union[str, Path],
+        target: Union[str, Path],
+        **kwargs,
+    ) -> dict[str, int]:
+        """Sincroniza diretórios.
 
         Args:
             source: Diretório fonte
@@ -185,6 +183,6 @@ class DocSync:
             Dict[str, int]: Estatísticas de sincronização
         """
         self.logger.info(
-            f"🔄 Sincronizando diretórios:\nFonte: {source}\nDestino: {target}"
+            f"🔄 Sincronizando diretórios:\nFonte: {source}\nDestino: {target}",
         )
         return self.sync_manager.sync(source, target, **kwargs)

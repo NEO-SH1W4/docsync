@@ -1,5 +1,4 @@
-"""
-DOCSYNC Notion Tests Configuration
+"""DOCSYNC Notion Tests Configuration.
 ================================
 
 Configuração e fixtures comuns para testes do módulo Notion.
@@ -16,7 +15,8 @@ import pytest
 
 # Configuração de logging para testes
 logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
 # Configuração do pytest-asyncio
@@ -50,13 +50,13 @@ TEST_DATA = {
 
 @pytest.fixture
 def test_data():
-    """Retorna dados de teste padrão"""
+    """Retorna dados de teste padrão."""
     return TEST_DATA
 
 
 @pytest.fixture
 def mock_api_response():
-    """Mock padrão para respostas da API"""
+    """Mock padrão para respostas da API."""
 
     def _make_response(status=200, data=None, rate_limit=100):
         mock = Mock()
@@ -74,7 +74,7 @@ def mock_api_response():
 
 @pytest.fixture
 def temp_workspace(tmp_path):
-    """Cria workspace temporário para testes"""
+    """Cria workspace temporário para testes."""
     workspace = tmp_path / "test_workspace"
     workspace.mkdir()
 
@@ -94,21 +94,23 @@ def temp_workspace(tmp_path):
 
 @pytest.fixture
 def test_config(temp_workspace):
-    """Configuração padrão para testes"""
+    """Configuração padrão para testes."""
     from docsync.integrations.notion import NotionConfig, NotionMapping
 
     return NotionConfig(
         token="test_token",
         workspace_id="test_workspace",
         mappings=[
-            NotionMapping(source_path=temp_workspace / "docs", target_id="test_page_id")
+            NotionMapping(
+                source_path=temp_workspace / "docs", target_id="test_page_id",
+            ),
         ],
     )
 
 
 @pytest.fixture
 def file_helper(temp_workspace):
-    """Helper para manipulação de arquivos de teste"""
+    """Helper para manipulação de arquivos de teste."""
 
     class FileHelper:
         def create_file(self, name: str, content: str) -> Path:
@@ -120,7 +122,7 @@ def file_helper(temp_workspace):
             path = temp_workspace / "docs" / name
             return path.read_text()
 
-        def delete_file(self, name: str):
+        def delete_file(self, name: str) -> None:
             path = temp_workspace / "docs" / name
             path.unlink()
 
@@ -129,16 +131,20 @@ def file_helper(temp_workspace):
 
 @pytest.fixture
 def mock_http_session():
-    """Mock para sessão HTTP"""
+    """Mock para sessão HTTP."""
 
     class MockSession:
-        def __init__(self):
+        def __init__(self) -> None:
             self.responses = {}
             self.calls = []
 
         def add_response(
-            self, method: str, url: str, response: dict, status: int = 200
-        ):
+            self,
+            method: str,
+            url: str,
+            response: dict,
+            status: int = 200,
+        ) -> None:
             key = f"{method}:{url}"
             self.responses[key] = (status, response)
 
@@ -168,8 +174,8 @@ def mock_http_session():
     return MockSession()
 
 
-def pytest_configure(config):
-    """Configuração global do pytest"""
+def pytest_configure(config) -> None:
+    """Configuração global do pytest."""
     config.addinivalue_line("markers", "integration: mark test as integration test")
 
     # Configurar cobertura de código
@@ -179,7 +185,7 @@ def pytest_configure(config):
 
 @pytest.fixture(autouse=True)
 def setup_test_env():
-    """Setup automático para cada teste"""
+    """Setup automático para cada teste."""
     # Backup de variáveis de ambiente
     old_env = dict(os.environ)
 
@@ -189,7 +195,7 @@ def setup_test_env():
             "NOTION_TOKEN": "test_token",
             "NOTION_WORKSPACE": "test_workspace",
             "DOCSYNC_ENV": "test",
-        }
+        },
     )
 
     yield

@@ -1,5 +1,4 @@
 import time
-from pathlib import Path
 
 import pytest
 import yaml
@@ -118,7 +117,10 @@ def test_create_document_with_template(docsync, test_dir):
 
     # Testa criação do documento
     docsync.create_document(
-        template_name, target_path, title="Test Title", content="Test Content"
+        template_name,
+        target_path,
+        title="Test Title",
+        content="Test Content",
     )
 
     assert target_path.exists()

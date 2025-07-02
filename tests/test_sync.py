@@ -14,22 +14,17 @@ Author: DocSync Team
 Date: 2025-06-03
 """
 
-import asyncio
-import os
 import shutil
 import tempfile
-from datetime import datetime
 from pathlib import Path
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import patch
 
 import pytest
 
 from src.docsync.config import Config, DocumentType, load_config
 from src.docsync.sync_manager import (
     DocumentHandler,
-    FileMetadata,
     SyncManager,
-    SyncStatus,
     VersionController,
 )
 
@@ -68,10 +63,10 @@ def test_config():
                     "target_path": "AREA_DEV/dev_docs",
                     "doc_type": "technical",
                     "bidirectional": True,
-                }
+                },
             ],
             "doc_handlers": {
-                "markdown": {"file_extensions": ["md"], "preserve_metadata": True}
+                "markdown": {"file_extensions": ["md"], "preserve_metadata": True},
             },
             "version_control": {"enabled": True, "provider": "git"},
         },
@@ -89,9 +84,8 @@ def temp_test_dir():
 @pytest.fixture
 def mock_file_system():
     """Mock para operações de sistema de arquivos."""
-    with patch("aiofiles.os") as mock_os:
-        with patch("aiofiles.open") as mock_open:
-            yield mock_os, mock_open
+    with patch("aiofiles.os") as mock_os, patch("aiofiles.open") as mock_open:
+        yield mock_os, mock_open
 
 
 @pytest.fixture
@@ -120,7 +114,7 @@ class TestConfiguration:
     def test_invalid_config_structure(self):
         """Testa validação de estrutura inválida."""
         with pytest.raises(ValueError):
-            Config(**{"invalid": "config"})
+            Config(invalid="config")
 
     def test_path_mapping_validation(self, test_config):
         """Testa validação de mapeamentos de caminho."""
@@ -176,7 +170,7 @@ class TestDocumentHandler:
     async def test_metadata_preservation(self, mock_file_system):
         """Testa preservação de metadados."""
         handler = DocumentHandler(
-            {"file_extensions": ["md"], "preserve_metadata": True}
+            {"file_extensions": ["md"], "preserve_metadata": True},
         )
 
         metadata = await handler._extract_metadata(Path("test.md"))

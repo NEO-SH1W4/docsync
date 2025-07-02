@@ -3,15 +3,13 @@ Testes de integração para o sistema de processamento de documentação.
 Valida o fluxo completo de processamento, cache e monitoramento.
 """
 
-import os
 import tempfile
 import threading
 import time
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
-import yaml
 
 from src.ai_processor import AIEnhancedMonitor, DocumentProcessor
 
@@ -153,12 +151,12 @@ def test_cache_functionality(temp_doc_dir: Path):
 
     # Primeira leitura - cache miss
     start_time = time.time()
-    result1 = processor.process_file(md_file)
+    processor.process_file(md_file)
     first_process_time = time.time() - start_time
 
     # Segunda leitura imediata - cache hit
     start_time = time.time()
-    result2 = processor.process_file(md_file)
+    processor.process_file(md_file)
     cached_process_time = time.time() - start_time
 
     # Verificar cache hit
@@ -170,7 +168,7 @@ def test_cache_functionality(temp_doc_dir: Path):
     time.sleep(1.1)
 
     # Terceira leitura - cache miss após expiração
-    result3 = processor.process_file(md_file)
+    processor.process_file(md_file)
     assert processor.stats["cache_misses"] == 2
 
 
@@ -201,7 +199,8 @@ def test_file_monitoring(temp_doc_dir: Path):
 
         # Modificar arquivo
         test_file.write_text(
-            pytest.test_doc_content + "\n## New Section", encoding="utf-8"
+            pytest.test_doc_content + "\n## New Section",
+            encoding="utf-8",
         )
 
         # Esperar processamento
@@ -224,7 +223,8 @@ def test_batch_processing(temp_doc_dir: Path):
     (temp_doc_dir / "doc1.md").write_text(pytest.test_doc_content, encoding="utf-8")
     (temp_doc_dir / "doc2.md").write_text(pytest.test_doc_content, encoding="utf-8")
     (temp_doc_dir / "config1.yaml").write_text(
-        pytest.test_yaml_content, encoding="utf-8"
+        pytest.test_yaml_content,
+        encoding="utf-8",
     )
 
     # Processar diretório

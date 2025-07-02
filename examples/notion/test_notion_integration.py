@@ -2,13 +2,15 @@
 import asyncio
 import logging
 import os
+import sys
 from pathlib import Path
 
 from docsync.integrations.notion import NotionBridge, NotionConfig, NotionMapping
 
 # Configurar logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
 logger = logging.getLogger(__name__)
@@ -31,7 +33,7 @@ async def test_notion_connection():
                 NotionMapping(
                     source_path=Path("./test_docs"),
                     target_id="test_page_id",  # Será usado apenas para teste
-                )
+                ),
             ],
         )
 
@@ -46,7 +48,7 @@ async def test_notion_connection():
         return True
 
     except Exception as e:
-        logger.error(f"✗ Erro ao testar conexão: {e}")
+        logger.exception(f"✗ Erro ao testar conexão: {e}")
         return False
 
 
@@ -60,7 +62,7 @@ async def test_document_sync():
         test_file = test_dir / "test.md"
         test_file.write_text(
             """# Documento de Teste
-        
+
 Este é um documento de teste para a integração DOCSYNC-Notion.
 
 ## Seção de Teste
@@ -75,7 +77,7 @@ Este é um documento de teste para a integração DOCSYNC-Notion.
 def hello_world():
     print('Hello from DOCSYNC!')
 `
-"""
+""",
         )
 
         # Configurar Notion
@@ -86,7 +88,7 @@ def hello_world():
                 NotionMapping(
                     source_path=test_dir,
                     target_id=os.getenv("NOTION_TEST_PAGE_ID", "test_page_id"),
-                )
+                ),
             ],
         )
 
@@ -102,7 +104,7 @@ def hello_world():
         return True
 
     except Exception as e:
-        logger.error(f"✗ Erro durante sincronização: {e}")
+        logger.exception(f"✗ Erro durante sincronização: {e}")
         return False
     finally:
         # Limpar arquivos de teste
@@ -145,7 +147,7 @@ if __name__ == "__main__":
         logger.error(f'Erro: Variáveis de ambiente ausentes: {", ".join(missing_vars)}')
         logger.error("Por favor, configure as variáveis de ambiente necessárias:")
         logger.error("  export NOTION_TOKEN=seu_token_aqui")
-        exit(1)
+        sys.exit(1)
 
     # Executar testes
     asyncio.run(run_all_tests())

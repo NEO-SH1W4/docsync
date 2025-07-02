@@ -1,5 +1,4 @@
-"""
-Template orchestrator para relatórios ESG.
+"""Template orchestrator para relatórios ESG.
 
 Este módulo fornece a infraestrutura para:
 - Combinação inteligente de templates
@@ -10,17 +9,17 @@ Este módulo fornece a infraestrutura para:
 """
 
 import logging
-import yaml
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
+import yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from rich.console import Console
 from rich.progress import Progress
 
-from ..exceptions import OrchestratorError
-from ..utils.filters import FILTERS
+from docsync.exceptions import OrchestratorError
+from docsync.utils.filters import FILTERS
 
 # Console para feedback visual
 console = Console()
@@ -32,16 +31,15 @@ class TemplateConfig:
     """Configuração para renderização de template."""
 
     name: str
-    sections: List[str]
+    sections: list[str]
     format: str
-    metadata: Dict[str, Any]
-    data: Dict[str, Any]
+    metadata: dict[str, Any]
+    data: dict[str, Any]
     output_path: Path
 
 
 class TemplateOrchestrator:
-    """
-    Orquestrador de templates para relatórios ESG.
+    """Orquestrador de templates para relatórios ESG.
 
     Responsável por:
     - Carregamento de templates
@@ -55,9 +53,8 @@ class TemplateOrchestrator:
         self,
         template_dir: Union[str, Path],
         config_path: Optional[Union[str, Path]] = None,
-    ):
-        """
-        Inicializa o orquestrador.
+    ) -> None:
+        """Inicializa o orquestrador.
 
         Args:
             template_dir: Diretório base dos templates
@@ -83,7 +80,7 @@ class TemplateOrchestrator:
 
         logger.info(f"Orquestrador inicializado com diretório: {template_dir}")
 
-    def _load_config(self) -> Dict:
+    def _load_config(self) -> dict:
         """Carrega configuração do orquestrador."""
         if not self.config_path or not self.config_path.exists():
             return {}
@@ -96,8 +93,7 @@ class TemplateOrchestrator:
             return {}
 
     def _validate_template_config(self, config: TemplateConfig) -> None:
-        """
-        Valida configuração do template.
+        """Valida configuração do template.
 
         Args:
             config: Configuração a ser validada
@@ -122,7 +118,7 @@ class TemplateOrchestrator:
         if errors:
             raise OrchestratorError("\n".join(errors))
 
-    def list_templates(self) -> Dict[str, List[str]]:
+    def list_templates(self) -> dict[str, list[str]]:
         """Lista templates disponíveis."""
         templates = {"sections": [], "layouts": []}
 
@@ -141,7 +137,7 @@ class TemplateOrchestrator:
                     p.stem.split(".")[0] for p in layouts_path.glob("*.md.jinja")
                 ]
         except Exception as e:
-            logger.error(f"Erro ao listar templates: {e}")
+            logger.exception(f"Erro ao listar templates: {e}")
             raise
 
         return templates
@@ -154,7 +150,8 @@ class TemplateOrchestrator:
 
             with Progress() as progress:
                 task = progress.add_task(
-                    "Gerando relatório...", total=len(config.sections)
+                    "Gerando relatório...",
+                    total=len(config.sections),
                 )
 
                 content_parts = []
@@ -183,5 +180,5 @@ class TemplateOrchestrator:
                 return config.output_path
 
         except Exception as e:
-            logger.error(f"Erro ao gerar relatório: {e}")
+            logger.exception(f"Erro ao gerar relatório: {e}")
             raise

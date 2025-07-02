@@ -1,5 +1,4 @@
-"""
-Módulo de configuração do DocSync.
+"""Módulo de configuração do DocSync.
 
 Fornece funcionalidades para carregar, validar e gerenciar configurações
 do sistema de documentação, incluindo suporte para:
@@ -18,7 +17,7 @@ import os
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Union
 
 import yaml
 from yaml.parser import ParserError
@@ -32,7 +31,7 @@ class ESGConfig:
     """Configuração para geração de relatórios ESG."""
 
     metrics_enabled: bool = True
-    custom_templates: Dict[str, str] = field(default_factory=dict)
+    custom_templates: dict[str, str] = field(default_factory=dict)
     output_format: str = "markdown"
     validation_level: str = "strict"
 
@@ -67,8 +66,8 @@ class PathMappingConfig:
     target_path: str = field(default="")
     doc_type: DocumentType = field(default=DocumentType.TECHNICAL)
     bidirectional: bool = True
-    ignore_patterns: List[str] = field(
-        default_factory=lambda: [".git", "__pycache__", "*.pyc"]
+    ignore_patterns: list[str] = field(
+        default_factory=lambda: [".git", "__pycache__", "*.pyc"],
     )
 
 
@@ -76,8 +75,8 @@ class PathMappingConfig:
 class DocumentHandlerConfig:
     """Configuração para manipulação de diferentes tipos de documentos."""
 
-    file_extensions: List[str] = field(
-        default_factory=lambda: ["md", "rst", "txt", "pdf"]
+    file_extensions: list[str] = field(
+        default_factory=lambda: ["md", "rst", "txt", "pdf"],
     )
     preserve_metadata: bool = True
     convert_formats: bool = False
@@ -93,8 +92,8 @@ class GuardriveConfig:
     base_path: str = field(default="")
     docs_path: str = field(default="GUARDRIVE_DOCS")
     dev_path: str = field(default="AREA_DEV")
-    path_mappings: List[PathMappingConfig] = field(default_factory=list)
-    doc_handlers: Dict[str, DocumentHandlerConfig] = field(default_factory=dict)
+    path_mappings: list[PathMappingConfig] = field(default_factory=list)
+    doc_handlers: dict[str, DocumentHandlerConfig] = field(default_factory=dict)
     version_control: VersionControlConfig = field(default_factory=VersionControlConfig)
     conflict_resolution: str = "manual"
     sync_schedule: str = "*/15 * * * *"  # Formato cron
@@ -105,8 +104,8 @@ class GuardriveConfig:
 class SyncConfig:
     """Configuração para sincronização de documentação."""
 
-    watch_paths: List[str] = field(default_factory=list)
-    ignore_patterns: List[str] = field(default_factory=list)
+    watch_paths: list[str] = field(default_factory=list)
+    ignore_patterns: list[str] = field(default_factory=list)
     auto_sync: bool = True
     sync_interval: int = 300
     real_time_sync: bool = False
@@ -170,7 +169,7 @@ DEFAULT_CONFIG = {
                 "convert_formats": False,
                 "validate_links": True,
                 "check_references": True,
-            }
+            },
         },
         "version_control": {
             "enabled": True,
@@ -192,9 +191,8 @@ DEFAULT_CONFIG = {
 }
 
 
-def load_config(config_path: Union[str, Path, None] = None) -> Dict[str, Any]:
-    """
-    Carrega a configuração do DocSync de um arquivo YAML e aplica
+def load_config(config_path: Union[str, Path, None] = None) -> dict[str, Any]:
+    """Carrega a configuração do DocSync de um arquivo YAML e aplica
     variáveis de ambiente e valores padrão.
 
     Args:
@@ -216,7 +214,7 @@ def load_config(config_path: Union[str, Path, None] = None) -> Dict[str, Any]:
         config_path = Path(config_path)
         try:
             if config_path.exists():
-                with open(config_path, "r", encoding="utf-8") as f:
+                with open(config_path, encoding="utf-8") as f:
                     file_config = yaml.safe_load(f)
                     if file_config:
                         _deep_update(config, file_config)
@@ -224,10 +222,10 @@ def load_config(config_path: Union[str, Path, None] = None) -> Dict[str, Any]:
             else:
                 logger.warning(f"Arquivo de configuração não encontrado: {config_path}")
         except ParserError as e:
-            logger.error(f"Erro ao parsear YAML: {e}")
+            logger.exception(f"Erro ao parsear YAML: {e}")
             raise
         except Exception as e:
-            logger.error(f"Erro ao carregar configuração: {e}")
+            logger.exception(f"Erro ao carregar configuração: {e}")
             raise
 
     # Aplica variáveis de ambiente
@@ -239,7 +237,7 @@ def load_config(config_path: Union[str, Path, None] = None) -> Dict[str, Any]:
     return config
 
 
-def _deep_update(base_dict: Dict[str, Any], update_dict: Dict[str, Any]) -> None:
+def _deep_update(base_dict: dict[str, Any], update_dict: dict[str, Any]) -> None:
     """Atualiza um dicionário recursivamente."""
     for key, value in update_dict.items():
         if (
@@ -252,7 +250,7 @@ def _deep_update(base_dict: Dict[str, Any], update_dict: Dict[str, Any]) -> None
             base_dict[key] = value
 
 
-def _apply_env_vars(config: Dict[str, Any]) -> None:
+def _apply_env_vars(config: dict[str, Any]) -> None:
     """Aplica variáveis de ambiente à configuração."""
     env_mappings = {
         "DOCSYNC_TEMPLATES_DIR": ("templates_dir", str),
@@ -284,9 +282,8 @@ def _apply_env_vars(config: Dict[str, Any]) -> None:
                 logger.warning(f"Erro ao processar variável de ambiente {env_var}: {e}")
 
 
-def _validate_config(config: Dict[str, Any]) -> None:
-    """
-    Valida a configuração carregada.
+def _validate_config(config: dict[str, Any]) -> None:
+    """Valida a configuração carregada.
 
     Raises:
         ValueError: Se a configuração for inválida
@@ -304,17 +301,22 @@ def _validate_config(config: Dict[str, Any]) -> None:
 
     for field_name, expected_type in required_fields.items():
         if field_name not in config:
-            raise ValueError(f"Campo obrigatório ausente: {field_name}")
+            msg = f"Campo obrigatório ausente: {field_name}"
+            raise ValueError(msg)
         if not isinstance(config[field_name], expected_type):
-            raise ValueError(
+            msg = (
                 f"Tipo inválido para {field_name}: esperado {expected_type}, "
                 f"recebido {type(config[field_name])}"
+            )
+            raise ValueError(
+                msg,
             )
 
     # Valida níveis específicos
     valid_log_levels = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
     if config["log_level"].upper() not in valid_log_levels:
-        raise ValueError(f"Nível de log inválido: {config['log_level']}")
+        msg = f"Nível de log inválido: {config['log_level']}"
+        raise ValueError(msg)
 
     # Valida diretórios
     templates_dir = Path(config["templates_dir"])
@@ -323,18 +325,21 @@ def _validate_config(config: Dict[str, Any]) -> None:
 
     # Valida configuração ESG
     if not isinstance(config["esg"].get("metrics_enabled"), bool):
-        raise ValueError("esg.metrics_enabled deve ser booleano")
+        msg = "esg.metrics_enabled deve ser booleano"
+        raise ValueError(msg)
 
     # Valida configuração de sincronização
     if not isinstance(config["sync"].get("sync_interval"), int):
-        raise ValueError("sync.sync_interval deve ser inteiro")
+        msg = "sync.sync_interval deve ser inteiro"
+        raise ValueError(msg)
 
     # Valida configuração do GUARDRIVE
     guardrive_config = config.get("guardrive", {})
     if guardrive_config.get("enabled"):
         if not guardrive_config.get("base_path"):
+            msg = "guardrive.base_path é obrigatório quando guardrive está habilitado"
             raise ValueError(
-                "guardrive.base_path é obrigatório quando guardrive está habilitado"
+                msg,
             )
 
         # Valida caminhos do GUARDRIVE
@@ -349,15 +354,17 @@ def _validate_config(config: Dict[str, Any]) -> None:
         # Valida mapeamentos de caminhos
         for mapping in guardrive_config.get("path_mappings", []):
             if not mapping.get("source_path") or not mapping.get("target_path"):
+                msg = "Mapeamentos de caminho devem ter source_path e target_path"
                 raise ValueError(
-                    "Mapeamentos de caminho devem ter source_path e target_path"
+                    msg,
                 )
 
         # Valida configuração de controle de versão
         vc_config = guardrive_config.get("version_control", {})
         if vc_config.get("enabled") and not vc_config.get("provider"):
+            msg = "Provider de controle de versão é obrigatório quando habilitado"
             raise ValueError(
-                "Provider de controle de versão é obrigatório quando habilitado"
+                msg,
             )
 
     logger.info("Configuração validada com sucesso")

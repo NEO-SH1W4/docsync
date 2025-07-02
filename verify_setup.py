@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Script de verificação do sistema DOCSYNC.
+"""Script de verificação do sistema DOCSYNC.
 
 Verifica a instalação, configuração e prontidão do sistema
 de sincronização de documentação GUARDRIVE.
@@ -12,11 +11,9 @@ Date: 2025-06-03
 import importlib
 import logging
 import os
-import platform
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 import pkg_resources
 import yaml
@@ -32,7 +29,7 @@ console = Console()
 class SetupVerifier:
     """Verificador de instalação e configuração do sistema."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.project_root = Path(__file__).parent
         self.required_dirs = [
             "templates",
@@ -76,25 +73,33 @@ class SetupVerifier:
 
             # 1. Verifica dependências
             progress.update(
-                task, advance=1, description="[cyan]Verificando dependências..."
+                task,
+                advance=1,
+                description="[cyan]Verificando dependências...",
             )
             results.append(("Dependências", self.check_dependencies()))
 
             # 2. Verifica configuração
             progress.update(
-                task, advance=1, description="[cyan]Verificando configuração..."
+                task,
+                advance=1,
+                description="[cyan]Verificando configuração...",
             )
             results.append(("Configuração", self.check_configuration()))
 
             # 3. Verifica diretórios
             progress.update(
-                task, advance=1, description="[cyan]Verificando diretórios..."
+                task,
+                advance=1,
+                description="[cyan]Verificando diretórios...",
             )
             results.append(("Diretórios", self.check_directories()))
 
             # 4. Verifica templates
             progress.update(
-                task, advance=1, description="[cyan]Verificando templates..."
+                task,
+                advance=1,
+                description="[cyan]Verificando templates...",
             )
             results.append(("Templates", self.check_templates()))
 
@@ -108,14 +113,16 @@ class SetupVerifier:
 
             # 7. Verifica monitoramento
             progress.update(
-                task, advance=1, description="[cyan]Verificando monitoramento..."
+                task,
+                advance=1,
+                description="[cyan]Verificando monitoramento...",
             )
             results.append(("Monitoramento", self.check_monitoring()))
 
         self._print_report(results)
         return all(result[1][0] for result in results)
 
-    def check_dependencies(self) -> Tuple[bool, str]:
+    def check_dependencies(self) -> tuple[bool, str]:
         """Verifica se todas as dependências estão instaladas."""
         try:
             pkg_resources.require(self.required_packages)
@@ -125,7 +132,7 @@ class SetupVerifier:
         except Exception as e:
             return False, f"Erro ao verificar dependências: {e}"
 
-    def check_configuration(self) -> Tuple[bool, str]:
+    def check_configuration(self) -> tuple[bool, str]:
         """Verifica arquivo de configuração."""
         config_path = self.project_root / "guardrive_sync.yaml"
         try:
@@ -143,7 +150,7 @@ class SetupVerifier:
         except Exception as e:
             return False, f"Erro ao verificar configuração: {e}"
 
-    def check_directories(self) -> Tuple[bool, str]:
+    def check_directories(self) -> tuple[bool, str]:
         """Verifica estrutura de diretórios e permissões."""
         try:
             missing_dirs = []
@@ -161,7 +168,7 @@ class SetupVerifier:
         except Exception as e:
             return False, f"Erro ao verificar diretórios: {e}"
 
-    def check_templates(self) -> Tuple[bool, str]:
+    def check_templates(self) -> tuple[bool, str]:
         """Verifica templates de documentação."""
         try:
             templates_dir = self.project_root / "templates"
@@ -179,7 +186,7 @@ class SetupVerifier:
         except Exception as e:
             return False, f"Erro ao verificar templates: {e}"
 
-    def check_git(self) -> Tuple[bool, str]:
+    def check_git(self) -> tuple[bool, str]:
         """Verifica integração com Git."""
         try:
             # Verifica Git instalado
@@ -196,7 +203,7 @@ class SetupVerifier:
         except Exception as e:
             return False, f"Erro ao verificar Git: {e}"
 
-    def check_logging(self) -> Tuple[bool, str]:
+    def check_logging(self) -> tuple[bool, str]:
         """Verifica configuração de logging."""
         try:
             log_dir = self.project_root / "logs"
@@ -220,7 +227,7 @@ class SetupVerifier:
         except Exception as e:
             return False, f"Erro ao verificar logging: {e}"
 
-    def check_monitoring(self) -> Tuple[bool, str]:
+    def check_monitoring(self) -> tuple[bool, str]:
         """Verifica capacidades de monitoramento."""
         try:
             # Verifica watchdog
@@ -235,7 +242,7 @@ class SetupVerifier:
         except Exception as e:
             return False, f"Erro ao verificar monitoramento: {e}"
 
-    def _print_report(self, results: List[Tuple[str, Tuple[bool, str]]]):
+    def _print_report(self, results: list[tuple[str, tuple[bool, str]]]) -> None:
         """Imprime relatório de verificação."""
         table = Table(title="Relatório de Verificação do Sistema")
 
@@ -257,7 +264,7 @@ class SetupVerifier:
             rprint("[red]Sistema requer atenção. Corrija os problemas indicados acima.")
 
 
-def main():
+def main() -> None:
     """Função principal de execução."""
     try:
         verifier = SetupVerifier()

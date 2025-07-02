@@ -1,6 +1,4 @@
-"""
-Filtros personalizados para templates Jinja2.
-"""
+"""Filtros personalizados para templates Jinja2."""
 
 from datetime import datetime
 from typing import Any, Optional
@@ -40,11 +38,11 @@ def format_metric(value: Any, metric_type: str, unit: Optional[str] = None) -> s
     """Formata valor de métrica com base no tipo e unidade."""
     if metric_type == "percentage":
         return f"{float(value):.1f}%"
-    elif metric_type == "currency":
+    if metric_type == "currency":
         return f"R$ {float(value):,.2f}"
-    elif metric_type == "number":
+    if metric_type == "number":
         return f"{float(value):,.0f}"
-    elif metric_type == "decimal":
+    if metric_type == "decimal":
         return f"{float(value):,.2f}"
 
     formatted = str(value)

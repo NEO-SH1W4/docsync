@@ -1,5 +1,4 @@
-"""
-DOCSYNC Notion Types
+"""DOCSYNC Notion Types.
 ===================
 
 Definições de tipos e classes para integração com a API do Notion.
@@ -22,11 +21,11 @@ PropertyType: Tipos de propriedades
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 
 class NotionObjectType(Enum):
-    """Tipos de objetos do Notion"""
+    """Tipos de objetos do Notion."""
 
     PAGE = "page"
     DATABASE = "database"
@@ -36,7 +35,7 @@ class NotionObjectType(Enum):
 
 
 class BlockType(Enum):
-    """Tipos de blocos suportados"""
+    """Tipos de blocos suportados."""
 
     PARAGRAPH = "paragraph"
     HEADING_1 = "heading_1"
@@ -58,7 +57,7 @@ class BlockType(Enum):
 
 
 class PropertyType(Enum):
-    """Tipos de propriedades do Notion"""
+    """Tipos de propriedades do Notion."""
 
     TITLE = "title"
     RICH_TEXT = "rich_text"
@@ -83,11 +82,11 @@ class PropertyType(Enum):
 
 @dataclass
 class RichText:
-    """Representa texto rico do Notion"""
+    """Representa texto rico do Notion."""
 
     content: str
     type: str = "text"
-    annotations: Dict[str, bool] = field(
+    annotations: dict[str, bool] = field(
         default_factory=lambda: {
             "bold": False,
             "italic": False,
@@ -95,12 +94,12 @@ class RichText:
             "underline": False,
             "code": False,
             "color": "default",
-        }
+        },
     )
     url: Optional[str] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Converte para dicionário no formato da API"""
+    def to_dict(self) -> dict[str, Any]:
+        """Converte para dicionário no formato da API."""
         return {
             "type": self.type,
             "text": {
@@ -111,8 +110,8 @@ class RichText:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "RichText":
-        """Cria objeto a partir de dicionário da API"""
+    def from_dict(cls, data: dict[str, Any]) -> "RichText":
+        """Cria objeto a partir de dicionário da API."""
         return cls(
             content=data["text"]["content"],
             type=data["type"],
@@ -122,14 +121,14 @@ class RichText:
 
 
 class NotionObject:
-    """Classe base para objetos Notion"""
+    """Classe base para objetos Notion."""
 
     id: str
     type: NotionObjectType
     created_time: datetime
     last_edited_time: datetime
-    created_by: Optional[Dict[str, Any]]
-    last_edited_by: Optional[Dict[str, Any]]
+    created_by: Optional[dict[str, Any]]
+    last_edited_by: Optional[dict[str, Any]]
     archived: bool
 
     def __init__(
@@ -138,10 +137,10 @@ class NotionObject:
         type: NotionObjectType = NotionObjectType.BLOCK,
         created_time: Optional[datetime] = None,
         last_edited_time: Optional[datetime] = None,
-        created_by: Optional[Dict[str, Any]] = None,
-        last_edited_by: Optional[Dict[str, Any]] = None,
+        created_by: Optional[dict[str, Any]] = None,
+        last_edited_by: Optional[dict[str, Any]] = None,
         archived: bool = False,
-    ):
+    ) -> None:
         self.id = id
         self.type = type
         self.created_time = created_time or datetime.now()
@@ -150,8 +149,8 @@ class NotionObject:
         self.last_edited_by = last_edited_by
         self.archived = archived
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Converte objeto para dicionário"""
+    def to_dict(self) -> dict[str, Any]:
+        """Converte objeto para dicionário."""
         return {
             "id": self.id,
             "type": self.type.value,
@@ -163,16 +162,16 @@ class NotionObject:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "NotionObject":
-        """Cria objeto a partir de dicionário"""
+    def from_dict(cls, data: dict[str, Any]) -> "NotionObject":
+        """Cria objeto a partir de dicionário."""
         return cls(
             id=data["id"],
             type=NotionObjectType(data["type"]),
             created_time=datetime.fromisoformat(
-                data["created_time"].replace("Z", "+00:00")
+                data["created_time"].replace("Z", "+00:00"),
             ),
             last_edited_time=datetime.fromisoformat(
-                data["last_edited_time"].replace("Z", "+00:00")
+                data["last_edited_time"].replace("Z", "+00:00"),
             ),
             created_by=data.get("created_by"),
             last_edited_by=data.get("last_edited_by"),
@@ -181,27 +180,27 @@ class NotionObject:
 
 
 class NotionBlock(NotionObject):
-    """Representa um bloco de conteúdo"""
+    """Representa um bloco de conteúdo."""
 
     block_type: BlockType
-    content: Dict[str, Any]
+    content: dict[str, Any]
     has_children: bool
-    children: List["NotionBlock"]
+    children: list["NotionBlock"]
 
     def __init__(
         self,
         id: str,
         block_type: BlockType,
-        content: Dict[str, Any],
+        content: dict[str, Any],
         type: NotionObjectType = NotionObjectType.BLOCK,
         created_time: Optional[datetime] = None,
         last_edited_time: Optional[datetime] = None,
-        created_by: Optional[Dict[str, Any]] = None,
-        last_edited_by: Optional[Dict[str, Any]] = None,
+        created_by: Optional[dict[str, Any]] = None,
+        last_edited_by: Optional[dict[str, Any]] = None,
         archived: bool = False,
         has_children: bool = False,
-        children: Optional[List["NotionBlock"]] = None,
-    ):
+        children: Optional[list["NotionBlock"]] = None,
+    ) -> None:
         super().__init__(
             id=id,
             type=type,
@@ -216,23 +215,23 @@ class NotionBlock(NotionObject):
         self.has_children = has_children
         self.children = children or []
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Converte bloco para dicionário"""
+    def to_dict(self) -> dict[str, Any]:
+        """Converte bloco para dicionário."""
         data = super().to_dict()
         data.update(
             {
                 "type": self.block_type.value,
                 self.block_type.value: self.content,
                 "has_children": self.has_children,
-            }
+            },
         )
         if self.children:
             data["children"] = [child.to_dict() for child in self.children]
         return data
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "NotionBlock":
-        """Cria bloco a partir de dicionário"""
+    def from_dict(cls, data: dict[str, Any]) -> "NotionBlock":
+        """Cria bloco a partir de dicionário."""
         # Extrair campos específicos do bloco
         block_type = BlockType(data["type"])
         content = data[block_type.value]
@@ -245,10 +244,10 @@ class NotionBlock(NotionObject):
             id=data["id"],
             type=NotionObjectType(data["type"]),
             created_time=datetime.fromisoformat(
-                data["created_time"].replace("Z", "+00:00")
+                data["created_time"].replace("Z", "+00:00"),
             ),
             last_edited_time=datetime.fromisoformat(
-                data["last_edited_time"].replace("Z", "+00:00")
+                data["last_edited_time"].replace("Z", "+00:00"),
             ),
             created_by=data.get("created_by"),
             last_edited_by=data.get("last_edited_by"),
@@ -260,46 +259,46 @@ class NotionBlock(NotionObject):
         )
 
     def to_markdown(self) -> str:
-        """Converte bloco para markdown"""
+        """Converte bloco para markdown."""
         if self.block_type == BlockType.PARAGRAPH:
             return self._rich_text_to_markdown(self.content.get("rich_text", []))
-        elif self.block_type == BlockType.HEADING_1:
+        if self.block_type == BlockType.HEADING_1:
             return (
                 f"# {self._rich_text_to_markdown(self.content.get('rich_text', []))}\n"
             )
-        elif self.block_type == BlockType.HEADING_2:
+        if self.block_type == BlockType.HEADING_2:
             return (
                 f"## {self._rich_text_to_markdown(self.content.get('rich_text', []))}\n"
             )
-        elif self.block_type == BlockType.HEADING_3:
+        if self.block_type == BlockType.HEADING_3:
             return f"### {self._rich_text_to_markdown(self.content.get('rich_text', []))}\n"
-        elif self.block_type == BlockType.CODE:
+        if self.block_type == BlockType.CODE:
             language = self.content.get("language", "")
             code = self._rich_text_to_markdown(self.content.get("rich_text", []))
             return f"```{language}\n{code}\n```\n"
-        elif self.block_type == BlockType.BULLETED_LIST:
+        if self.block_type == BlockType.BULLETED_LIST:
             return (
                 f"- {self._rich_text_to_markdown(self.content.get('rich_text', []))}\n"
             )
-        elif self.block_type == BlockType.NUMBERED_LIST:
+        if self.block_type == BlockType.NUMBERED_LIST:
             return (
                 f"1. {self._rich_text_to_markdown(self.content.get('rich_text', []))}\n"
             )
-        elif self.block_type == BlockType.QUOTE:
+        if self.block_type == BlockType.QUOTE:
             return (
                 f"> {self._rich_text_to_markdown(self.content.get('rich_text', []))}\n"
             )
-        elif self.block_type == BlockType.DIVIDER:
+        if self.block_type == BlockType.DIVIDER:
             return "---\n"
-        elif self.block_type == BlockType.TO_DO:
+        if self.block_type == BlockType.TO_DO:
             checked = self.content.get("checked", False)
             mark = "x" if checked else " "
             return f"- [{mark}] {self._rich_text_to_markdown(self.content.get('rich_text', []))}\n"
         return ""
 
     @staticmethod
-    def _rich_text_to_markdown(rich_text: List[Dict[str, Any]]) -> str:
-        """Converte rich text para markdown"""
+    def _rich_text_to_markdown(rich_text: list[dict[str, Any]]) -> str:
+        """Converte rich text para markdown."""
         result = ""
         for text in rich_text:
             content = text.get("text", {}).get("content", "")
@@ -321,15 +320,15 @@ class NotionBlock(NotionObject):
 
 @dataclass
 class NotionPage(NotionObject):
-    """Representa uma página no Notion"""
+    """Representa uma página no Notion."""
 
     title: str
-    parent: Dict[str, Any]
-    properties: Dict[str, Any]
-    blocks: List[NotionBlock] = field(default_factory=list)
+    parent: dict[str, Any]
+    properties: dict[str, Any]
+    blocks: list[NotionBlock] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Converte página para dicionário"""
+    def to_dict(self) -> dict[str, Any]:
+        """Converte página para dicionário."""
         data = super().to_dict()
         data.update({"parent": self.parent, "properties": self.properties})
         if self.blocks:
@@ -339,53 +338,53 @@ class NotionPage(NotionObject):
 
 @dataclass
 class NotionDatabase(NotionObject):
-    """Representa um banco de dados no Notion"""
+    """Representa um banco de dados no Notion."""
 
     title: str
     description: Optional[str]
-    properties: Dict[str, Any]
-    pages: List[NotionPage] = field(default_factory=list)
+    properties: dict[str, Any]
+    pages: list[NotionPage] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Converte database para dicionário"""
+    def to_dict(self) -> dict[str, Any]:
+        """Converte database para dicionário."""
         data = super().to_dict()
         data.update(
             {
                 "title": self.title,
                 "description": self.description,
                 "properties": self.properties,
-            }
+            },
         )
         return data
 
 
 class NotionError(Exception):
-    """Erro base para operações Notion"""
+    """Erro base para operações Notion."""
 
-    def __init__(self, message: str, code: Optional[str] = None):
+    def __init__(self, message: str, code: Optional[str] = None) -> None:
         self.message = message
         self.code = code
         super().__init__(self.message)
 
 
 class NotionAuthError(NotionError):
-    """Erro de autenticação"""
+    """Erro de autenticação."""
 
 
 class NotionRateLimitError(NotionError):
-    """Erro de limite de taxa"""
+    """Erro de limite de taxa."""
 
-    def __init__(self, retry_after: int):
+    def __init__(self, retry_after: int) -> None:
         self.retry_after = retry_after
         super().__init__(f"Rate limit exceeded. Retry after {retry_after} seconds")
 
 
 class NotionValidationError(NotionError):
-    """Erro de validação"""
+    """Erro de validação."""
 
 
 class NotionSyncError(NotionError):
-    """Erro de sincronização"""
+    """Erro de sincronização."""
 
 
 # -----------------------------------------------------------------------------

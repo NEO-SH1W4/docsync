@@ -2,7 +2,6 @@
 import asyncio
 import json
 import logging
-import os
 from pathlib import Path
 
 import click
@@ -11,14 +10,14 @@ from docsync.integrations.notion import NotionBridge, NotionConfig, NotionMappin
 
 # Configurar logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
 
 @click.group()
 def cli():
     """Ferramenta CLI para sincronização com Notion"""
-    pass
 
 
 @cli.command()
@@ -30,7 +29,9 @@ def cli():
 )
 @click.option("--token", envvar="NOTION_TOKEN", help="Token de integração do Notion")
 @click.option(
-    "--workspace", envvar="NOTION_WORKSPACE", help="ID do workspace do Notion"
+    "--workspace",
+    envvar="NOTION_WORKSPACE",
+    help="ID do workspace do Notion",
 )
 @click.option(
     "--source",
@@ -56,7 +57,7 @@ def sync(config, token, workspace, source, target):
                         "source_path": str(source),
                         "target_id": target,
                         "sync_type": "bidirectional",
-                    }
+                    },
                 ],
             }
 

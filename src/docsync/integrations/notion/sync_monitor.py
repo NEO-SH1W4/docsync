@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import asyncio
 import logging
@@ -24,9 +23,9 @@ from docsync.integrations.notion import (
 
 
 class SyncStats:
-    """Estatísticas de sincronização"""
+    """Estatísticas de sincronização."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.start_time = datetime.now()
         self.files_synced = 0
         self.bytes_transferred = 0
@@ -41,14 +40,14 @@ class SyncStats:
 
 
 class SyncFileHandler(FileSystemEventHandler):
-    """Handler para eventos do sistema de arquivos"""
+    """Handler para eventos do sistema de arquivos."""
 
-    def __init__(self, monitor):
+    def __init__(self, monitor) -> None:
         self.monitor = monitor
         super().__init__()
 
-    def on_modified(self, event):
-        """Trata modificações em arquivos"""
+    def on_modified(self, event) -> None:
+        """Trata modificações em arquivos."""
         if event.is_directory:
             return
 
@@ -57,8 +56,8 @@ class SyncFileHandler(FileSystemEventHandler):
         self.monitor.stats.status = "Alteração local detectada"
         logging.info(f"Arquivo modificado: {event.src_path}")
 
-    def on_created(self, event):
-        """Trata criação de arquivos"""
+    def on_created(self, event) -> None:
+        """Trata criação de arquivos."""
         if event.is_directory:
             return
 
@@ -67,8 +66,8 @@ class SyncFileHandler(FileSystemEventHandler):
         self.monitor.stats.status = "Novo arquivo local detectado"
         logging.info(f"Arquivo criado: {event.src_path}")
 
-    def on_deleted(self, event):
-        """Trata deleção de arquivos"""
+    def on_deleted(self, event) -> None:
+        """Trata deleção de arquivos."""
         if event.is_directory:
             return
 
@@ -79,9 +78,9 @@ class SyncFileHandler(FileSystemEventHandler):
 
 
 class NotionSyncMonitor:
-    """Monitor de sincronização Notion-DOCSYNC"""
+    """Monitor de sincronização Notion-DOCSYNC."""
 
-    def __init__(self, config: NotionConfig):
+    def __init__(self, config: NotionConfig) -> None:
         self.config = config
         self.stats = SyncStats()
         self.console = Console()
@@ -91,8 +90,8 @@ class NotionSyncMonitor:
         self._running = False
         self._notion_poll_task = None
 
-    async def start(self):
-        """Inicia o monitoramento"""
+    async def start(self) -> None:
+        """Inicia o monitoramento."""
         try:
             # Inicializar bridge
             await self.bridge.initialize()
@@ -100,7 +99,9 @@ class NotionSyncMonitor:
             # Configurar observador de arquivos
             for mapping in self.config.mappings:
                 self.observer.schedule(
-                    self.file_handler, str(mapping.source_path), recursive=True
+                    self.file_handler,
+                    str(mapping.source_path),
+                    recursive=True,
                 )
 
             self.observer.start()
@@ -113,23 +114,23 @@ class NotionSyncMonitor:
             await self._run_interface()
 
         except Exception as e:
-            logging.error(f"Erro ao iniciar monitoramento: {e}")
+            logging.exception(f"Erro ao iniciar monitoramento: {e}")
             raise
 
-    async def stop(self):
-        """Para o monitoramento"""
+    async def stop(self) -> None:
+        """Para o monitoramento."""
         self._running = False
         self.observer.stop()
         if self._notion_poll_task:
             self._notion_poll_task.cancel()
 
-    async def _poll_notion_changes(self):
-        """Monitora alterações no Notion"""
+    async def _poll_notion_changes(self) -> None:
+        """Monitora alterações no Notion."""
         while self._running:
             try:
                 for mapping in self.config.mappings:
                     changes = await self.bridge.client.get_recent_changes(
-                        mapping.target_id
+                        mapping.target_id,
                     )
                     if changes:
                         self.stats.changes_notion += len(changes)
@@ -139,13 +140,13 @@ class NotionSyncMonitor:
                 await asyncio.sleep(30)  # Poll a cada 30 segundos
 
             except Exception as e:
-                logging.error(f"Erro ao verificar alterações no Notion: {e}")
+                logging.exception(f"Erro ao verificar alterações no Notion: {e}")
                 self.stats.errors += 1
                 self.stats.status = "Erro ao verificar Notion"
                 await asyncio.sleep(60)  # Espera mais tempo em caso de erro
 
     def _create_status_table(self) -> Table:
-        """Cria tabela de status"""
+        """Cria tabela de status."""
         table = Table(title="Status de Sincronização")
 
         table.add_column("Métrica", style="cyan")
@@ -162,7 +163,8 @@ class NotionSyncMonitor:
         table.add_row("Tempo em Execução", uptime_str)
         table.add_row("Arquivos Sincronizados", str(self.stats.files_synced))
         table.add_row(
-            "Dados Transferidos", f"{self.stats.bytes_transferred/1024:.2f} KB"
+            "Dados Transferidos",
+            f"{self.stats.bytes_transferred/1024:.2f} KB",
         )
         table.add_row("Alterações Locais", str(self.stats.changes_local))
         table.add_row("Alterações Notion", str(self.stats.changes_notion))
@@ -180,7 +182,7 @@ class NotionSyncMonitor:
         return table
 
     def _update_display(self) -> Layout:
-        """Atualiza o layout da interface"""
+        """Atualiza o layout da interface."""
         layout = Layout()
 
         # Criar seção principal
@@ -190,17 +192,19 @@ class NotionSyncMonitor:
                     self._create_status_table(),
                     title="DOCSYNC Monitor",
                     border_style="blue",
-                )
-            )
+                ),
+            ),
         )
 
         return layout
 
-    async def _run_interface(self):
-        """Executa a interface do monitor"""
+    async def _run_interface(self) -> None:
+        """Executa a interface do monitor."""
         try:
             with Live(
-                self._update_display(), refresh_per_second=4, console=self.console
+                self._update_display(),
+                refresh_per_second=4,
+                console=self.console,
             ) as live:
                 while self._running:
                     # Processar fila de sincronização local
@@ -214,7 +218,7 @@ class NotionSyncMonitor:
                             self.stats.last_sync = datetime.now()
                         except Exception as e:
                             self.stats.errors += 1
-                            logging.error(f"Erro ao sincronizar {path}: {e}")
+                            logging.exception(f"Erro ao sincronizar {path}: {e}")
 
                     # Processar fila do Notion
                     if self.stats.notion_queue:
@@ -227,7 +231,7 @@ class NotionSyncMonitor:
                             self.stats.last_sync = datetime.now()
                         except Exception as e:
                             self.stats.errors += 1
-                            logging.error(f"Erro ao baixar página {page_id}: {e}")
+                            logging.exception(f"Erro ao baixar página {page_id}: {e}")
 
                     # Atualizar display
                     live.update(self._update_display())
@@ -241,16 +245,17 @@ class NotionSyncMonitor:
                         self.stats.current_operation = None
 
         except Exception as e:
-            logging.error(f"Erro na interface: {e}")
+            logging.exception(f"Erro na interface: {e}")
             self.stats.errors += 1
             raise
 
 
-async def main():
-    """Função principal"""
+async def main() -> None:
+    """Função principal."""
     # Configurar logging
     logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
     )
 
     # Configuração do monitor
@@ -258,7 +263,7 @@ async def main():
         token="seu_token_aqui",
         workspace_id="GENESIS_LAB",
         mappings=[
-            NotionMapping(source_path=Path("./docs"), target_id="pagina_destino_id")
+            NotionMapping(source_path=Path("./docs"), target_id="pagina_destino_id"),
         ],
     )
 
@@ -268,10 +273,8 @@ async def main():
     try:
         await monitor.start()
     except KeyboardInterrupt:
-        print("\nEncerrando monitoramento...")
         await monitor.stop()
-    except Exception as e:
-        print(f"Erro: {e}")
+    except Exception:
         await monitor.stop()
 
 

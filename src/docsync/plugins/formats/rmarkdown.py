@@ -1,10 +1,8 @@
-"""
-Plugin para suporte a documentos RMarkdown.
-"""
+"""Plugin para suporte a documentos RMarkdown."""
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from rich.logging import RichHandler
 
@@ -24,7 +22,7 @@ class RMarkdownFormat(DocumentFormat):
             requires=["rpy2>=3.5.0", "pandas>=1.3.0"],
         )
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Inicializa o plugin RMarkdown."""
         self.logger = logging.getLogger("docsync.plugins.rmarkdown")
         self.logger.handlers = [RichHandler()]
@@ -35,14 +33,13 @@ class RMarkdownFormat(DocumentFormat):
         self.r_libs = ["rmarkdown", "knitr", "tidyverse"]
 
     def initialize(self, config: dict) -> None:
-        """
-        Inicializa o plugin verificando dependências.
+        """Inicializa o plugin verificando dependências.
 
         Args:
             config: Configuração do plugin
         """
         try:
-            import rpy2.robjects as robjects
+            from rpy2 import robjects
             from rpy2.robjects.packages import importr
 
             # Verificar/instalar pacotes R necessários
@@ -56,17 +53,19 @@ class RMarkdownFormat(DocumentFormat):
             self.logger.info("✨ Plugin RMarkdown inicializado")
 
         except ImportError:
-            raise ImportError(
+            msg = (
                 "rpy2 é necessário para o plugin RMarkdown. "
                 "Instale com: pip install rpy2"
+            )
+            raise ImportError(
+                msg,
             )
 
     def cleanup(self) -> None:
         """Limpa recursos do plugin."""
 
     def can_handle(self, file_path: Path) -> bool:
-        """
-        Verifica se arquivo é RMarkdown.
+        """Verifica se arquivo é RMarkdown.
 
         Args:
             file_path: Caminho do arquivo
@@ -76,9 +75,8 @@ class RMarkdownFormat(DocumentFormat):
         """
         return file_path.suffix.lower() in [".rmd", ".rmarkdown"]
 
-    def read_document(self, file_path: Path) -> Dict[str, Any]:
-        """
-        Lê documento RMarkdown e extrai conteúdo/metadados.
+    def read_document(self, file_path: Path) -> dict[str, Any]:
+        """Lê documento RMarkdown e extrai conteúdo/metadados.
 
         Args:
             file_path: Caminho do arquivo
@@ -86,11 +84,11 @@ class RMarkdownFormat(DocumentFormat):
         Returns:
             Dict[str, Any]: Conteúdo e metadados
         """
-        import rpy2.robjects as robjects
+        from rpy2 import robjects
 
         # Extrair YAML frontmatter
         r_code = f"""
-        yaml::read_yaml("{str(file_path)}")
+        yaml::read_yaml("{file_path!s}")
         """
         metadata = dict(robjects.r(r_code))
 
@@ -99,9 +97,8 @@ class RMarkdownFormat(DocumentFormat):
 
         return {"metadata": metadata, "content": content}
 
-    def write_document(self, file_path: Path, content: Dict[str, Any]) -> None:
-        """
-        Escreve documento RMarkdown.
+    def write_document(self, file_path: Path, content: dict[str, Any]) -> None:
+        """Escreve documento RMarkdown.
 
         Args:
             file_path: Caminho do arquivo
@@ -121,10 +118,12 @@ class RMarkdownFormat(DocumentFormat):
         file_path.write_text(full_content, encoding="utf-8")
 
     def render_document(
-        self, input_path: Path, output_path: Optional[Path] = None, format: str = "html"
+        self,
+        input_path: Path,
+        output_path: Optional[Path] = None,
+        format: str = "html",
     ) -> Path:
-        """
-        Renderiza documento RMarkdown.
+        """Renderiza documento RMarkdown.
 
         Args:
             input_path: Arquivo RMarkdown
@@ -134,7 +133,7 @@ class RMarkdownFormat(DocumentFormat):
         Returns:
             Path: Caminho do arquivo gerado
         """
-        import rpy2.robjects as robjects
+        from rpy2 import robjects
 
         if not output_path:
             output_path = input_path.with_suffix(f".{format}")
@@ -142,8 +141,8 @@ class RMarkdownFormat(DocumentFormat):
         # Código R para renderização
         r_code = f"""
         rmarkdown::render(
-            "{str(input_path)}",
-            output_file = "{str(output_path)}",
+            "{input_path!s}",
+            output_file = "{output_path!s}",
             output_format = "{format}_document"
         )
         """
@@ -155,9 +154,8 @@ class RMarkdownFormat(DocumentFormat):
 
         return output_path
 
-    def get_references(self, file_path: Path) -> List[str]:
-        """
-        Extrai referências do documento.
+    def get_references(self, file_path: Path) -> list[str]:
+        """Extrai referências do documento.
 
         Args:
             file_path: Caminho do arquivo
@@ -165,7 +163,7 @@ class RMarkdownFormat(DocumentFormat):
         Returns:
             List[str]: Lista de referências
         """
-        import rpy2.robjects as robjects
+        from rpy2 import robjects
 
         # Extrair citações e links
         r_code = f"""
@@ -173,14 +171,14 @@ class RMarkdownFormat(DocumentFormat):
 
         # Extrair citações
         citations <- stringr::str_extract_all(
-            readLines("{str(file_path)}"),
+            readLines("{file_path!s}"),
             "@[[:alnum:]_-]+"
         )
         refs$citations <- unlist(citations)
 
         # Extrair links
         links <- stringr::str_extract_all(
-            readLines("{str(file_path)}"),
+            readLines("{file_path!s}"),
             "\\[([^]]+)\\]\\(([^)]+)\\)"
         )
         refs$links <- unlist(links)
@@ -191,9 +189,8 @@ class RMarkdownFormat(DocumentFormat):
         refs = robjects.r(r_code)
         return list(refs)
 
-    def update_references(self, file_path: Path, updates: Dict[str, str]) -> None:
-        """
-        Atualiza referências no documento.
+    def update_references(self, file_path: Path, updates: dict[str, str]) -> None:
+        """Atualiza referências no documento.
 
         Args:
             file_path: Caminho do arquivo

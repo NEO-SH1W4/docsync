@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Script principal para execução do sistema de sincronização GUARDRIVE.
+"""Script principal para execução do sistema de sincronização GUARDRIVE.
 
 Inicializa e gerencia o processo de sincronização da documentação,
 incluindo configuração, monitoramento e controle de execução.
@@ -12,7 +11,6 @@ Date: 2025-06-03
 import argparse
 import asyncio
 import logging
-import os
 import signal
 import sys
 from contextlib import asynccontextmanager
@@ -30,14 +28,13 @@ logger = setup_logger(__name__)
 class SyncController:
     """Controlador principal do sistema de sincronização."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.sync_manager: Optional[SyncManager] = None
         self.shutdown_event = asyncio.Event()
         self.config: Optional[Config] = None
 
     async def initialize(self, config_path: Path) -> bool:
-        """
-        Inicializa o sistema de sincronização.
+        """Inicializa o sistema de sincronização.
 
         Args:
             config_path: Caminho para o arquivo de configuração
@@ -66,32 +63,31 @@ class SyncController:
             return True
 
         except Exception as e:
-            logger.error(f"Erro ao inicializar sistema: {e}")
+            logger.exception(f"Erro ao inicializar sistema: {e}")
             return False
 
-    def _setup_signal_handlers(self):
+    def _setup_signal_handlers(self) -> None:
         """Configura handlers para sinais do sistema."""
         for sig in (signal.SIGTERM, signal.SIGINT):
             signal.signal(sig, self._signal_handler)
 
-    def _signal_handler(self, signum, frame):
+    def _signal_handler(self, signum, frame) -> None:
         """Handler para sinais de término."""
         logger.info(f"Sinal {signum} recebido, iniciando desligamento...")
         self.shutdown_event.set()
 
-    async def shutdown(self):
+    async def shutdown(self) -> None:
         """Realiza desligamento controlado do sistema."""
         try:
             if self.sync_manager:
                 await self.sync_manager.stop()
             logger.info("Sistema encerrado com sucesso")
         except Exception as e:
-            logger.error(f"Erro durante encerramento: {e}")
+            logger.exception(f"Erro durante encerramento: {e}")
 
     @asynccontextmanager
     async def run_session(self, config_path: Path):
-        """
-        Gerencia uma sessão completa de sincronização.
+        """Gerencia uma sessão completa de sincronização.
 
         Args:
             config_path: Caminho para arquivo de configuração
@@ -105,7 +101,7 @@ class SyncController:
         finally:
             await self.shutdown()
 
-    async def run(self):
+    async def run(self) -> None:
         """Executa o loop principal de sincronização."""
         try:
             while not self.shutdown_event.is_set():
@@ -113,13 +109,13 @@ class SyncController:
         except asyncio.CancelledError:
             logger.info("Execução cancelada")
         except Exception as e:
-            logger.error(f"Erro durante execução: {e}")
+            logger.exception(f"Erro durante execução: {e}")
 
 
 def parse_args():
     """Processa argumentos da linha de comando."""
     parser = argparse.ArgumentParser(
-        description="Sistema de Sincronização de Documentação GUARDRIVE"
+        description="Sistema de Sincronização de Documentação GUARDRIVE",
     )
     parser.add_argument(
         "-c",
@@ -129,12 +125,15 @@ def parse_args():
         help="Caminho para arquivo de configuração (default: guardrive_sync.yaml)",
     )
     parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Ativa logging detalhado"
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Ativa logging detalhado",
     )
     return parser.parse_args()
 
 
-async def main():
+async def main() -> int:
     """Função principal de execução."""
     args = parse_args()
 
@@ -164,5 +163,5 @@ if __name__ == "__main__":
         logger.info("Execução interrompida pelo usuário")
         sys.exit(1)
     except Exception as e:
-        logger.error(f"Erro fatal: {e}")
+        logger.exception(f"Erro fatal: {e}")
         sys.exit(1)

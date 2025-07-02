@@ -1,5 +1,4 @@
-"""
-Sistema de Configuração e Monitoramento do DOCSYNC.
+"""Sistema de Configuração e Monitoramento do DOCSYNC.
 
 Este módulo implementa a estrutura central do DOCSYNC, integrando:
 - Monitoramento e validação por ia
@@ -13,7 +12,6 @@ import logging.config
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import structlog
 import yaml
@@ -50,7 +48,7 @@ logging.config.dictConfig(
                 "level": "INFO",
             },
         },
-    }
+    },
 )
 
 logger = structlog.get_logger()
@@ -61,22 +59,21 @@ class DirConfig:
     """Configuração de um diretório monitorado."""
 
     path: Path
-    patterns: List[str]
+    patterns: list[str]
     backup_enabled: bool = True
     quantum_validation: bool = True
     consciousness_sync: bool = True
 
 
 class DocSyncSetup:
-    """
-    Classe principal de configuração e execução do DOCSYNC.
+    """Classe principal de configuração e execução do DOCSYNC.
     Implementa monitoramento quântico e integração com consciência.
     """
 
-    def __init__(self, config_path: str = "config.yaml"):
+    def __init__(self, config_path: str = "config.yaml") -> None:
         self.config_path = config_path
         self.base_path = Path(os.getcwd())
-        self.directories: Dict[str, DirConfig] = {}
+        self.directories: dict[str, DirConfig] = {}
         self.observer = Observer()
         self.logger = logger.bind(component="DocSyncSetup")
 
@@ -100,11 +97,12 @@ class DocSyncSetup:
                 )
 
             self.logger.info(
-                "configuração_carregada", num_directories=len(self.directories)
+                "configuração_carregada",
+                num_directories=len(self.directories),
             )
 
         except Exception as e:
-            self.logger.error("erro_carregando_config", error=str(e))
+            self.logger.exception("erro_carregando_config", error=str(e))
             raise
 
     async def setup_directory_structure(self) -> None:
@@ -132,8 +130,10 @@ class DocSyncSetup:
             # Implementar validação quântica aqui
             self.logger.info("validação_quântica_ok", path=str(dir_config.path))
         except Exception as e:
-            self.logger.error(
-                "erro_validação_quântica", path=str(dir_config.path), error=str(e)
+            self.logger.exception(
+                "erro_validação_quântica",
+                path=str(dir_config.path),
+                error=str(e),
             )
 
     async def _sync_consciousness(self, dir_config: DirConfig) -> None:
@@ -142,8 +142,10 @@ class DocSyncSetup:
             # Implementar sincronização com consciência
             self.logger.info("consciência_sincronizada", path=str(dir_config.path))
         except Exception as e:
-            self.logger.error(
-                "erro_sync_consciência", path=str(dir_config.path), error=str(e)
+            self.logger.exception(
+                "erro_sync_consciência",
+                path=str(dir_config.path),
+                error=str(e),
             )
 
     def setup_monitoring(self) -> None:
@@ -154,7 +156,8 @@ class DocSyncSetup:
 
         self.observer.start()
         self.logger.info(
-            "monitoramento_iniciado", num_directories=len(self.directories)
+            "monitoramento_iniciado",
+            num_directories=len(self.directories),
         )
 
     def setup_backup(self) -> None:
@@ -174,7 +177,7 @@ class DocSyncSetup:
 class DocSyncEventHandler(FileSystemEventHandler):
     """Handler para eventos do sistema de arquivos."""
 
-    def __init__(self, dir_config: DirConfig):
+    def __init__(self, dir_config: DirConfig) -> None:
         self.dir_config = dir_config
         self.logger = logger.bind(component="DocSyncEventHandler")
 
@@ -184,13 +187,15 @@ class DocSyncEventHandler(FileSystemEventHandler):
             return
 
         self.logger.info(
-            "evento_detectado", event_type=event.event_type, path=event.src_path
+            "evento_detectado",
+            event_type=event.event_type,
+            path=event.src_path,
         )
 
         # Implementar processamento de eventos aqui
 
 
-async def main():
+async def main() -> None:
     """Função principal de execução."""
     setup = DocSyncSetup()
     await setup.setup_directory_structure()

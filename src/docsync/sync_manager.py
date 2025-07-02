@@ -1,5 +1,4 @@
-"""
-Módulo de gerenciamento de sincronização do DocSync.
+"""Módulo de gerenciamento de sincronização do DocSync.
 
 Implementa a lógica de sincronização bidirecional entre GUARDRIVE_DOCS e AREA_DEV,
 incluindo monitoramento de arquivos, controle de versão e validação de segurança.
@@ -14,7 +13,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, Optional, Set
+from typing import Optional
 
 import aiofiles
 import aiogit
@@ -55,7 +54,7 @@ class FileMetadata:
 class DocumentHandler:
     """Manipulador de documentos específico por tipo."""
 
-    def __init__(self, config: Dict):
+    def __init__(self, config: dict) -> None:
         self.config = config
         self.supported_extensions = config.get("file_extensions", [])
         self.preserve_metadata = config.get("preserve_metadata", True)
@@ -93,7 +92,7 @@ class DocumentHandler:
             return True
 
         except Exception as e:
-            logger.error(f"Erro ao processar arquivo {file_path}: {e}")
+            logger.exception(f"Erro ao processar arquivo {file_path}: {e}")
             return False
 
     def _is_supported_file(self, file_path: Path) -> bool:
@@ -111,11 +110,11 @@ class DocumentHandler:
         # Implementar conversão de formato se necessário
         return target
 
-    async def _extract_metadata(self, file_path: Path) -> Dict:
+    async def _extract_metadata(self, file_path: Path) -> dict:
         # Extrair metadados do arquivo
         return {}
 
-    async def _restore_metadata(self, file_path: Path, metadata: Dict) -> None:
+    async def _restore_metadata(self, file_path: Path, metadata: dict) -> None:
         # Restaurar metadados no arquivo
         pass
 
@@ -127,7 +126,7 @@ class DocumentHandler:
 class VersionController:
     """Controlador de versão para documentos."""
 
-    def __init__(self, config: Dict):
+    def __init__(self, config: dict) -> None:
         self.config = config
         self.enabled = config.get("enabled", True)
         self.provider = config.get("provider", "git")
@@ -135,7 +134,8 @@ class VersionController:
         self.backup_interval = config.get("backup_interval", 3600)
         self.retention_days = config.get("retention_days", 30)
         self.commit_template = config.get(
-            "commit_message_template", "doc: {action} - {path}"
+            "commit_message_template",
+            "doc: {action} - {path}",
         )
 
     async def initialize_repo(self, path: Path) -> None:
@@ -148,7 +148,7 @@ class VersionController:
             await repo.init()
             logger.info(f"Repositório inicializado em {path}")
         except Exception as e:
-            logger.error(f"Erro ao inicializar repositório: {e}")
+            logger.exception(f"Erro ao inicializar repositório: {e}")
 
     async def commit_changes(self, path: Path, action: str) -> bool:
         """Registra alterações no controle de versão."""
@@ -162,7 +162,7 @@ class VersionController:
             await repo.commit(message)
             return True
         except Exception as e:
-            logger.error(f"Erro ao commitar alterações: {e}")
+            logger.exception(f"Erro ao commitar alterações: {e}")
             return False
 
     async def create_backup(self, path: Path) -> bool:
@@ -177,29 +177,29 @@ class VersionController:
             await aiofiles.os.copy(path, backup_path)
             return True
         except Exception as e:
-            logger.error(f"Erro ao criar backup: {e}")
+            logger.exception(f"Erro ao criar backup: {e}")
             return False
 
 
 class FileSystemMonitor(FileSystemEventHandler):
     """Monitor de alterações no sistema de arquivos."""
 
-    def __init__(self, sync_manager: "SyncManager"):
+    def __init__(self, sync_manager: "SyncManager") -> None:
         self.sync_manager = sync_manager
         self.observer = Observer()
 
-    def start(self):
+    def start(self) -> None:
         """Inicia monitoramento de diretórios."""
         for path in self.sync_manager.watch_paths:
             self.observer.schedule(self, path, recursive=True)
         self.observer.start()
 
-    def stop(self):
+    def stop(self) -> None:
         """Para monitoramento de diretórios."""
         self.observer.stop()
         self.observer.join()
 
-    def on_modified(self, event):
+    def on_modified(self, event) -> None:
         """Manipula eventos de modificação de arquivo."""
         if event.is_directory:
             return
@@ -209,7 +209,7 @@ class FileSystemMonitor(FileSystemEventHandler):
 class SyncManager:
     """Gerenciador principal de sincronização."""
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config) -> None:
         self.config = config
         self.guardrive_config = config.guardrive
         self.sync_config = config.sync
@@ -230,12 +230,12 @@ class SyncManager:
         self.monitor = FileSystemMonitor(self)
 
         # Cache de metadados
-        self.file_metadata: Dict[Path, FileMetadata] = {}
+        self.file_metadata: dict[Path, FileMetadata] = {}
 
         # Scheduler para sincronização programada
         self.scheduler = asyncio.create_task(self._run_scheduler())
 
-    def _setup_watch_paths(self) -> Set[Path]:
+    def _setup_watch_paths(self) -> set[Path]:
         """Configura caminhos para monitoramento."""
         paths = set()
         base_path = Path(self.guardrive_config.base_path)
@@ -250,7 +250,7 @@ class SyncManager:
 
         return paths
 
-    async def start(self):
+    async def start(self) -> None:
         """Inicia o gerenciador de sincronização."""
         logger.info("Iniciando gerenciador de sincronização...")
 
@@ -267,7 +267,7 @@ class SyncManager:
 
         logger.info("Gerenciador de sincronização iniciado com sucesso")
 
-    async def stop(self):
+    async def stop(self) -> None:
         """Para o gerenciador de sincronização."""
         logger.info("Parando gerenciador de sincronização...")
 
@@ -278,7 +278,7 @@ class SyncManager:
 
         logger.info("Gerenciador de sincronização parado com sucesso")
 
-    async def sync_all(self):
+    async def sync_all(self) -> None:
         """Realiza sincronização completa dos diretórios."""
         logger.info("Iniciando sincronização completa...")
 
@@ -293,9 +293,9 @@ class SyncManager:
             logger.info("Sincronização completa finalizada com sucesso")
 
         except Exception as e:
-            logger.error(f"Erro durante sincronização completa: {e}")
+            logger.exception(f"Erro durante sincronização completa: {e}")
 
-    async def handle_file_change(self, file_path: Path):
+    async def handle_file_change(self, file_path: Path) -> None:
         """Manipula alteração em arquivo."""
         try:
             # Verifica se arquivo deve ser ignorado
@@ -313,7 +313,8 @@ class SyncManager:
 
             # Processa arquivo
             handler = self.doc_handlers.get(
-                mapping.doc_type.value, self.doc_handlers["default"]
+                mapping.doc_type.value,
+                self.doc_handlers["default"],
             )
 
             # Cria backup se necessário
@@ -334,7 +335,7 @@ class SyncManager:
                 logger.info(f"Arquivo {file_path} sincronizado com sucesso")
 
         except Exception as e:
-            logger.error(f"Erro ao processar alteração em {file_path}: {e}")
+            logger.exception(f"Erro ao processar alteração em {file_path}: {e}")
 
     def _should_ignore(self, file_path: Path) -> bool:
         """Verifica se arquivo deve ser ignorado."""
@@ -345,9 +346,7 @@ class SyncManager:
         """Encontra mapeamento correspondente para um arquivo."""
         str_path = str(file_path)
         for mapping in self.guardrive_config.path_mappings:
-            if str_path.startswith(mapping.source_path) or str_path.startswith(
-                mapping.target_path
-            ):
+            if str_path.startswith((mapping.source_path, mapping.target_path)):
                 return mapping
         return None
 
@@ -356,11 +355,10 @@ class SyncManager:
         if str(source_path).startswith(mapping.source_path):
             relative_path = source_path.relative_to(mapping.source_path)
             return Path(mapping.target_path) / relative_path
-        else:
-            relative_path = source_path.relative_to(mapping.target_path)
-            return Path(mapping.source_path) / relative_path
+        relative_path = source_path.relative_to(mapping.target_path)
+        return Path(mapping.source_path) / relative_path
 
-    async def _update_metadata(self, file_path: Path):
+    async def _update_metadata(self, file_path: Path) -> None:
         """Atualiza metadados de arquivo."""
         try:
             async with aiofiles.open(file_path, "rb") as f:
@@ -380,19 +378,17 @@ class SyncManager:
             )
 
         except Exception as e:
-            logger.error(f"Erro ao atualizar metadados de {file_path}: {e}")
+            logger.exception(f"Erro ao atualizar metadados de {file_path}: {e}")
 
     def _get_doc_type(self, file_path: Path) -> DocumentType:
         """Determina tipo de documento baseado no caminho."""
         str_path = str(file_path)
         for mapping in self.guardrive_config.path_mappings:
-            if str_path.startswith(mapping.source_path) or str_path.startswith(
-                mapping.target_path
-            ):
+            if str_path.startswith((mapping.source_path, mapping.target_path)):
                 return mapping.doc_type
         return DocumentType.TECHNICAL
 
-    async def _run_scheduler(self):
+    async def _run_scheduler(self) -> None:
         """Executa scheduler de sincronização programada."""
         try:
             while True:
@@ -412,11 +408,14 @@ class SyncManager:
         except asyncio.CancelledError:
             logger.info("Scheduler de sincronização cancelado")
         except Exception as e:
-            logger.error(f"Erro no scheduler de sincronização: {e}")
+            logger.exception(f"Erro no scheduler de sincronização: {e}")
 
     async def _sync_directory_pair(
-        self, source: Path, target: Path, doc_type: DocumentType
-    ):
+        self,
+        source: Path,
+        target: Path,
+        doc_type: DocumentType,
+    ) -> None:
         """Sincroniza par de diretórios."""
         try:
             # Cria diretório de destino se necessário
@@ -435,7 +434,8 @@ class SyncManager:
 
                     # Processa arquivo
                     handler = self.doc_handlers.get(
-                        doc_type.value, self.doc_handlers["default"]
+                        doc_type.value,
+                        self.doc_handlers["default"],
                     )
                     await handler.process_file(source_file, target_file)
 
@@ -446,4 +446,4 @@ class SyncManager:
                     await self._sync_directory_pair(source_dir, target_dir, doc_type)
 
         except Exception as e:
-            logger.error(f"Erro ao sincronizar diretórios {source} -> {target}: {e}")
+            logger.exception(f"Erro ao sincronizar diretórios {source} -> {target}: {e}")

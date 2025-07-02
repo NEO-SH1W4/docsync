@@ -35,7 +35,7 @@ def main():
                     result = monitor.process_file_event("modified", file_path)
                     logger.info(f"Resultado: {result}")
                 except Exception as e:
-                    logger.error(f"Erro ao processar {file_path}: {e}")
+                    logger.exception(f"Erro ao processar {file_path}: {e}")
 
         # Exibir estatísticas
         logger.info("\nEstatísticas de Monitoramento:")
@@ -49,7 +49,7 @@ def main():
         logger.info(f"Tipos de documento: {learning_stats.get('document_types', {})}")
 
     except Exception as e:
-        logger.error(f"Erro durante execução: {e}")
+        logger.exception(f"Erro durante execução: {e}")
 
 
 if __name__ == "__main__":

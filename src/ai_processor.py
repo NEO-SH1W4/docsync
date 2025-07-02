@@ -1,8 +1,8 @@
-"""
-Processador de documentação com recursos de IA para o sistema DOCSYNC.
+"""Processador de documentação com recursos de IA para o sistema DOCSYNC.
 Fornece análise, sugestões e melhorias para documentação técnica.
 """
 
+import contextlib
 import json
 import logging
 import os
@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 from threading import Lock
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Optional
 
 import yaml
 from watchdog.events import FileModifiedEvent, FileSystemEventHandler
@@ -21,14 +21,14 @@ from watchdog.observers import Observer
 class DocumentProcessor:
     """Processador principal de documentos com recursos de IA."""
 
-    def __init__(self, config_path: Optional[Path] = None):
+    def __init__(self, config_path: Optional[Path] = None) -> None:
         """Inicializa o processador de documentos."""
         self.logger = logging.getLogger(__name__)
         self.config = self._load_config(config_path)
         self.cache = {}
         self.history = []
 
-    def _load_config(self, config_path: Optional[Path]) -> Dict:
+    def _load_config(self, config_path: Optional[Path]) -> dict:
         """Carrega configurações do processador."""
         default_config = {
             "analysis_enabled": True,
@@ -45,7 +45,7 @@ class DocumentProcessor:
                 return {**default_config, **custom_config}
         return default_config
 
-    def analyze_document(self, doc_path: Path) -> Dict:
+    def analyze_document(self, doc_path: Path) -> dict:
         """Analisa documento e fornece insights."""
         self.logger.info(f"Analisando documento: {doc_path}")
 
@@ -72,10 +72,10 @@ class DocumentProcessor:
             return analysis
 
         except Exception as e:
-            self.logger.error(f"Erro ao analisar documento: {e}")
+            self.logger.exception(f"Erro ao analisar documento: {e}")
             raise
 
-    def _extract_metadata(self, content: str) -> Tuple[Dict, str]:
+    def _extract_metadata(self, content: str) -> tuple[dict, str]:
         """Extrai e valida metadados do documento."""
         try:
             parts = content.split("---")
@@ -89,10 +89,10 @@ class DocumentProcessor:
             return metadata, body
 
         except Exception as e:
-            self.logger.error(f"Erro ao extrair metadados: {e}")
+            self.logger.exception(f"Erro ao extrair metadados: {e}")
             return {}, content
 
-    def _analyze_stats(self, content: str) -> Dict:
+    def _analyze_stats(self, content: str) -> dict:
         """Analisa estatísticas do documento."""
         words = content.split()
         sentences = content.split(".")
@@ -105,7 +105,7 @@ class DocumentProcessor:
             "code_blocks": content.count("```"),
         }
 
-    def _assess_quality(self, content: str) -> Dict:
+    def _assess_quality(self, content: str) -> dict:
         """Avalia qualidade do documento."""
         quality_metrics = {
             "completeness": self._check_completeness(content),
@@ -163,11 +163,11 @@ class DocumentProcessor:
             if len(lines) > 1:
                 indentation_consistent = (
                     len(
-                        set(
+                        {
                             len(line) - len(line.lstrip())
                             for line in lines
                             if line.strip()
-                        )
+                        },
                     )
                     <= 2
                 )
@@ -179,7 +179,7 @@ class DocumentProcessor:
 
         return sum(metrics) / len(metrics) if metrics else 1.0
 
-    def _generate_suggestions(self, content: str, metadata: Dict) -> List[Dict]:
+    def _generate_suggestions(self, content: str, metadata: dict) -> list[dict]:
         """Gera sugestões de melhoria para o documento."""
         suggestions = []
 
@@ -191,7 +191,7 @@ class DocumentProcessor:
                     "severity": "high",
                     "message": "Adicionar título ao documento",
                     "context": "Metadados incompletos",
-                }
+                },
             )
 
         if not metadata.get("version"):
@@ -201,7 +201,7 @@ class DocumentProcessor:
                     "severity": "medium",
                     "message": "Especificar versão do documento",
                     "context": "Controle de versão",
-                }
+                },
             )
 
         # Analisar estrutura
@@ -212,7 +212,7 @@ class DocumentProcessor:
                     "severity": "high",
                     "message": "Iniciar documento com título principal (h1)",
                     "context": "Estrutura do documento",
-                }
+                },
             )
 
         # Verificar seções comuns
@@ -230,7 +230,7 @@ class DocumentProcessor:
                     "severity": "medium",
                     "message": f'Considerar adicionar seções: {", ".join(missing_sections)}',
                     "context": "Completude do documento",
-                }
+                },
             )
 
         # Analisar blocos de código
@@ -242,12 +242,12 @@ class DocumentProcessor:
                     "severity": "medium",
                     "message": "Adicionar seção de exemplos para contextualizar blocos de código",
                     "context": "Exemplos e código",
-                }
+                },
             )
 
         return suggestions[: self.config["max_suggestions"]]
 
-    def process_directory(self, dir_path: Path) -> Dict[str, Dict]:
+    def process_directory(self, dir_path: Path) -> dict[str, dict]:
         """Processa todos os documentos em um diretório."""
         self.logger.info(f"Processando diretório: {dir_path}")
         results = {}
@@ -257,16 +257,16 @@ class DocumentProcessor:
                 try:
                     results[str(doc_path)] = self.analyze_document(doc_path)
                 except Exception as e:
-                    self.logger.error(f"Erro ao processar {doc_path}: {e}")
+                    self.logger.exception(f"Erro ao processar {doc_path}: {e}")
                     results[str(doc_path)] = {"error": str(e)}
 
             return results
 
         except Exception as e:
-            self.logger.error(f"Erro ao processar diretório: {e}")
+            self.logger.exception(f"Erro ao processar diretório: {e}")
             raise
 
-    def export_analysis(self, analysis: Dict, output_path: Path):
+    def export_analysis(self, analysis: dict, output_path: Path) -> None:
         """Exporta resultados da análise em formato estruturado."""
         try:
             output = {
@@ -281,7 +281,7 @@ class DocumentProcessor:
             self.logger.info(f"Análise exportada para: {output_path}")
 
         except Exception as e:
-            self.logger.error(f"Erro ao exportar análise: {e}")
+            self.logger.exception(f"Erro ao exportar análise: {e}")
             raise
 
 
@@ -298,14 +298,13 @@ if __name__ == "__main__":
 
     if test_doc.exists():
         analysis = processor.analyze_document(test_doc)
-        print(json.dumps(analysis, indent=2))
 
 
 class DocProcessor:
     """Processes documents with caching and metadata extraction."""
 
-    def __init__(self, cache_ttl: int = 3600):
-        self.cache: Dict[str, Tuple[float, dict]] = {}  # path -> (timestamp, data)
+    def __init__(self, cache_ttl: int = 3600) -> None:
+        self.cache: dict[str, tuple[float, dict]] = {}  # path -> (timestamp, data)
         self.cache_ttl = cache_ttl
         self.cache_lock = Lock()
         self.stats = {
@@ -346,11 +345,12 @@ class DocProcessor:
 
         except Exception as e:
             self.stats["errors"] += 1
-            raise Exception(f"Error processing {file_path}: {str(e)}")
+            msg = f"Error processing {file_path}: {e!s}"
+            raise Exception(msg)
 
     def _process_markdown(self, file_path: str) -> dict:
         """Extract metadata, headers and code blocks from markdown."""
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
 
         # Extract metadata (YAML frontmatter)
@@ -358,10 +358,8 @@ class DocProcessor:
         if content.startswith("---"):
             parts = content.split("---", 2)[1:]
             if len(parts) >= 1:
-                try:
+                with contextlib.suppress(Exception):
                     metadata = yaml.safe_load(parts[0])
-                except Exception:
-                    pass
 
         # Extract headers
         headers = []
@@ -388,7 +386,7 @@ class DocProcessor:
 
     def _process_yaml(self, file_path: str) -> dict:
         """Process YAML files with structure analysis."""
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = yaml.safe_load(f)
 
         def analyze_structure(data, path="root"):
@@ -400,7 +398,7 @@ class DocProcessor:
                         k: analyze_structure(v, f"{path}.{k}") for k, v in data.items()
                     },
                 }
-            elif isinstance(data, list):
+            if isinstance(data, list):
                 return {
                     "type": "list",
                     "length": len(data),
@@ -408,8 +406,7 @@ class DocProcessor:
                         analyze_structure(data[0], f"{path}[0]") if data else None
                     ),
                 }
-            else:
-                return {"type": type(data).__name__, "path": path}
+            return {"type": type(data).__name__, "path": path}
 
         return {
             "content": content,
@@ -426,10 +423,10 @@ class DocProcessor:
 class AIEnhancedMonitor(FileSystemEventHandler):
     """Intelligent file monitoring with pattern detection."""
 
-    def __init__(self, processor: DocProcessor, patterns: Set[str] = None):
+    def __init__(self, processor: DocProcessor, patterns: Optional[set[str]] = None) -> None:
         self.processor = processor
         self.patterns = patterns or {".md", ".yaml", ".yml"}
-        self.file_history: Dict[str, List[float]] = {}
+        self.file_history: dict[str, list[float]] = {}
         self.stats = {
             "events_processed": 0,
             "files_monitored": 0,
@@ -437,7 +434,7 @@ class AIEnhancedMonitor(FileSystemEventHandler):
         }
         self._lock = Lock()
 
-    def on_modified(self, event: FileModifiedEvent):
+    def on_modified(self, event: FileModifiedEvent) -> None:
         """Handle file modification events."""
         if not event.is_directory and self._should_process(event.src_path):
             with self._lock:
@@ -462,10 +459,8 @@ class AIEnhancedMonitor(FileSystemEventHandler):
                     self.stats["patterns_detected"] += 1
 
                 # Process file
-                try:
+                with contextlib.suppress(Exception):
                     self.processor.process_file(path)
-                except Exception as e:
-                    print(f"Error processing {path}: {str(e)}")
 
     def _should_process(self, path: str) -> bool:
         """Check if file should be processed based on extension."""
@@ -480,8 +475,9 @@ class AIEnhancedMonitor(FileSystemEventHandler):
 
 
 def setup_monitoring(
-    path: str, patterns: Set[str] = None
-) -> Tuple[Observer, AIEnhancedMonitor]:
+    path: str,
+    patterns: Optional[set[str]] = None,
+) -> tuple[Observer, AIEnhancedMonitor]:
     """Set up file monitoring for a directory."""
     processor = DocProcessor()
     monitor = AIEnhancedMonitor(processor, patterns)

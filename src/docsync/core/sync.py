@@ -1,6 +1,4 @@
-"""
-Implementação principal do DocSync.
-"""
+"""Implementação principal do DocSync."""
 
 import logging
 from pathlib import Path
@@ -9,7 +7,7 @@ from typing import Optional, Union
 from rich.console import Console
 from rich.logging import RichHandler
 
-from ..utils.config import load_config
+from docsync.utils.config import load_config
 
 
 class DocSync:
@@ -19,9 +17,8 @@ class DocSync:
         self,
         base_path: Union[str, Path],
         config_path: Optional[Union[str, Path]] = None,
-    ):
-        """
-        Inicializa o DocSync.
+    ) -> None:
+        """Inicializa o DocSync.
 
         Args:
             base_path: Diretório base da documentação

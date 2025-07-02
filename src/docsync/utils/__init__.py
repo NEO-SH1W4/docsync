@@ -1,5 +1,4 @@
-"""
-Utility modules for the DOCSYNC package providing configuration, filtering,
+"""Utility modules for the DOCSYNC package providing configuration, filtering,
 and registry functionality.
 """
 
@@ -22,11 +21,8 @@ from .filters import (
 )
 
 __all__ = [
-    "load_config",
-    "FilterRegistry",
-    "register_filter",
-    "get_registered_filters",
     "FILTERS",
+    "FilterRegistry",
     "format_date",
     "format_esg_metric",
     "format_metric",
@@ -34,5 +30,8 @@ __all__ = [
     "format_status",
     "format_trend",
     "format_version",
+    "get_registered_filters",
+    "load_config",
+    "register_filter",
     "to_percentage",
 ]

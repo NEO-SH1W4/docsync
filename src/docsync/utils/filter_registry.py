@@ -1,14 +1,12 @@
-"""
-Registro central de filtros para templates.
-"""
+"""Registro central de filtros para templates."""
 
 import logging
 from datetime import datetime
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Optional
 
 from jinja2 import Environment
 
-from ..exceptions import FilterError
+from docsync.exceptions import FilterError
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +14,9 @@ logger = logging.getLogger(__name__)
 class FilterRegistry:
     """Gerenciador de filtros para templates."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Inicializa registro de filtros."""
-        self._filters: Dict[str, Callable] = {}
+        self._filters: dict[str, Callable] = {}
         self._register_default_filters()
 
     def _register_default_filters(self) -> None:
@@ -33,8 +31,7 @@ class FilterRegistry:
         self.register("format_priority", self.format_priority)
 
     def register(self, name: str, filter_func: Callable) -> None:
-        """
-        Registra um novo filtro.
+        """Registra um novo filtro.
 
         Args:
             name: Nome do filtro
@@ -47,8 +44,7 @@ class FilterRegistry:
         logger.debug(f"Filtro registrado: {name}")
 
     def setup_environment(self, env: Environment) -> None:
-        """
-        Configura ambiente Jinja2 com todos os filtros.
+        """Configura ambiente Jinja2 com todos os filtros.
 
         Args:
             env: Ambiente Jinja2
@@ -57,12 +53,12 @@ class FilterRegistry:
             for name, filter_func in self._filters.items():
                 env.filters[name] = filter_func
         except Exception as e:
-            logger.error(f"Erro ao configurar filtros: {e}")
-            raise FilterError(f"Falha no registro de filtros: {e}")
+            logger.exception(f"Erro ao configurar filtros: {e}")
+            msg = f"Falha no registro de filtros: {e}"
+            raise FilterError(msg)
 
     def get_filter(self, name: str) -> Optional[Callable]:
-        """
-        Obtém função de filtro por nome.
+        """Obtém função de filtro por nome.
 
         Args:
             name: Nome do filtro
@@ -138,7 +134,7 @@ class FilterRegistry:
         """Formata tendência com seta."""
         if value > previous:
             return "↗️ Aumento"
-        elif value < previous:
+        if value < previous:
             return "↘️ Redução"
         return "➡️ Estável"
 

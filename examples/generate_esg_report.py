@@ -34,7 +34,7 @@ def generate_esg_data():
                 "unit": "ton",
                 "target": "100 ton",
                 "status": "at_risk",
-                "trend": "↗️"
+                "trend": "↗️",
             },
             {
                 "category": "ambiental",
@@ -43,7 +43,7 @@ def generate_esg_data():
                 "unit": "kWh",
                 "target": "400 kWh",
                 "status": "in_progress",
-                "trend": "➡️"
+                "trend": "➡️",
             },
             {
                 "category": "social",
@@ -52,39 +52,39 @@ def generate_esg_data():
                 "unit": "%",
                 "target": "90%",
                 "status": "on_track",
-                "trend": "↗️"
-            }
+                "trend": "↗️",
+            },
         ],
         "objectives": [
             {
                 "title": "Redução de Emissões",
                 "description": "Reduzir emissões de CO2 em 20% até 2024",
                 "progress": 65,
-                "status": "in_progress"
+                "status": "in_progress",
             },
             {
                 "title": "Eficiência Energética",
                 "description": "Implementar medidas de economia de energia",
                 "progress": 80,
-                "status": "on_track"
-            }
+                "status": "on_track",
+            },
         ],
         "analysis": {
             "Impacto Ambiental": {
                 "summary": "Análise detalhada das iniciativas ambientais.",
                 "key_points": [
                     "Redução significativa no consumo de energia",
-                    "Implementação de programa de reciclagem"
+                    "Implementação de programa de reciclagem",
                 ],
                 "challenges": [
                     "Aumento nas emissões de CO2 devido ao crescimento",
-                    "Adaptação a novas regulamentações"
+                    "Adaptação a novas regulamentações",
                 ],
                 "opportunities": [
                     "Investimento em energia renovável",
-                    "Otimização da cadeia logística"
-                ]
-            }
+                    "Otimização da cadeia logística",
+                ],
+            },
         },
         "recommendations": [
             {
@@ -92,16 +92,16 @@ def generate_esg_data():
                 "description": "Implementar sistema de monitoramento.",
                 "priority": "Alta",
                 "impact": "Significativo",
-                "timeline": "Q2 2024"
+                "timeline": "Q2 2024",
             },
             {
                 "title": "Programa de Compensação",
                 "description": "Desenvolver programa de compensação de carbono.",
                 "priority": "Média",
                 "impact": "Moderado",
-                "timeline": "Q3 2024"
-            }
-        ]
+                "timeline": "Q3 2024",
+            },
+        ],
     }
 
 
@@ -115,30 +115,28 @@ def main():
         output_path.mkdir(exist_ok=True)
 
         # Apresenta cabeçalho
-        console.print(Panel.fit(
-            "🌿 Gerador de Relatório ESG - GUARDRIVE",
-            style="green"
-        ))
+        console.print(
+            Panel.fit("🌿 Gerador de Relatório ESG - GUARDRIVE", style="green"),
+        )
 
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
             # Inicializa DocumentSynchronizer
             task = progress.add_task(
-                "Inicializando Document Synchronizer...", total=None
+                "Inicializando Document Synchronizer...",
+                total=None,
             )
             doc_sync = DocumentSynchronizer(
                 base_path=base_path,
-                templates_path=templates_path
+                templates_path=templates_path,
             )
             progress.update(task, completed=True)
 
             # Prepara dados
-            task = progress.add_task(
-                "Preparando dados do relatório...", total=None
-            )
+            task = progress.add_task("Preparando dados do relatório...", total=None)
             report_data = generate_esg_data()
             progress.update(task, completed=True)
 
@@ -153,14 +151,14 @@ def main():
                 "recommendations": report_data["recommendations"],
                 "overview": "Relatório trimestral de métricas ESG.",
                 "version": "1.0.0",
-                "generated_at": datetime.now().strftime("%d/%m/%Y %H:%M")
+                "generated_at": datetime.now().strftime("%d/%m/%Y %H:%M"),
             }
 
             output_file = output_path / "esg_q1_2024.md"
             doc_sync.generate_report(
                 template_name="guardrive/esg_report",
                 output_path=output_file,
-                data=report_config
+                data=report_config,
             )
             progress.update(task, completed=True)
 
@@ -169,13 +167,12 @@ def main():
         console.print(f"\n📝 Arquivo gerado: {output_file}", style="blue")
 
     except DocSyncError as e:
-        console.print(f"\n❌ Erro ao gerar relatório: {str(e)}", style="red")
+        console.print(f"\n❌ Erro ao gerar relatório: {e!s}", style="red")
         sys.exit(1)
     except Exception as e:
-        console.print(f"\n❌ Erro inesperado: {str(e)}", style="red")
+        console.print(f"\n❌ Erro inesperado: {e!s}", style="red")
         sys.exit(1)
 
 
 if __name__ == "__main__":
     main()
-

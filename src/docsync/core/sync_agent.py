@@ -4,7 +4,7 @@ import logging
 from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 
 class SyncAgentState(Enum):
@@ -35,9 +35,9 @@ class SyncAgent(ABC):
         self,
         agent_id: str,
         workspace_path: Path,
-        capabilities: Optional[Dict[SyncAgentCapability, bool]] = None,
-        config: Optional[Dict[str, Any]] = None,
-    ):
+        capabilities: Optional[dict[SyncAgentCapability, bool]] = None,
+        config: Optional[dict[str, Any]] = None,
+    ) -> None:
         """Inicializa um agente de sincronização.
 
         Args:
@@ -48,7 +48,7 @@ class SyncAgent(ABC):
         """
         self.agent_id = agent_id
         self.workspace_path = Path(workspace_path)
-        self.capabilities = capabilities or {cap: False for cap in SyncAgentCapability}
+        self.capabilities = capabilities or dict.fromkeys(SyncAgentCapability, False)
         self.config = config or {}
         self.state = SyncAgentState.IDLE
         self.logger = logging.getLogger(f"docsync.agent.{agent_id}")
@@ -57,7 +57,7 @@ class SyncAgent(ABC):
         self.workspace_path.mkdir(parents=True, exist_ok=True)
 
     @abstractmethod
-    async def sync(self, doc_path: Path) -> Dict[str, Any]:
+    async def sync(self, doc_path: Path) -> dict[str, Any]:
         """Sincroniza um documento.
 
         Args:
@@ -69,8 +69,10 @@ class SyncAgent(ABC):
 
     @abstractmethod
     async def resolve_conflict(
-        self, doc_path: Path, conflicts: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self,
+        doc_path: Path,
+        conflicts: dict[str, Any],
+    ) -> dict[str, Any]:
         """Resolve conflitos de sincronização.
 
         Args:
@@ -82,7 +84,7 @@ class SyncAgent(ABC):
         """
 
     @abstractmethod
-    async def check_version(self, doc_path: Path) -> Dict[str, Any]:
+    async def check_version(self, doc_path: Path) -> dict[str, Any]:
         """Verifica versão de um documento.
 
         Args:
@@ -92,7 +94,7 @@ class SyncAgent(ABC):
             Dict com informações de versão
         """
 
-    async def get_state(self) -> Dict[str, Any]:
+    async def get_state(self) -> dict[str, Any]:
         """Retorna estado atual do agente."""
         return {
             "agent_id": self.agent_id,
@@ -101,7 +103,7 @@ class SyncAgent(ABC):
             "workspace": str(self.workspace_path),
         }
 
-    async def set_state(self, state: SyncAgentState):
+    async def set_state(self, state: SyncAgentState) -> None:
         """Atualiza estado do agente."""
         self.state = state
         self.logger.info("Agent %s state changed to %s", self.agent_id, state.value)

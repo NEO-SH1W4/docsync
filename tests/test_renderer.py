@@ -3,7 +3,6 @@ Testes de integração para o sistema de renderização de relatórios.
 """
 
 import json
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -68,7 +67,7 @@ def sample_data():
                 "status": "in_progress",
                 "responsible": "John Doe",
                 "description": "Reduzir emissões em 20%",
-            }
+            },
         ],
     }
 
@@ -105,7 +104,7 @@ def test_json_rendering(templates_dir, output_dir, renderer, sample_data):
         ]
       }
     }
-    """
+    """,
     )
 
     # Renderiza
@@ -130,19 +129,19 @@ def test_excel_rendering(templates_dir, output_dir, renderer, sample_data):
     [Overview]
     Title|Period|Version
     {{ report.title }}|{{ report.period }}|{{ report.version }}
-    
+
     [Metrics]
     Name|Value|Target|Status|Trend
     {% for metric in metrics %}
     {{ metric.name }}|{{ metric.value }}|{{ metric.target }}|{{ metric.status }}|{{ metric.trend }}
     {% endfor %}
-    
+
     [Objectives]
     Title|Progress|Status|Responsible
     {% for obj in objectives %}
     {{ obj.title }}|{{ obj.progress }}|{{ obj.status }}|{{ obj.responsible }}
     {% endfor %}
-    """
+    """,
     )
 
     # Renderiza
@@ -169,11 +168,11 @@ def test_latex_rendering(templates_dir, output_dir, renderer, sample_data):
         r"""
     \documentclass{article}
     \begin{document}
-    
+
     \title{ {{- report.title -}} }
     \date{ {{- report.generated_at -}} }
     \maketitle
-    
+
     \section{Métricas}
     {% for metric in metrics %}
     \subsection{ {{- metric.name -}} }
@@ -183,9 +182,9 @@ def test_latex_rendering(templates_dir, output_dir, renderer, sample_data):
         \item Status: {{ metric.status | format_status }}
     \end{itemize}
     {% endfor %}
-    
+
     \end{document}
-    """
+    """,
     )
 
     # Renderiza
@@ -224,7 +223,7 @@ def test_invalid_json_template(templates_dir, output_dir, renderer, sample_data)
         ],
       }  {# Erro: vírgula extra #}
     }
-    """
+    """,
     )
 
     with pytest.raises(RenderError):
@@ -246,7 +245,7 @@ def test_excel_data_validation(templates_dir, output_dir, renderer, sample_data)
     {% for metric in metrics %}
     {{ metric.name }}|{{ metric.value }}
     {% endfor %}
-    """
+    """,
     )
 
     # Renderiza deve falhar graciosamente
@@ -274,12 +273,12 @@ def test_format_handlers(templates_dir, output_dir, renderer, sample_data):
         """
     Relatório: {{ report.title }}
     Período: {{ report.period }}
-    
+
     Métricas:
     {% for metric in metrics %}
     - {{ metric.name }}: {{ metric.value }} {{ metric.unit }}
     {% endfor %}
-    """
+    """,
     )
 
     # Testa novo formato

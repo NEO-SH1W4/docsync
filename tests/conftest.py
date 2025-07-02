@@ -5,12 +5,10 @@ Follows pytest best practices with comprehensive test infrastructure.
 """
 
 import asyncio
-import os
-import shutil
-import tempfile
 import logging
+import tempfile
+from collections.abc import Generator
 from pathlib import Path
-from typing import AsyncGenerator, Dict, Generator, Any, List, Optional, Callable
 from unittest.mock import AsyncMock, Mock
 
 import pytest
@@ -111,14 +109,14 @@ def sample_files(temp_dir: Path, sample_markdown: str) -> dict:
         "docs": temp_dir / "docs",
         "config": temp_dir / "config.yaml",
     }
-    
+
     # Create directories
     files["docs"].mkdir(exist_ok=True)
-    
+
     # Create files
     files["readme"].write_text(sample_markdown)
     (files["docs"] / "test.md").write_text(sample_markdown)
-    
+
     return files
 
 
@@ -186,19 +184,19 @@ def test_logger():
     """Create a test logger instance."""
     logger = logging.getLogger("docsync_test")
     logger.setLevel(logging.DEBUG)
-    
+
     # Clear existing handlers
     logger.handlers.clear()
-    
+
     # Add console handler
     handler = logging.StreamHandler()
     handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    
+
     return logger
 
 
@@ -209,20 +207,17 @@ pytest_plugins = ["pytest_asyncio"]
 def pytest_configure(config):
     """Configure custom pytest markers."""
     config.addinivalue_line(
-        "markers", "unit: Unit tests that test individual components"
+        "markers",
+        "unit: Unit tests that test individual components",
     )
     config.addinivalue_line(
-        "markers", "integration: Integration tests that test component interactions"
+        "markers",
+        "integration: Integration tests that test component interactions",
     )
     config.addinivalue_line(
-        "markers", "e2e: End-to-end tests that test complete workflows"
+        "markers",
+        "e2e: End-to-end tests that test complete workflows",
     )
-    config.addinivalue_line(
-        "markers", "performance: Performance and load testing"
-    )
-    config.addinivalue_line(
-        "markers", "security: Security and vulnerability testing"
-    )
-    config.addinivalue_line(
-        "markers", "slow: Tests that take longer than 5 seconds"
-    )
+    config.addinivalue_line("markers", "performance: Performance and load testing")
+    config.addinivalue_line("markers", "security: Security and vulnerability testing")
+    config.addinivalue_line("markers", "slow: Tests that take longer than 5 seconds")

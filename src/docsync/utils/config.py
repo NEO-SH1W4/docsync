@@ -1,19 +1,16 @@
-"""
-Utilitários para gerenciamento de configuração.
-"""
+"""Utilitários para gerenciamento de configuração."""
 
 import logging
 from pathlib import Path
-from typing import Dict, Union
+from typing import Union
 
 import yaml
 
 logger = logging.getLogger(__name__)
 
 
-def load_config(config_path: Union[str, Path]) -> Dict:
-    """
-    Carrega configuração de arquivo YAML.
+def load_config(config_path: Union[str, Path]) -> dict:
+    """Carrega configuração de arquivo YAML.
 
     Args:
         config_path: Caminho do arquivo de configuração
@@ -28,15 +25,16 @@ def load_config(config_path: Union[str, Path]) -> Dict:
     config_path = Path(config_path)
 
     if not config_path.exists():
+        msg = f"Arquivo de configuração não encontrado: {config_path}"
         raise FileNotFoundError(
-            f"Arquivo de configuração não encontrado: {config_path}"
+            msg,
         )
 
     try:
-        with open(config_path, "r", encoding="utf-8") as f:
+        with open(config_path, encoding="utf-8") as f:
             config = yaml.safe_load(f)
             logger.debug("Configuração carregada: %s", config_path)
             return config
     except yaml.YAMLError as e:
-        logger.error("Erro ao carregar configuração: %s", e)
+        logger.exception("Erro ao carregar configuração: %s", e)
         raise

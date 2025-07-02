@@ -4,7 +4,7 @@ import logging
 import threading
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Set
+from typing import Optional
 
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from watchdog.observers import Observer
@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 class MonitorConfig:
     """Configuration for file monitoring."""
 
-    paths: List[Path]
-    patterns: List[str] = None
-    ignore_patterns: List[str] = None
+    paths: list[Path]
+    patterns: list[str] = None
+    ignore_patterns: list[str] = None
 
     def __post_init__(self):
         """Convert string paths to Path objects and set defaults."""
@@ -30,19 +30,19 @@ class MonitorConfig:
             "*.md",
         ]  # Default patterns from tests
         self.ignore_patterns = self.ignore_patterns or [
-            "*.tmp"
+            "*.tmp",
         ]  # Default ignore pattern
 
 
 class FileMonitor(FileSystemEventHandler):
     """Monitor file system changes with thread-safe tracking."""
 
-    def __init__(self, config: MonitorConfig):
+    def __init__(self, config: MonitorConfig) -> None:
         """Initialize the monitor with given configuration."""
         super().__init__()
         self.config = config
         self.observer = Observer()
-        self._modified_files: Set[Path] = set()
+        self._modified_files: set[Path] = set()
         self._lock = threading.Lock()
 
     def start(self) -> None:
@@ -56,7 +56,7 @@ class FileMonitor(FileSystemEventHandler):
             self.observer.start()
             logger.info(f"Started monitoring paths: {self.config.paths}")
         except Exception as e:
-            logger.error(f"Failed to start monitoring: {e}")
+            logger.exception(f"Failed to start monitoring: {e}")
             raise
 
     def stop(self) -> None:
@@ -66,7 +66,7 @@ class FileMonitor(FileSystemEventHandler):
             self.observer.join()
             logger.info("Stopped monitoring")
         except Exception as e:
-            logger.error(f"Error stopping monitor: {e}")
+            logger.exception(f"Error stopping monitor: {e}")
             raise
 
     def _should_process_file(self, path: Path) -> bool:
@@ -97,7 +97,7 @@ class FileMonitor(FileSystemEventHandler):
                     self._modified_files.add(path)
                     logger.debug(f"File created: {path}")
 
-    def get_modified_files(self) -> Set[Path]:
+    def get_modified_files(self) -> set[Path]:
         """Get and clear the set of modified files."""
         with self._lock:
             modified = self._modified_files.copy()
@@ -106,7 +106,9 @@ class FileMonitor(FileSystemEventHandler):
 
 
 def create_monitor(
-    paths: List[str], patterns: List[str] = None, ignore_patterns: List[str] = None
+    paths: list[str],
+    patterns: Optional[list[str]] = None,
+    ignore_patterns: Optional[list[str]] = None,
 ) -> FileMonitor:
     """Create and configure a FileMonitor instance.
 
@@ -119,6 +121,8 @@ def create_monitor(
         Configured FileMonitor instance
     """
     config = MonitorConfig(
-        paths=paths, patterns=patterns, ignore_patterns=ignore_patterns
+        paths=paths,
+        patterns=patterns,
+        ignore_patterns=ignore_patterns,
     )
     return FileMonitor(config)

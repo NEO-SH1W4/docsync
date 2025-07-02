@@ -1,10 +1,8 @@
-"""
-Base classes and functions for DocSync system.
-"""
+"""Base classes and functions for DocSync system."""
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 
 from rich.console import Console
 from rich.logging import RichHandler
@@ -30,9 +28,8 @@ class DocSync:
         self,
         base_path: Union[str, Path],
         config_path: Optional[Union[str, Path]] = None,
-    ):
-        """
-        Initialize DocSync system.
+    ) -> None:
+        """Initialize DocSync system.
 
         Args:
             base_path: Base directory for documentation
@@ -63,9 +60,8 @@ class DocumentSynchronizer:
         self,
         base_path: Union[str, Path],
         templates_path: Optional[Union[str, Path]] = None,
-    ):
-        """
-        Initialize document synchronizer.
+    ) -> None:
+        """Initialize document synchronizer.
 
         Args:
             base_path: Base directory for documents
@@ -80,9 +76,8 @@ class DocumentSynchronizer:
         if self.templates_path:
             self.templates_path.mkdir(parents=True, exist_ok=True)
 
-    def sync_document(self, doc_path: Union[str, Path]) -> Dict[str, Any]:
-        """
-        Synchronize a document.
+    def sync_document(self, doc_path: Union[str, Path]) -> dict[str, Any]:
+        """Synchronize a document.
 
         Args:
             doc_path: Path to document
@@ -99,16 +94,16 @@ class DocumentSynchronizer:
             # TODO: Implement actual synchronization
             return {"status": "synced", "path": str(doc_path)}
         except Exception as e:
-            raise DocSyncError(f"Failed to sync document: {e}")
+            msg = f"Failed to sync document: {e}"
+            raise DocSyncError(msg)
 
 
 def generate_esg_report(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     template_path: Union[str, Path],
     output_path: Union[str, Path],
 ) -> Path:
-    """
-    Generate ESG report from data and template.
+    """Generate ESG report from data and template.
 
     Args:
         data: Report data
@@ -135,4 +130,5 @@ def generate_esg_report(
 
         return output_path
     except Exception as e:
-        raise ReportGenerationError(f"Failed to generate ESG report: {e}")
+        msg = f"Failed to generate ESG report: {e}"
+        raise ReportGenerationError(msg)

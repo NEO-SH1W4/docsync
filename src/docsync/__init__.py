@@ -1,5 +1,4 @@
-"""
-DocSync - Documentation synchronization and ESG report generation.
+"""DocSync - Documentation synchronization and ESG report generation.
 
 This package provides tools for:
 - ESG report generation using templates
@@ -23,8 +22,8 @@ from .core import (
 
 __all__ = [
     "DocSync",
-    "DocumentSynchronizer",
     "DocSyncError",
+    "DocumentSynchronizer",
     "ReportGenerationError",
     "TemplateError",
     "generate_esg_report",

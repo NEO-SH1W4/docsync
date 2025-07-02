@@ -1,14 +1,11 @@
 # conftest.py
 import asyncio
 from datetime import datetime
-from pathlib import Path
 
 import pytest
 
 from docsync.integrations.notion import (
-    NotionConfig,
     NotionDatabase,
-    NotionMapping,
     NotionPage,
 )
 

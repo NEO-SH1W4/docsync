@@ -1,14 +1,17 @@
-"""
-Template rendering functionality.
-"""
+"""Template rendering functionality."""
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from ..utils.filters import format_date, format_metric, format_status, to_percentage
+from docsync.utils.filters import (
+    format_date,
+    format_metric,
+    format_status,
+    to_percentage,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -21,10 +24,11 @@ class TemplateRenderer:
     """Handles template rendering with custom filters."""
 
     def __init__(
-        self, templates_dir: Optional[Union[str, Path]] = None, encoding: str = "utf-8"
-    ):
-        """
-        Initialize template renderer.
+        self,
+        templates_dir: Optional[Union[str, Path]] = None,
+        encoding: str = "utf-8",
+    ) -> None:
+        """Initialize template renderer.
 
         Args:
             templates_dir: Optional custom templates directory
@@ -36,7 +40,8 @@ class TemplateRenderer:
             self.templates_dir = Path(__file__).parent
 
         if not self.templates_dir.exists():
-            raise TemplateError(f"Templates directory not found: {self.templates_dir}")
+            msg = f"Templates directory not found: {self.templates_dir}"
+            raise TemplateError(msg)
 
         logger.debug("Initializing template renderer at: %s", self.templates_dir)
 
@@ -57,25 +62,26 @@ class TemplateRenderer:
             logger.info("Template renderer initialized successfully")
 
         except Exception as e:
-            logger.error("Failed to initialize template renderer: %s", e)
-            raise TemplateError(f"Failed to initialize template renderer: {e}")
+            logger.exception("Failed to initialize template renderer: %s", e)
+            msg = f"Failed to initialize template renderer: {e}"
+            raise TemplateError(msg)
 
     def list_templates(self) -> list[str]:
         """List all available templates."""
         try:
             return self.env.list_templates()
         except Exception as e:
-            logger.error("Failed to list templates: %s", e)
-            raise TemplateError(f"Failed to list templates: {e}")
+            logger.exception("Failed to list templates: %s", e)
+            msg = f"Failed to list templates: {e}"
+            raise TemplateError(msg)
 
     def render(
         self,
         template_name: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         output_path: Optional[Union[str, Path]] = None,
     ) -> str:
-        """
-        Render a template with provided data.
+        """Render a template with provided data.
 
         Args:
             template_name: Name of template file
@@ -109,12 +115,12 @@ class TemplateRenderer:
             return rendered
 
         except Exception as e:
-            logger.error("Failed to render template %s: %s", template_name, e)
-            raise TemplateError(f"Failed to render template '{template_name}': {e}")
+            logger.exception("Failed to render template %s: %s", template_name, e)
+            msg = f"Failed to render template '{template_name}': {e}"
+            raise TemplateError(msg)
 
     def validate_template(self, template_name: str) -> bool:
-        """
-        Validate that a template exists and is loadable.
+        """Validate that a template exists and is loadable.
 
         Args:
             template_name: Name of template to validate
@@ -129,5 +135,6 @@ class TemplateRenderer:
             self.env.get_template(template_name)
             return True
         except Exception as e:
-            logger.error("Invalid template %s: %s", template_name, e)
-            raise TemplateError(f"Invalid template '{template_name}': {e}")
+            logger.exception("Invalid template %s: %s", template_name, e)
+            msg = f"Invalid template '{template_name}': {e}"
+            raise TemplateError(msg)

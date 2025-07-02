@@ -2,11 +2,9 @@
 Testes unitários para funcionalidade de geração de relatórios ESG.
 """
 
-import json
-import os
 from datetime import datetime
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from rich.console import Console
@@ -51,7 +49,7 @@ def sample_objectives():
             "description": "Reduzir emissões de CO2 em 20% até 2024",
             "progress": 65,
             "status": "in_progress",
-        }
+        },
     ]
 
 
@@ -64,7 +62,7 @@ def sample_analysis():
             "key_points": ["Redução no consumo de energia"],
             "challenges": ["Aumento nas emissões"],
             "opportunities": ["Energia renovável"],
-        }
+        },
     }
 
 
@@ -78,7 +76,7 @@ def sample_recommendations():
             "priority": "Alta",
             "impact": "Significativo",
             "timeline": "Q2 2024",
-        }
+        },
     ]
 
 
@@ -118,7 +116,7 @@ def test_objectives_structure(sample_objectives):
 
 def test_analysis_structure(sample_analysis):
     """Testa estrutura da análise ESG."""
-    for category, data in sample_analysis.items():
+    for _category, data in sample_analysis.items():
         assert "summary" in data
         assert "key_points" in data
         assert "challenges" in data
@@ -186,7 +184,9 @@ def test_error_handling_invalid_template(mock_doc_sync):
 
     with pytest.raises(DocSyncError) as exc:
         mock_doc_sync.generate_report(
-            template_name="invalid/template", output_path="output/report.md", data={}
+            template_name="invalid/template",
+            output_path="output/report.md",
+            data={},
         )
 
     assert "Template não encontrado" in str(exc.value)
@@ -196,7 +196,7 @@ def test_path_resolution():
     """Testa resolução de caminhos do projeto."""
     base_path = Path(__file__).parent.parent
     templates_path = base_path / "src" / "docsync" / "templates"
-    output_path = base_path / "reports"
+    base_path / "reports"
 
     assert templates_path.exists()
     assert "guardrive" in [p.name for p in templates_path.iterdir()]
@@ -224,7 +224,7 @@ def test_full_report_generation():
                 "target": "100 ton",
                 "status": "at_risk",
                 "trend": "↗️",
-            }
+            },
         ],
         "objectives": [
             {
@@ -232,7 +232,7 @@ def test_full_report_generation():
                 "description": "Reduzir emissões de CO2",
                 "progress": 65,
                 "status": "in_progress",
-            }
+            },
         ],
         "version": "1.0.0",
         "generated_at": datetime.now().strftime("%d/%m/%Y %H:%M"),
@@ -243,7 +243,9 @@ def test_full_report_generation():
     html_path = output_path / "integration_test.html"
 
     assert doc_sync.generate_report(
-        template_name="guardrive/esg_report", output_path=str(md_path), data=config
+        template_name="guardrive/esg_report",
+        output_path=str(md_path),
+        data=config,
     )
 
     assert doc_sync.generate_report(

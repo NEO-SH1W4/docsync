@@ -107,7 +107,7 @@ python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 markers = [
-    "slow: marks tests as slow (deselect with '-m "not slow"')",
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
     "unit: marks tests as unit tests",
 ]
@@ -130,16 +130,78 @@ exclude_lines = [
     "raise NotImplementedError",
     "if 0:",
     "if __name__ == .__main__.:",
-    "class .*\bProtocol\):",
-    "@(abc\.)?abstractmethod",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
 ]
 
-[tool.flake8]
-max-line-length = 88
-extend-ignore = ["E203", "W503"]
-max-complexity = 10
-per-file-ignores = [
-    "__init__.py:F401",
-    "tests/*:S101,S311",
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+
+[tool.ruff.lint]
+# Ruff rules
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "D",   # pydocstyle
+    "UP",  # pyupgrade
+    "YTT", # flake8-2020
+    "ANN", # flake8-annotations
+    "S",   # bandit
+    "BLE", # flake8-blind-except
+    "FBT", # flake8-boolean-trap
+    "B",   # flake8-bugbear
+    "A",   # flake8-builtins
+    "COM", # flake8-commas
+    "C4",  # flake8-comprehensions
+    "DTZ", # flake8-datetimez
+    "T10", # flake8-debugger
+    "EM",  # flake8-errmsg
+    "EXE", # flake8-executable
+    "ISC", # flake8-implicit-str-concat
+    "ICN", # flake8-import-conventions
+    "G",   # flake8-logging-format
+    "INP", # flake8-no-pep420
+    "PIE", # flake8-pie
+    "T20", # flake8-print
+    "PYI", # flake8-pyi
+    "PT",  # flake8-pytest-style
+    "Q",   # flake8-quotes
+    "RSE", # flake8-raise
+    "RET", # flake8-return
+    "SLF", # flake8-self
+    "SIM", # flake8-simplify
+    "TID", # flake8-tidy-imports
+    "TCH", # flake8-type-checking
+    "ARG", # flake8-unused-arguments
+    "PTH", # flake8-use-pathlib
+    "ERA", # eradicate
+    "PD",  # pandas-vet
+    "PGH", # pygrep-hooks
+    "PL",  # pylint
+    "TRY", # tryceratops
+    "NPY", # numpy
+    "RUF", # ruff-specific
 ]
+ignore = [
+    "D100", # undocumented-public-module
+    "D104", # undocumented-public-package
+    "D213", # multi-line-summary-second-line
+    "D203", # one-blank-line-before-class
+    "S101", # use of assert
+    "PLR0913", # too-many-arguments
+    "PLR2004", # magic-value-comparison
+]
+unfixable = ["ERA"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["S101", "S311", "D", "ANN"]
+"examples/*" = ["T201", "T203", "D", "ANN"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 

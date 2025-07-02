@@ -178,7 +178,7 @@ def test_filter_context():
         """
     {% set ctx = {'unit': 'ton'} %}
     {{ value | format_with_context(ctx) }}
-    """
+    """,
     )
 
     # Testa renderização

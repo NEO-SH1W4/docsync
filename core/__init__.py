@@ -1,5 +1,4 @@
-"""
-DocSync core module initialization.
+"""DocSync core module initialization.
 Exports main classes for file monitoring, synchronization, validation and backup.
 """
 
@@ -9,11 +8,11 @@ from .sync import FileSync
 from .validate import FileValidator, ValidationResult
 
 __all__ = [
-    "FileMonitor",
+    "BackupManager",
+    "BackupMetadata",
     "DocSyncEventHandler",
+    "FileMonitor",
     "FileSync",
     "FileValidator",
     "ValidationResult",
-    "BackupManager",
-    "BackupMetadata",
 ]

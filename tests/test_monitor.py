@@ -1,10 +1,9 @@
 """Tests for the file system monitoring module."""
 
-import os
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
 from time import sleep
-from typing import Generator
 
 import pytest
 from watchdog.observers import Observer
@@ -23,7 +22,9 @@ def temp_dir() -> Generator[Path, None, None]:
 def monitor(temp_dir: Path) -> Generator[FileMonitor, None, None]:
     """Create a FileMonitor instance for testing."""
     config = MonitorConfig(
-        paths=[temp_dir], patterns=["*.txt", "*.md"], ignore_patterns=["*.tmp"]
+        paths=[temp_dir],
+        patterns=["*.txt", "*.md"],
+        ignore_patterns=["*.tmp"],
     )
     monitor = FileMonitor(config)
     monitor.start()

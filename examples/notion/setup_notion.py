@@ -4,9 +4,7 @@ import json
 import os
 import webbrowser
 from pathlib import Path
-from typing import Optional
 
-import click
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
@@ -28,7 +26,10 @@ async def validate_token(token: str) -> bool:
 
 
 def create_config_file(
-    token: str, workspace_id: str, mappings: list, output_path: Path
+    token: str,
+    workspace_id: str,
+    mappings: list,
+    output_path: Path,
 ):
     """Cria arquivo de configuração do Notion"""
     config = {
@@ -50,7 +51,7 @@ def setup_env_file(token: str):
     content = f"NOTION_TOKEN={token}\n"
 
     if env_path.exists():
-        with open(env_path, "r") as f:
+        with open(env_path) as f:
             existing = f.read()
         if "NOTION_TOKEN" not in existing:
             with open(env_path, "a") as f:
@@ -64,8 +65,8 @@ async def main():
     console.print(
         Panel.fit(
             "[bold blue]DOCSYNC - Configuração da Integração com Notion[/bold blue]\\n"
-            "Este assistente irá ajudá-lo a configurar a integração com o Notion."
-        )
+            "Este assistente irá ajudá-lo a configurar a integração com o Notion.",
+        ),
     )
 
     # Step 1: Token
@@ -75,7 +76,7 @@ async def main():
     if Confirm.ask("Deseja abrir a página de integrações do Notion agora?"):
         webbrowser.open("https://www.notion.so/my-integrations")
         console.print(
-            "\\n[italic]Após criar a integração, copie o token e retorne aqui.[/italic]"
+            "\\n[italic]Após criar a integração, copie o token e retorne aqui.[/italic]",
         )
 
     token = Prompt.ask("\\nDigite seu token do Notion")
@@ -84,7 +85,7 @@ async def main():
     console.print("\\nValidando token...")
     if not await validate_token(token):
         console.print(
-            "[red]Token inválido! Por favor, verifique e tente novamente.[/red]"
+            "[red]Token inválido! Por favor, verifique e tente novamente.[/red]",
         )
         return
 
@@ -108,7 +109,7 @@ async def main():
         )
 
         mappings.append(
-            {"source_path": source, "target_id": target, "sync_type": sync_type}
+            {"source_path": source, "target_id": target, "sync_type": sync_type},
         )
 
     # Step 4: Salvar configuração
@@ -130,7 +131,7 @@ async def main():
    python examples/notion/test_notion_integration.py
 4. Para sincronização contínua:
    python examples/notion/notion_sync_example.py
-"""
+""",
     )
 
     if Confirm.ask("\\nDeseja executar o teste de integração agora?"):

@@ -1,6 +1,4 @@
-"""
-DocSync command line interface.
-"""
+"""DocSync command line interface."""
 
 import logging
 from pathlib import Path
@@ -17,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 @click.group()
 @click.version_option(version=__version__)
-def cli():
+def cli() -> None:
     """DocSync - Documentation synchronization and management system."""
 
 
@@ -32,7 +30,7 @@ def cli():
     type=click.Path(exists=True, file_okay=True, dir_okay=False, path_type=Path),
     help="YAML configuration file",
 )
-def sync(path: Path, config: Optional[Path] = None):
+def sync(path: Path, config: Optional[Path] = None) -> None:
     """Synchronize documentation directory."""
     try:
         # doc_sync = DocSync(path, config_path=config)  # TODO: Implement command
@@ -40,13 +38,13 @@ def sync(path: Path, config: Optional[Path] = None):
         console.print("✨ Synchronization completed!")
     except Exception as e:
         console.print(f"❌ Error: {e}", style="red")
-        raise click.Abort()
+        raise click.Abort
 
 
-def main():
+def main() -> None:
     """Main entry point."""
     try:
         cli()
     except Exception as e:
         console.print(f"❌ Fatal error: {e}", style="red")
-        raise click.Abort()
+        raise click.Abort

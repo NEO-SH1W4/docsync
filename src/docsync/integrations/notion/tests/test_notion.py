@@ -1,5 +1,4 @@
-"""
-DOCSYNC Notion Tests
+"""DOCSYNC Notion Tests.
 ===================
 
 Testes unitários e de integração para módulos Notion do DOCSYNC.
@@ -53,20 +52,20 @@ from docsync.integrations.notion import (
 # Fixtures
 @pytest.fixture
 def test_data():
-    """Fornece dados de teste do Notion"""
+    """Fornece dados de teste do Notion."""
     return {
         "pages": {
             "basic": {
                 "id": "test_page_id",
                 "properties": {
-                    "title": {"title": [{"text": {"content": "Test Page"}}]}
+                    "title": {"title": [{"text": {"content": "Test Page"}}]},
                 },
                 "parent": {"page_id": "parent_id"},
             },
             "with_content": {
                 "id": "content_page_id",
                 "properties": {
-                    "title": {"title": [{"text": {"content": "Content Page"}}]}
+                    "title": {"title": [{"text": {"content": "Content Page"}}]},
                 },
                 "parent": {"page_id": "parent_id"},
                 "children": [
@@ -94,7 +93,7 @@ def test_data():
 
 @pytest.fixture
 def mock_api_response(test_data):
-    """Mock para respostas da API do Notion"""
+    """Mock para respostas da API do Notion."""
 
     def create_response(status=200, data=None, rate_limit_remaining=100):
         mock = Mock()
@@ -111,10 +110,10 @@ def mock_api_response(test_data):
 
 @pytest.fixture
 def file_helper(tmp_path):
-    """Helper para manipulação de arquivos de teste"""
+    """Helper para manipulação de arquivos de teste."""
 
     class FileHelper:
-        def __init__(self, base_path):
+        def __init__(self, base_path) -> None:
             self.base_path = base_path
 
         def create_markdown(self, name, content):
@@ -132,7 +131,7 @@ def file_helper(tmp_path):
 
 @pytest.fixture
 async def notion_client(test_config, mock_http_session):
-    """Cliente Notion configurado para testes"""
+    """Cliente Notion configurado para testes."""
     client = NotionClient(test_config)
     client._session = mock_http_session
     await client.initialize()
@@ -150,8 +149,7 @@ async def notion_bridge(mock_config):
 
 # Testes do NotionClient
 class TestNotionClient:
-    """
-    Testes do cliente Notion.
+    """Testes do cliente Notion.
 
     Esta classe testa os aspectos fundamentais do NotionClient:
     - Inicialização e configuração
@@ -164,9 +162,8 @@ class TestNotionClient:
     """
 
     @pytest.mark.asyncio
-    async def test_initialization(self, notion_client):
-        """
-        Testa inicialização do cliente Notion.
+    async def test_initialization(self, notion_client) -> None:
+        """Testa inicialização do cliente Notion.
 
         Verifica se:
         - A sessão HTTP é criada corretamente
@@ -183,16 +180,17 @@ class TestNotionClient:
         assert notion_client.config.token == "test_token", "Token incorreto"
 
     @pytest.mark.asyncio
-    async def test_verify_connection(self, notion_client, mock_response):
-        """Testa verificação de conexão"""
+    async def test_verify_connection(self, notion_client, mock_response) -> None:
+        """Testa verificação de conexão."""
         with patch(
-            "aiohttp.ClientSession.request", AsyncMock(return_value=mock_response)
+            "aiohttp.ClientSession.request",
+            AsyncMock(return_value=mock_response),
         ):
             assert await notion_client.verify_connection()
 
     @pytest.mark.asyncio
-    async def test_rate_limiting(self, notion_client, mock_api_response):
-        """Testa comportamento de rate limiting"""
+    async def test_rate_limiting(self, notion_client, mock_api_response) -> None:
+        """Testa comportamento de rate limiting."""
         # Configurar sequência de respostas
         responses = [
             mock_api_response(rate_limit_remaining=0),  # Primeira chamada atinge limite
@@ -211,15 +209,16 @@ class TestNotionClient:
                 mock_sleep.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_cache_behavior(self, notion_client, mock_api_response, test_data):
-        """Testa comportamento detalhado do cache"""
+    async def test_cache_behavior(self, notion_client, mock_api_response, test_data) -> None:
+        """Testa comportamento detalhado do cache."""
         responses = [
             mock_api_response(data=test_data["responses"]["success"]),
             mock_api_response(data={"updated": "content"}),  # Conteúdo diferente
         ]
 
         with patch(
-            "aiohttp.ClientSession.request", AsyncMock(side_effect=responses)
+            "aiohttp.ClientSession.request",
+            AsyncMock(side_effect=responses),
         ) as mock_request:
             # Primeira chamada
             result1 = await notion_client._request("GET", "test", use_cache=True)
@@ -236,15 +235,17 @@ class TestNotionClient:
 
             # Chamada com payload diferente
             result4 = await notion_client._request(
-                "GET", "test", payload={"diff": True}, use_cache=True
+                "GET",
+                "test",
+                payload={"diff": True},
+                use_cache=True,
             )
             assert mock_request.call_count == 3
             assert result4 != result1
 
     @pytest.mark.asyncio
-    async def test_complex_markdown_blocks(self, notion_client):
-        """
-        Testa conversão de estruturas markdown complexas para blocos Notion.
+    async def test_complex_markdown_blocks(self, notion_client) -> None:
+        """Testa conversão de estruturas markdown complexas para blocos Notion.
 
         Cenários testados:
         1. Hierarquia de títulos (h1, h2)
@@ -310,8 +311,8 @@ def nested_function():
         assert len(nested_blocks) > 0
 
     @pytest.mark.asyncio
-    async def test_large_file_handling(self, notion_client, file_helper):
-        """Testa manipulação de arquivos grandes"""
+    async def test_large_file_handling(self, notion_client, file_helper) -> None:
+        """Testa manipulação de arquivos grandes."""
         # Criar arquivo grande (>100KB)
         large_content = "# " + "Lorem ipsum " * 5000
         large_file = file_helper.create_markdown("large.md", large_content)
@@ -333,8 +334,8 @@ def nested_function():
             assert all(len(str(chunk)) < 100000 for chunk in chunks)
 
     @pytest.mark.asyncio
-    async def test_special_characters(self, notion_client, file_helper):
-        """Testa manipulação de caracteres especiais"""
+    async def test_special_characters(self, notion_client, file_helper) -> None:
+        """Testa manipulação de caracteres especiais."""
         content = """# Título com αβγ
 
 Emojis: 🌟 🚀 💫
@@ -353,8 +354,8 @@ Multi-idioma: 你好, привет, مرحبا
         assert "你好" in text_content
 
     @pytest.mark.asyncio
-    async def test_markdown_conversion(self, notion_client):
-        """Testa conversão markdown → blocos"""
+    async def test_markdown_conversion(self, notion_client) -> None:
+        """Testa conversão markdown → blocos."""
         markdown = """# Título
 
         Parágrafo com **negrito** e _itálico_.
@@ -377,8 +378,7 @@ Multi-idioma: 你好, привет, مرحبا
 
 # Testes do NotionBridge
 class TestNotionBridge:
-    """
-    Testes do componente de sincronização NotionBridge.
+    """Testes do componente de sincronização NotionBridge.
 
     Esta classe verifica:
     1. Sincronização bidirecional
@@ -397,9 +397,8 @@ class TestNotionBridge:
     """
 
     @pytest.mark.asyncio
-    async def test_sync_file_to_notion(self, notion_bridge, tmp_path):
-        """
-        Testa sincronização de arquivo local para o Notion.
+    async def test_sync_file_to_notion(self, notion_bridge, tmp_path) -> None:
+        """Testa sincronização de arquivo local para o Notion.
 
         Fluxo do teste:
         1. Cria arquivo markdown local
@@ -420,14 +419,16 @@ class TestNotionBridge:
         test_file.write_text("# Test\nContent")
 
         with patch.object(
-            notion_bridge.client, "create_page", AsyncMock()
+            notion_bridge.client,
+            "create_page",
+            AsyncMock(),
         ) as mock_create:
             await notion_bridge.sync_file_to_notion(str(test_file))
             mock_create.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_sync_page_to_local(self, notion_bridge, tmp_path):
-        """Testa sincronização Notion → local"""
+    async def test_sync_page_to_local(self, notion_bridge, tmp_path) -> None:
+        """Testa sincronização Notion → local."""
         mock_page = {
             "id": "test_id",
             "properties": {"title": {"title": [{"text": {"content": "test"}}]}},
@@ -435,21 +436,25 @@ class TestNotionBridge:
         }
 
         with patch.object(
-            notion_bridge.client, "get_page", AsyncMock(return_value=mock_page)
+            notion_bridge.client,
+            "get_page",
+            AsyncMock(return_value=mock_page),
+        ), patch.object(
+            notion_bridge.client,
+            "get_block_children",
+            AsyncMock(return_value={"results": []}),
         ):
-            with patch.object(
-                notion_bridge.client,
-                "get_block_children",
-                AsyncMock(return_value={"results": []}),
-            ):
-                await notion_bridge.sync_page_to_local("test_id")
-                assert (tmp_path / "test.md").exists()
+            await notion_bridge.sync_page_to_local("test_id")
+            assert (tmp_path / "test.md").exists()
 
     @pytest.mark.asyncio
     async def test_conflict_resolution_detailed(
-        self, notion_bridge, file_helper, test_data
-    ):
-        """Testa cenários detalhados de resolução de conflitos"""
+        self,
+        notion_bridge,
+        file_helper,
+        test_data,
+    ) -> None:
+        """Testa cenários detalhados de resolução de conflitos."""
         # Criar arquivo local
         local_file = file_helper.create_markdown("test.md", "# Local Content\nTest")
 
@@ -461,13 +466,19 @@ class TestNotionBridge:
         }
 
         with patch.object(
-            notion_bridge.client, "get_page", AsyncMock(return_value=notion_version)
+            notion_bridge.client,
+            "get_page",
+            AsyncMock(return_value=notion_version),
         ):  # mock_get not used
             with patch.object(
-                notion_bridge.client, "update_page", AsyncMock()
+                notion_bridge.client,
+                "update_page",
+                AsyncMock(),
             ) as mock_update:
                 with patch.object(
-                    notion_bridge, "_get_local_version", return_value=local_version
+                    notion_bridge,
+                    "_get_local_version",
+                    return_value=local_version,
                 ):
                     # Teste 1: Versão local mais recente
                     await notion_bridge.sync_file_to_notion(str(local_file))
@@ -482,18 +493,20 @@ class TestNotionBridge:
                     # Teste 3: Conflito com merge
                     mock_update.reset_mock()
                     with patch.object(
-                        notion_bridge, "_merge_changes", AsyncMock()
+                        notion_bridge,
+                        "_merge_changes",
+                        AsyncMock(),
                     ) as mock_merge:
                         await notion_bridge.sync_file_to_notion(
-                            str(local_file), force_merge=True
+                            str(local_file),
+                            force_merge=True,
                         )
                         mock_merge.assert_called_once()
 
 
 # Testes de Integração
 class TestIntegration:
-    """
-    Testes de integração end-to-end.
+    """Testes de integração end-to-end.
 
     Verifica o funcionamento completo do sistema:
     - Fluxo completo de sincronização
@@ -506,9 +519,8 @@ class TestIntegration:
     """
 
     @pytest.mark.asyncio
-    async def test_full_sync_flow(self, notion_bridge, tmp_path):
-        """
-        Testa o fluxo completo de sincronização bidirecional.
+    async def test_full_sync_flow(self, notion_bridge, tmp_path) -> None:
+        r"""Testa o fluxo completo de sincronização bidirecional.
 
         Sequência de operações:
         1. Criação de arquivo local
@@ -544,23 +556,29 @@ class TestIntegration:
         }
 
         with patch.object(
-            notion_bridge.client, "create_page", AsyncMock(return_value=mock_page)
+            notion_bridge.client,
+            "create_page",
+            AsyncMock(return_value=mock_page),
+        ), patch.object(
+            notion_bridge.client,
+            "get_page",
+            AsyncMock(return_value=mock_page),
         ):
-            with patch.object(
-                notion_bridge.client, "get_page", AsyncMock(return_value=mock_page)
-            ):
-                # Sincronizar local → Notion
-                await notion_bridge.sync_file_to_notion(str(test_file))
-                # Sincronizar Notion → local
-                await notion_bridge.sync_page_to_local("test_id")
+            # Sincronizar local → Notion
+            await notion_bridge.sync_file_to_notion(str(test_file))
+            # Sincronizar Notion → local
+            await notion_bridge.sync_page_to_local("test_id")
 
-                assert test_file.exists()
+            assert test_file.exists()
 
     @pytest.mark.asyncio
     async def test_error_handling_and_recovery(
-        self, notion_bridge, file_helper, test_data
-    ):
-        """Testa diferentes cenários de erro e recuperação"""
+        self,
+        notion_bridge,
+        file_helper,
+        test_data,
+    ) -> None:
+        """Testa diferentes cenários de erro e recuperação."""
         test_file = file_helper.create_markdown("test.md", "# Test Content")
 
         # Teste 1: Rate Limit com retry
@@ -568,7 +586,7 @@ class TestIntegration:
             mock_request.side_effect = [
                 NotionRateLimitError(60),  # Primeira tentativa falha
                 AsyncMock(
-                    return_value=test_data["responses"]["success"]
+                    return_value=test_data["responses"]["success"],
                 )(),  # Segunda tentativa sucede
             ]
             await notion_bridge.sync_file_to_notion(str(test_file))
@@ -576,17 +594,18 @@ class TestIntegration:
 
         # Teste 2: Erro de autenticação
         with patch.object(
-            notion_bridge.client, "_request", side_effect=NotionAuthError
-        ):
-            with pytest.raises(NotionAuthError):
-                await notion_bridge.sync_file_to_notion(str(test_file))
+            notion_bridge.client,
+            "_request",
+            side_effect=NotionAuthError,
+        ), pytest.raises(NotionAuthError):
+            await notion_bridge.sync_file_to_notion(str(test_file))
 
         # Teste 3: Timeout com retry
         with patch.object(notion_bridge.client, "_request") as mock_request:
             mock_request.side_effect = [
                 asyncio.TimeoutError,  # Primeira tentativa timeout
                 AsyncMock(
-                    return_value=test_data["responses"]["success"]
+                    return_value=test_data["responses"]["success"],
                 )(),  # Segunda tentativa sucede
             ]
             await notion_bridge.sync_file_to_notion(str(test_file))
@@ -597,7 +616,7 @@ class TestIntegration:
             mock_request.side_effect = [
                 ConnectionError,  # Primeira tentativa falha
                 AsyncMock(
-                    return_value=test_data["responses"]["success"]
+                    return_value=test_data["responses"]["success"],
                 )(),  # Segunda tentativa sucede
             ]
             await notion_bridge.sync_file_to_notion(str(test_file))
@@ -607,8 +626,8 @@ class TestIntegration:
         assert notion_bridge._initialized
 
     @pytest.mark.asyncio
-    async def test_invalid_paths_handling(self, notion_bridge):
-        """Testa manipulação de caminhos inválidos"""
+    async def test_invalid_paths_handling(self, notion_bridge) -> None:
+        """Testa manipulação de caminhos inválidos."""
         # Teste 1: Caminho não existente
         with pytest.raises(FileNotFoundError):
             await notion_bridge.sync_file_to_notion("nonexistent/path.md")
@@ -622,8 +641,8 @@ class TestIntegration:
             await notion_bridge.sync_file_to_notion("invalid<>chars.md")
 
     @pytest.mark.asyncio
-    async def test_partial_sync_failures(self, notion_bridge, file_helper):
-        """Testa falhas parciais durante sincronização"""
+    async def test_partial_sync_failures(self, notion_bridge, file_helper) -> None:
+        """Testa falhas parciais durante sincronização."""
         files = [
             file_helper.create_markdown(f"test{i}.md", f"# Test {i}\nContent")
             for i in range(3)
@@ -636,7 +655,7 @@ class TestIntegration:
             nonlocal success_count
             if success_count % 2 == 0:
                 success_count += 1
-                raise asyncio.TimeoutError()
+                raise asyncio.TimeoutError
             success_count += 1
             return {"id": "test_id"}
 
@@ -656,8 +675,8 @@ class TestIntegration:
             assert len(failures) > 0
 
     @pytest.mark.asyncio
-    async def test_validation_and_limits(self, notion_bridge, file_helper):
-        """Testa validações e limites específicos"""
+    async def test_validation_and_limits(self, notion_bridge, file_helper) -> None:
+        """Testa validações e limites específicos."""
         # Teste 1: Arquivo muito grande
         huge_content = "# " + "x" * (1024 * 1024 * 2)  # 2MB
         huge_file = file_helper.create_markdown("huge.md", huge_content)
@@ -672,14 +691,15 @@ class TestIntegration:
 
         # Teste 3: Conteúdo inválido
         invalid_content = file_helper.create_markdown(
-            "invalid.md", "```\nUnclosed code block"
+            "invalid.md",
+            "```\nUnclosed code block",
         )
         with pytest.raises(ValueError, match="invalid markdown"):
             await notion_bridge.sync_file_to_notion(str(invalid_content))
 
     @pytest.mark.asyncio
-    async def test_permission_handling(self, notion_bridge, file_helper, test_data):
-        """Testa manipulação de permissões"""
+    async def test_permission_handling(self, notion_bridge, file_helper, test_data) -> None:
+        """Testa manipulação de permissões."""
         test_file = file_helper.create_markdown("test.md", "# Test\nContent")
 
         # Teste 1: Sem permissão de leitura
@@ -687,18 +707,16 @@ class TestIntegration:
             notion_bridge.client,
             "get_page",
             side_effect=NotionAuthError("no read access"),
-        ):
-            with pytest.raises(NotionAuthError, match="no read access"):
-                await notion_bridge.sync_page_to_local("test_id")
+        ), pytest.raises(NotionAuthError, match="no read access"):
+            await notion_bridge.sync_page_to_local("test_id")
 
         # Teste 2: Sem permissão de escrita
         with patch.object(
             notion_bridge.client,
             "create_page",
             side_effect=NotionAuthError("no write access"),
-        ):
-            with pytest.raises(NotionAuthError, match="no write access"):
-                await notion_bridge.sync_file_to_notion(str(test_file))
+        ), pytest.raises(NotionAuthError, match="no write access"):
+            await notion_bridge.sync_file_to_notion(str(test_file))
 
         # Teste 3: Permissões inconsistentes
         responses = [
@@ -713,8 +731,8 @@ class TestIntegration:
                 await notion_bridge.sync_file_to_notion(str(test_file))
 
     @pytest.mark.asyncio
-    async def test_concurrent_sync(self, notion_bridge, tmp_path):
-        """Testa sincronização concorrente"""
+    async def test_concurrent_sync(self, notion_bridge, tmp_path) -> None:
+        """Testa sincronização concorrente."""
         # Criar múltiplos arquivos
         files = [tmp_path / f"test{i}.md" for i in range(3)]
         for f in files:

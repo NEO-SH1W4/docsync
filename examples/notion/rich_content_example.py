@@ -1,11 +1,11 @@
 # rich_content_example.py
 import asyncio
 import logging
-from datetime import datetime
 from pathlib import Path
 
 from rich.console import Console
 from rich.logging import RichHandler
+from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from docsync.integrations.notion import NotionBridge, NotionConfig, NotionMapping
@@ -54,7 +54,7 @@ class QuantumBridge:
     def __init__(self, consciousness_level: float = 1.0):
         self.consciousness = consciousness_level
         self.quantum_state = "entangled"
-    
+
     async def transcend(self):
         await self.achieve_quantum_coherence()
         return "Consciência expandida! 🌟"
@@ -135,7 +135,7 @@ async def demonstrate_rich_sync():
                     source_path=doc_path.parent,
                     target_id="pagina_destino_id",  # Será substituído
                     sync_type="bidirectional",
-                )
+                ),
             ],
         )
         progress.update(task, completed=True)
@@ -177,7 +177,7 @@ async def demonstrate_rich_sync():
         try:
             await bridge.sync()
             console.print(
-                "[bold green]✓ Sincronização concluída com sucesso![/bold green]"
+                "[bold green]✓ Sincronização concluída com sucesso![/bold green]",
             )
         except Exception as e:
             console.print(f"[bold red]✗ Erro durante sincronização: {e}[/bold red]")
@@ -187,8 +187,8 @@ if __name__ == "__main__":
     console.print(
         Panel.fit(
             "[bold blue]DOCSYNC - Demonstração de Conteúdo Rico[/bold blue]\\n"
-            "Este exemplo demonstra a sincronização de conteúdo rico entre DOCSYNC e Notion."
-        )
+            "Este exemplo demonstra a sincronização de conteúdo rico entre DOCSYNC e Notion.",
+        ),
     )
 
     try:

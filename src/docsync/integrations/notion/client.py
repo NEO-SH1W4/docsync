@@ -1,5 +1,4 @@
-"""
-DOCSYNC Notion Client
+"""DOCSYNC Notion Client.
 ====================
 
 Cliente HTTP assíncrono para API do Notion com suporte a:
@@ -15,7 +14,7 @@ import hashlib
 import json
 import logging
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 from urllib.parse import urljoin
 
 import aiohttp
@@ -41,17 +40,17 @@ logger = logging.getLogger(__name__)
 
 
 class NotionClient:
-    """Cliente HTTP assíncrono para API do Notion"""
+    """Cliente HTTP assíncrono para API do Notion."""
 
-    def __init__(self, config: NotionConfig):
+    def __init__(self, config: NotionConfig) -> None:
         self.config = config
         self._session: Optional[aiohttp.ClientSession] = None
         self._rate_limits = {"remaining": 100, "reset_at": datetime.now()}
         self._cache = TTLCache(maxsize=1000, ttl=DEFAULT_CACHE_TTL)
-        self._retry_locks: Dict[str, asyncio.Lock] = {}
+        self._retry_locks: dict[str, asyncio.Lock] = {}
 
-    async def initialize(self):
-        """Inicializa cliente e sessão HTTP"""
+    async def initialize(self) -> None:
+        """Inicializa cliente e sessão HTTP."""
         if self._session is None:
             timeout = aiohttp.ClientTimeout(
                 connect=self.config.timeout["connect"],
@@ -67,8 +66,8 @@ class NotionClient:
                 raise_for_status=True,
             )
 
-    async def close(self):
-        """Fecha sessão e libera recursos"""
+    async def close(self) -> None:
+        """Fecha sessão e libera recursos."""
         if self._session:
             await self._session.close()
             self._session = None
@@ -77,11 +76,11 @@ class NotionClient:
         self,
         method: str,
         endpoint: str,
-        data: Optional[Dict[str, Any]] = None,
-        params: Optional[Dict[str, Any]] = None,
+        data: Optional[dict[str, Any]] = None,
+        params: Optional[dict[str, Any]] = None,
         use_cache: bool = True,
-    ) -> Dict[str, Any]:
-        """Realiza requisição à API com retry e cache"""
+    ) -> dict[str, Any]:
+        """Realiza requisição à API com retry e cache."""
         if not self._session:
             await self.initialize()
 
@@ -113,7 +112,10 @@ class NotionClient:
                             await asyncio.sleep(wait_time)
 
                     async with self._session.request(
-                        method=method, url=url, json=data, params=params
+                        method=method,
+                        url=url,
+                        json=data,
+                        params=params,
                     ) as response:
                         result = await self._handle_response(response)
 
@@ -132,7 +134,8 @@ class NotionClient:
                 except (aiohttp.ClientError, asyncio.TimeoutError) as e:
                     last_error = e
                     if retries == self.config.max_retries:
-                        raise NotionError(f"Erro de conexão: {str(e)}")
+                        msg = f"Erro de conexão: {e!s}"
+                        raise NotionError(msg)
                     await asyncio.sleep(self.config.retry_delay * (2**retries))
 
                 retries += 1
@@ -140,12 +143,13 @@ class NotionClient:
             raise last_error or NotionError("Erro desconhecido após tentativas")
 
     async def _handle_response(
-        self, response: aiohttp.ClientResponse
-    ) -> Dict[str, Any]:
-        """Processa resposta da API"""
+        self,
+        response: aiohttp.ClientResponse,
+    ) -> dict[str, Any]:
+        """Processa resposta da API."""
         # Atualizar rate limits
         self._rate_limits["remaining"] = int(
-            response.headers.get("x-ratelimit-remaining", 100)
+            response.headers.get("x-ratelimit-remaining", 100),
         )
         reset_at = int(response.headers.get("x-ratelimit-reset", 0))
         self._rate_limits["reset_at"] = datetime.fromtimestamp(reset_at)
@@ -156,25 +160,27 @@ class NotionClient:
             return data
 
         if response.status == 401:
-            raise NotionAuthError("Token inválido ou expirado")
+            msg = "Token inválido ou expirado"
+            raise NotionAuthError(msg)
 
         if response.status == 429:
             retry_after = int(response.headers.get("retry-after", 60))
             raise NotionRateLimitError(retry_after)
 
         raise NotionError(
-            data.get("message", "Erro desconhecido"), str(response.status)
+            data.get("message", "Erro desconhecido"),
+            str(response.status),
         )
 
-    def _get_cache_key(self, method: str, url: str, data: Optional[Dict] = None) -> str:
-        """Gera chave de cache para requisição"""
+    def _get_cache_key(self, method: str, url: str, data: Optional[dict] = None) -> str:
+        """Gera chave de cache para requisição."""
         key = f"{method}:{url}"
         if data:
             key += f":{hashlib.sha256(json.dumps(data).encode()).hexdigest()}"
         return key
 
-    async def _convert_to_notion_page(self, data: Dict[str, Any]) -> NotionPage:
-        """Converte resposta da API em objeto NotionPage"""
+    async def _convert_to_notion_page(self, data: dict[str, Any]) -> NotionPage:
+        """Converte resposta da API em objeto NotionPage."""
         blocks = []
         if data.get("has_children"):
             block_data = await self._request("GET", f"blocks/{data['id']}/children")
@@ -186,10 +192,10 @@ class NotionClient:
             id=data["id"],
             type=NotionObjectType.PAGE,
             created_time=datetime.fromisoformat(
-                data["created_time"].replace("Z", "+00:00")
+                data["created_time"].replace("Z", "+00:00"),
             ),
             last_edited_time=datetime.fromisoformat(
-                data["last_edited_time"].replace("Z", "+00:00")
+                data["last_edited_time"].replace("Z", "+00:00"),
             ),
             title=(
                 data["properties"]["title"]["title"][0]["plain_text"]
@@ -204,18 +210,18 @@ class NotionClient:
             archived=data.get("archived", False),
         )
 
-    async def _convert_to_notion_database(self, data: Dict[str, Any]) -> NotionDatabase:
-        """Converte resposta da API em objeto NotionDatabase"""
+    async def _convert_to_notion_database(self, data: dict[str, Any]) -> NotionDatabase:
+        """Converte resposta da API em objeto NotionDatabase."""
         pages = await self.get_pages_in_database(data["id"])
 
         return NotionDatabase(
             id=data["id"],
             type=NotionObjectType.DATABASE,
             created_time=datetime.fromisoformat(
-                data["created_time"].replace("Z", "+00:00")
+                data["created_time"].replace("Z", "+00:00"),
             ),
             last_edited_time=datetime.fromisoformat(
-                data["last_edited_time"].replace("Z", "+00:00")
+                data["last_edited_time"].replace("Z", "+00:00"),
             ),
             title=data["title"][0]["plain_text"] if data.get("title") else "",
             description=data.get("description", ""),
@@ -226,18 +232,18 @@ class NotionClient:
             archived=data.get("archived", False),
         )
 
-    def _format_block(self, block_type: BlockType, content: str) -> Dict[str, Any]:
-        """Formata um bloco para a API do Notion"""
+    def _format_block(self, block_type: BlockType, content: str) -> dict[str, Any]:
+        """Formata um bloco para a API do Notion."""
         return {
             "object": "block",
             "type": block_type.value,
             block_type.value: {
-                "rich_text": [{"type": "text", "text": {"content": content}}]
+                "rich_text": [{"type": "text", "text": {"content": content}}],
             },
         }
 
-    def _convert_markdown_to_blocks(self, markdown: str) -> List[Dict[str, Any]]:
-        """Converte Markdown para blocos do Notion"""
+    def _convert_markdown_to_blocks(self, markdown: str) -> list[dict[str, Any]]:
+        """Converte Markdown para blocos do Notion."""
         blocks = []
         current_block = None
         lines = markdown.split("\n")
@@ -261,18 +267,17 @@ class NotionClient:
                     blocks.append(current_block)
                     current_block = None
                     continue
-                else:
-                    # Iniciando bloco de código
-                    code_language = content[3:] or "plain"
-                    current_block = {
-                        "object": "block",
-                        "type": "code",
-                        "code": {
-                            "language": code_language,
-                            "rich_text": [{"type": "text", "text": {"content": ""}}],
-                        },
-                    }
-                    continue
+                # Iniciando bloco de código
+                code_language = content[3:] or "plain"
+                current_block = {
+                    "object": "block",
+                    "type": "code",
+                    "code": {
+                        "language": code_language,
+                        "rich_text": [{"type": "text", "text": {"content": ""}}],
+                    },
+                }
+                continue
 
             # Se estiver dentro de um bloco de código
             if current_block and current_block["type"] == "code":
@@ -299,44 +304,46 @@ class NotionClient:
 
         return blocks
 
-    async def _delete_blocks(self, blocks: List[Union[NotionBlock, str]]) -> None:
-        """Deleta blocos do Notion"""
+    async def _delete_blocks(self, blocks: list[Union[NotionBlock, str]]) -> None:
+        """Deleta blocos do Notion."""
         for block in blocks:
             block_id = block.id if isinstance(block, NotionBlock) else block
             await self._request("DELETE", f"blocks/{block_id}")
 
-    async def _append_blocks(self, page_id: str, blocks: List[Dict[str, Any]]) -> None:
-        """Adiciona blocos a uma página"""
+    async def _append_blocks(self, page_id: str, blocks: list[dict[str, Any]]) -> None:
+        """Adiciona blocos a uma página."""
         await self._request(
-            "PATCH", f"blocks/{page_id}/children", data={"children": blocks}
+            "PATCH",
+            f"blocks/{page_id}/children",
+            data={"children": blocks},
         )
 
     async def verify_connection(self) -> bool:
-        """Verifica conexão com API"""
+        """Verifica conexão com API."""
         try:
             await self._request("GET", "users/me")
             return True
         except Exception as e:
-            logger.error(f"Erro ao verificar conexão: {e}")
+            logger.exception(f"Erro ao verificar conexão: {e}")
             return False
 
     async def get_page(self, page_id: str) -> NotionPage:
-        """Obtém uma página do Notion"""
+        """Obtém uma página do Notion."""
         data = await self._request("GET", f"pages/{page_id}")
         return await self._convert_to_notion_page(data)
 
-    async def get_page_content(self, page_id: str) -> List[NotionBlock]:
-        """Obtém conteúdo de uma página"""
+    async def get_page_content(self, page_id: str) -> list[NotionBlock]:
+        """Obtém conteúdo de uma página."""
         data = await self._request("GET", f"blocks/{page_id}/children")
         return [NotionBlock.from_dict(block) for block in data.get("results", [])]
 
     async def get_database(self, database_id: str) -> NotionDatabase:
-        """Obtém um banco de dados do Notion"""
+        """Obtém um banco de dados do Notion."""
         data = await self._request("GET", f"databases/{database_id}")
         return await self._convert_to_notion_database(data)
 
-    async def get_pages_in_database(self, database_id: str) -> List[NotionPage]:
-        """Obtém todas as páginas em um banco de dados"""
+    async def get_pages_in_database(self, database_id: str) -> list[NotionPage]:
+        """Obtém todas as páginas em um banco de dados."""
         pages = []
         has_more = True
         start_cursor = None
@@ -350,7 +357,9 @@ class NotionClient:
                 query_data["start_cursor"] = start_cursor
 
             results = await self._request(
-                "POST", f"databases/{database_id}/query", data=query_data
+                "POST",
+                f"databases/{database_id}/query",
+                data=query_data,
             )
 
             for page in results["results"]:
@@ -362,7 +371,7 @@ class NotionClient:
         return pages
 
     async def create_page(self, parent_id: str, title: str, content: str) -> NotionPage:
-        """Cria uma nova página no Notion"""
+        """Cria uma nova página no Notion."""
         # Determinar tipo de parent (page ou database)
         parent_type = "page_id" if len(parent_id) == 36 else "database_id"
 
@@ -370,8 +379,8 @@ class NotionClient:
             "parent": {parent_type: parent_id},
             "properties": {
                 "title" if parent_type == "page_id" else "Name": {
-                    "title": [{"text": {"content": title}}]
-                }
+                    "title": [{"text": {"content": title}}],
+                },
             },
         }
 
@@ -382,12 +391,17 @@ class NotionClient:
         return await self._convert_to_notion_page(data)
 
     async def update_page(
-        self, page_id: str, content: str = None, properties: Dict = None
+        self,
+        page_id: str,
+        content: Optional[str] = None,
+        properties: Optional[dict] = None,
     ) -> NotionPage:
-        """Atualiza uma página existente"""
+        """Atualiza uma página existente."""
         if properties:
             await self._request(
-                "PATCH", f"pages/{page_id}", data={"properties": properties}
+                "PATCH",
+                f"pages/{page_id}",
+                data={"properties": properties},
             )
 
         if content is not None:
@@ -406,8 +420,8 @@ class NotionClient:
         page_size: int = DEFAULT_BATCH_SIZE,
         filter_property: Optional[str] = None,
         sort_by: Optional[str] = None,
-    ) -> List[NotionPage]:
-        """Pesquisa páginas no Notion"""
+    ) -> list[NotionPage]:
+        """Pesquisa páginas no Notion."""
         search_data = {
             "query": query,
             "page_size": page_size,
