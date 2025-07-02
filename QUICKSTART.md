@@ -22,11 +22,11 @@ Este guia fornece os passos essenciais para começar a usar o sistema de sincron
 2. Configure a sincronização:
    ```bash
    # Copie o arquivo de exemplo
-   cp guardrive_sync.yaml.example guardrive_sync.yaml
+   cp docsync_sync.yaml.example docsync_sync.yaml
    
    # Edite com seu editor preferido
-   notepad guardrive_sync.yaml  # Windows
-   nano guardrive_sync.yaml     # Linux/macOS
+   notepad docsync_sync.yaml  # Windows
+   nano docsync_sync.yaml     # Linux/macOS
    ```
 
 3. Inicie o sistema:
@@ -36,11 +36,11 @@ Este guia fornece os passos essenciais para começar a usar o sistema de sincron
 
 ## Configuração Mínima
 
-Exemplo de configuração básica (guardrive_sync.yaml):
+Exemplo de configuração básica (docsync_sync.yaml):
 
 ```yaml
 # Configuração essencial
-guardrive:
+docs_repo:
   enabled: true
   base_path: "C:/Users/SEU_USUARIO/GUARDRIVE/GUARDRIVE_V1/1. GUARDRIVE_DOCS_DEV"
   docs_path: "GUARDRIVE_DOCS"
@@ -64,7 +64,7 @@ sync:
 1. **Sincronização Manual**
    ```bash
    # Sincronização única
-   python run_sync.py --config guardrive_sync.yaml
+   python run_sync.py --config docsync_sync.yaml
    ```
 
 2. **Monitoramento Contínuo**
@@ -100,14 +100,14 @@ GUARDRIVE_V1/
    ```
 
 2. **Falha na Sincronização**
-   - Verifique caminhos no guardrive_sync.yaml
+   - Verifique caminhos no docsync_sync.yaml
    - Confirme que os diretórios existem
    - Verifique logs em %APPDATA%/docsync/logs
 
 3. **Erros de Git**
    ```bash
    # Reinicie repositório Git
-   cd seu/diretorio/guardrive
+   cd seu/diretorio/docs_repo
    git init
    ```
 
@@ -116,7 +116,7 @@ GUARDRIVE_V1/
 1. **Backup Automático**
    - Ative no arquivo de configuração:
    ```yaml
-   guardrive:
+   docs_repo:
      version_control:
        backup_enabled: true
        backup_interval: 3600  # 1 hora
@@ -145,6 +145,6 @@ GUARDRIVE_V1/
 ## Suporte Rápido
 
 - Logs: `%APPDATA%/docsync/logs`
-- Configuração: `guardrive_sync.yaml`
+- Configuração: `docsync_sync.yaml`
 - Documentação: `docs/`
 

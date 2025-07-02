@@ -81,7 +81,7 @@ $DIRECTORY_CONFIGS = @{
             }
         }
         SpecialConfig = @{
-            design_system = "guardrive_design_system"
+            design_system = "docsync_design_system"
             prototype_tool = "figma"
             version_control = $true
         }

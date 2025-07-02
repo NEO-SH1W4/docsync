@@ -5,7 +5,7 @@ type: "api"
 status: "draft"
 author: "{AUTOR}"
 date: "{DATA}"
-tags: ["api", "documentation", "guardrive"]
+tags: ["api", "documentation", "docsync"]
 ---
 
 # Documentação da API
@@ -17,7 +17,7 @@ tags: ["api", "documentation", "guardrive"]
 ## Base URL
 
 ```
-https://api.guardrive.com/v1
+https://api.docsync.dev/v1
 ```
 
 ## Autenticação
@@ -28,7 +28,7 @@ https://api.guardrive.com/v1
 # Exemplo de autenticação
 curl -H "Authorization: Bearer {token}" \
      -H "Content-Type: application/json" \
-     https://api.guardrive.com/v1/resource
+     https://api.docsync.dev/v1/resource
 ```
 
 ## Endpoints
@@ -91,7 +91,7 @@ curl -H "Authorization: Bearer {token}" \
 ```bash
 curl -X GET \
      -H "Authorization: Bearer {token}" \
-     https://api.guardrive.com/v1/resource
+     https://api.docsync.dev/v1/resource
 ```
 
 ### Python
@@ -100,7 +100,7 @@ curl -X GET \
 import requests
 
 response = requests.get(
-    "https://api.guardrive.com/v1/resource",
+    "https://api.docsync.dev/v1/resource",
     headers={"Authorization": f"Bearer {token}"}
 )
 ```
@@ -113,7 +113,7 @@ response = requests.get(
 
 ## Suporte
 
-- Email: api@guardrive.com
-- Documentação: docs.guardrive.com
-- Status: status.guardrive.com
+- Email: api@docsync.dev
+- Documentação: docs.docsync.dev
+- Status: status.docsync.dev
 

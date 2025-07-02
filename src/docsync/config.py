@@ -61,7 +61,7 @@ class VersionControlConfig:
 
 @dataclass
 class PathMappingConfig:
-    """Configuração para mapeamento de caminhos entre GUARDRIVE_DOCS e AREA_DEV."""
+    """Configuração para mapeamento de caminhos entre diretórios de documentação."""
 
     source_path: str = field(default="")
     target_path: str = field(default="")
@@ -86,13 +86,13 @@ class DocumentHandlerConfig:
 
 
 @dataclass
-class GuardriveConfig:
-    """Configuração específica para integração com GUARDRIVE."""
+class DocsRepoConfig:
+    """Configuração do repositório de documentação local."""
 
     enabled: bool = True
     base_path: str = field(default="")
-    docs_path: str = field(default="GUARDRIVE_DOCS")
-    dev_path: str = field(default="AREA_DEV")
+    docs_path: str = field(default="DOCSYNC_DOCS")
+    dev_path: str = field(default="DEV_AREA")
     path_mappings: List[PathMappingConfig] = field(default_factory=list)
     doc_handlers: Dict[str, DocumentHandlerConfig] = field(default_factory=dict)
     version_control: VersionControlConfig = field(default_factory=VersionControlConfig)
@@ -126,7 +126,7 @@ class Config:
 
     esg: ESGConfig = field(default_factory=ESGConfig)
     sync: SyncConfig = field(default_factory=SyncConfig)
-    guardrive: GuardriveConfig = field(default_factory=GuardriveConfig)
+    docs_repo: DocsRepoConfig = field(default_factory=DocsRepoConfig)
     templates_dir: str = "templates"
     output_dir: str = "output"
     log_level: str = "INFO"
@@ -157,11 +157,11 @@ DEFAULT_CONFIG = {
         "sync_permissions": True,
         "max_file_size": 104857600,
     },
-    "guardrive": {
+    "docs_repo": {
         "enabled": True,
         "base_path": "",
-        "docs_path": "GUARDRIVE_DOCS",
-        "dev_path": "AREA_DEV",
+        "docs_path": "DOCSYNC_DOCS",
+        "dev_path": "DEV_AREA",
         "path_mappings": [],
         "doc_handlers": {
             "default": {
@@ -299,7 +299,7 @@ def _validate_config(config: Dict[str, Any]) -> None:
         "log_level": str,
         "esg": dict,
         "sync": dict,
-        "guardrive": dict,
+        "docs_repo": dict,
     }
 
     for field_name, expected_type in required_fields.items():
@@ -329,32 +329,32 @@ def _validate_config(config: Dict[str, Any]) -> None:
     if not isinstance(config["sync"].get("sync_interval"), int):
         raise ValueError("sync.sync_interval deve ser inteiro")
 
-    # Valida configuração do GUARDRIVE
-    guardrive_config = config.get("guardrive", {})
-    if guardrive_config.get("enabled"):
-        if not guardrive_config.get("base_path"):
+    # Valida configuração do repositório local
+    docs_repo_config = config.get("docs_repo", {})
+    if docs_repo_config.get("enabled"):
+        if not docs_repo_config.get("base_path"):
             raise ValueError(
-                "guardrive.base_path é obrigatório quando guardrive está habilitado"
+                "docs_repo.base_path é obrigatório quando docs_repo está habilitado"
             )
 
-        # Valida caminhos do GUARDRIVE
-        docs_path = Path(guardrive_config["base_path"]) / guardrive_config["docs_path"]
-        dev_path = Path(guardrive_config["base_path"]) / guardrive_config["dev_path"]
+        # Valida caminhos do repositório
+        docs_path = Path(docs_repo_config["base_path"]) / docs_repo_config["docs_path"]
+        dev_path = Path(docs_repo_config["base_path"]) / docs_repo_config["dev_path"]
 
         if not docs_path.exists():
-            logger.warning(f"Diretório GUARDRIVE_DOCS não encontrado: {docs_path}")
+            logger.warning(f"Diretório DOCSYNC_DOCS não encontrado: {docs_path}")
         if not dev_path.exists():
-            logger.warning(f"Diretório AREA_DEV não encontrado: {dev_path}")
+            logger.warning(f"Diretório DEV_AREA não encontrado: {dev_path}")
 
         # Valida mapeamentos de caminhos
-        for mapping in guardrive_config.get("path_mappings", []):
+        for mapping in docs_repo_config.get("path_mappings", []):
             if not mapping.get("source_path") or not mapping.get("target_path"):
                 raise ValueError(
                     "Mapeamentos de caminho devem ter source_path e target_path"
                 )
 
         # Valida configuração de controle de versão
-        vc_config = guardrive_config.get("version_control", {})
+        vc_config = docs_repo_config.get("version_control", {})
         if vc_config.get("enabled") and not vc_config.get("provider"):
             raise ValueError(
                 "Provider de controle de versão é obrigatório quando habilitado"

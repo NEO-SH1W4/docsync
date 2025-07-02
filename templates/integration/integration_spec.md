@@ -5,7 +5,7 @@ type: "integration"
 status: "draft"
 author: "{AUTOR}"
 date: "{DATA}"
-tags: ["integration", "documentation", "guardrive"]
+tags: ["integration", "documentation", "docsync"]
 ---
 
 # Especificação de Integração

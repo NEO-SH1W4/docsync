@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script principal para execução do sistema de sincronização GUARDRIVE.
+Script principal para execução do sistema DocSync.
 
 Inicializa e gerencia o processo de sincronização da documentação,
 incluindo configuração, monitoramento e controle de execução.
@@ -119,14 +119,14 @@ class SyncController:
 def parse_args():
     """Processa argumentos da linha de comando."""
     parser = argparse.ArgumentParser(
-        description="Sistema de Sincronização de Documentação GUARDRIVE"
+        description="Sistema de Sincronização de Documentação DocSync"
     )
     parser.add_argument(
         "-c",
         "--config",
         type=Path,
-        default=Path("guardrive_sync.yaml"),
-        help="Caminho para arquivo de configuração (default: guardrive_sync.yaml)",
+        default=Path("docsync_sync.yaml"),
+        help="Caminho para arquivo de configuração (default: docsync_sync.yaml)",
     )
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="Ativa logging detalhado"

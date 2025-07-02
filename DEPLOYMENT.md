@@ -48,12 +48,12 @@ python verify_setup.py
 ### 3.1 Arquivo de Configuração
 1. Copie o arquivo de exemplo:
    ```bash
-   cp guardrive_sync.yaml.example guardrive_sync.yaml
+   cp docsync_sync.yaml.example docsync_sync.yaml
    ```
 
 2. Configure os caminhos:
    ```yaml
-   guardrive:
+   docs_repo:
      base_path: "C:/Users/SEU_USUARIO/GUARDRIVE/GUARDRIVE_V1/1. GUARDRIVE_DOCS_DEV"
      docs_path: "GUARDRIVE_DOCS"
      dev_path: "2.AREA_DEV"
@@ -203,9 +203,9 @@ python run_sync.py --restore-backup <TIMESTAMP>
 ## 10. Contatos e Suporte
 
 ### 10.1 Equipe Técnica
-- Time DevOps: devops@guardrive.com
-- Suporte: support@guardrive.com
-- Emergência: emergency@guardrive.com
+- Time DevOps: devops@docsync.dev
+- Suporte: support@docsync.dev
+- Emergência: emergency@docsync.dev
 
 ### 10.2 Documentação
 - Documentação Técnica: docs/technical/

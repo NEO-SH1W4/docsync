@@ -10,11 +10,11 @@ Este módulo fornece a infraestrutura para:
 """
 
 import logging
-import yaml
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+import yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from rich.console import Console
 from rich.progress import Progress
@@ -128,14 +128,14 @@ class TemplateOrchestrator:
 
         try:
             # Lista seções disponíveis
-            sections_path = self.template_dir / "guardrive/sections"
+            sections_path = self.template_dir / "docsync/sections"
             if sections_path.exists():
                 templates["sections"] = [
                     p.stem.split(".")[0] for p in sections_path.glob("*.md.jinja")
                 ]
 
             # Lista layouts disponíveis
-            layouts_path = self.template_dir / "guardrive/layouts"
+            layouts_path = self.template_dir / "docsync/layouts"
             if layouts_path.exists():
                 templates["layouts"] = [
                     p.stem.split(".")[0] for p in layouts_path.glob("*.md.jinja")
@@ -159,9 +159,7 @@ class TemplateOrchestrator:
 
                 content_parts = []
                 for section in config.sections:
-                    template_path = (
-                        f"guardrive/sections/{section}.{config.format}.jinja"
-                    )
+                    template_path = f"docsync/sections/{section}.{config.format}.jinja"
                     template = self.env.get_template(template_path)
 
                     # Renderiza seção

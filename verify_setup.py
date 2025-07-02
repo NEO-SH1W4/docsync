@@ -3,7 +3,7 @@
 Script de verificação do sistema DOCSYNC.
 
 Verifica a instalação, configuração e prontidão do sistema
-de sincronização de documentação GUARDRIVE.
+de sincronização de documentação DocSync.
 
 Author: DocSync Team
 Date: 2025-06-03
@@ -43,7 +43,7 @@ class SetupVerifier:
             "logs",
         ]
         self.required_files = [
-            "guardrive_sync.yaml",
+            "docsync_sync.yaml",
             "src/docsync/config.py",
             "src/docsync/sync_manager.py",
             "run_sync.py",
@@ -127,7 +127,7 @@ class SetupVerifier:
 
     def check_configuration(self) -> Tuple[bool, str]:
         """Verifica arquivo de configuração."""
-        config_path = self.project_root / "guardrive_sync.yaml"
+        config_path = self.project_root / "docsync_sync.yaml"
         try:
             if not config_path.exists():
                 return False, "Arquivo de configuração não encontrado"
@@ -135,7 +135,7 @@ class SetupVerifier:
             with open(config_path) as f:
                 config = yaml.safe_load(f)
 
-            required_keys = ["guardrive", "sync", "templates_dir"]
+            required_keys = ["docs_repo", "sync", "templates_dir"]
             if not all(key in config for key in required_keys):
                 return False, "Configuração incompleta"
 

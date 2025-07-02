@@ -13,7 +13,7 @@ from docsync.templates.orchestrator import TemplateConfig, TemplateOrchestrator
 @pytest.fixture
 def template_dir(tmp_path):
     """Cria estrutura de templates para teste."""
-    sections = tmp_path / "guardrive" / "sections"
+    sections = tmp_path / "docsync" / "sections"
     sections.mkdir(parents=True)
 
     # Cria templates de teste

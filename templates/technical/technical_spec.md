@@ -5,7 +5,7 @@ date: "{DATA}"
 version: "1.0"
 status: "draft"
 type: "technical"
-tags: ["technical", "specification", "guardrive"]
+tags: ["technical", "specification", "docsync"]
 ---
 
 # Especificação Técnica

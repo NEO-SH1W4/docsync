@@ -5,7 +5,7 @@ status: "active"
 type: "project"
 owner: "{RESPONSÁVEL}"
 date: "{DATA}"
-tags: ["project", "documentation", "guardrive"]
+tags: ["project", "documentation", "docsync"]
 ---
 
 # Documento do Projeto

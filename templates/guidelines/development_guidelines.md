@@ -5,7 +5,7 @@ type: "guidelines"
 status: "active"
 author: "{AUTOR}"
 date: "{DATA}"
-tags: ["development", "guidelines", "guardrive"]
+tags: ["development", "guidelines", "docsync"]
 ---
 
 # Diretrizes de Desenvolvimento GUARDRIVE
