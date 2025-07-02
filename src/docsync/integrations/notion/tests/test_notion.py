@@ -209,7 +209,9 @@ class TestNotionClient:
                 mock_sleep.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_cache_behavior(self, notion_client, mock_api_response, test_data) -> None:
+    async def test_cache_behavior(
+        self, notion_client, mock_api_response, test_data
+    ) -> None:
         """Testa comportamento detalhado do cache."""
         responses = [
             mock_api_response(data=test_data["responses"]["success"]),
@@ -435,14 +437,17 @@ class TestNotionBridge:
             "parent": {"page_id": "parent_id"},
         }
 
-        with patch.object(
-            notion_bridge.client,
-            "get_page",
-            AsyncMock(return_value=mock_page),
-        ), patch.object(
-            notion_bridge.client,
-            "get_block_children",
-            AsyncMock(return_value={"results": []}),
+        with (
+            patch.object(
+                notion_bridge.client,
+                "get_page",
+                AsyncMock(return_value=mock_page),
+            ),
+            patch.object(
+                notion_bridge.client,
+                "get_block_children",
+                AsyncMock(return_value={"results": []}),
+            ),
         ):
             await notion_bridge.sync_page_to_local("test_id")
             assert (tmp_path / "test.md").exists()
@@ -555,14 +560,17 @@ class TestIntegration:
             "parent": {"page_id": "parent_id"},
         }
 
-        with patch.object(
-            notion_bridge.client,
-            "create_page",
-            AsyncMock(return_value=mock_page),
-        ), patch.object(
-            notion_bridge.client,
-            "get_page",
-            AsyncMock(return_value=mock_page),
+        with (
+            patch.object(
+                notion_bridge.client,
+                "create_page",
+                AsyncMock(return_value=mock_page),
+            ),
+            patch.object(
+                notion_bridge.client,
+                "get_page",
+                AsyncMock(return_value=mock_page),
+            ),
         ):
             # Sincronizar local → Notion
             await notion_bridge.sync_file_to_notion(str(test_file))
@@ -593,11 +601,14 @@ class TestIntegration:
             assert mock_request.call_count == 2
 
         # Teste 2: Erro de autenticação
-        with patch.object(
-            notion_bridge.client,
-            "_request",
-            side_effect=NotionAuthError,
-        ), pytest.raises(NotionAuthError):
+        with (
+            patch.object(
+                notion_bridge.client,
+                "_request",
+                side_effect=NotionAuthError,
+            ),
+            pytest.raises(NotionAuthError),
+        ):
             await notion_bridge.sync_file_to_notion(str(test_file))
 
         # Teste 3: Timeout com retry
@@ -698,24 +709,32 @@ class TestIntegration:
             await notion_bridge.sync_file_to_notion(str(invalid_content))
 
     @pytest.mark.asyncio
-    async def test_permission_handling(self, notion_bridge, file_helper, test_data) -> None:
+    async def test_permission_handling(
+        self, notion_bridge, file_helper, test_data
+    ) -> None:
         """Testa manipulação de permissões."""
         test_file = file_helper.create_markdown("test.md", "# Test\nContent")
 
         # Teste 1: Sem permissão de leitura
-        with patch.object(
-            notion_bridge.client,
-            "get_page",
-            side_effect=NotionAuthError("no read access"),
-        ), pytest.raises(NotionAuthError, match="no read access"):
+        with (
+            patch.object(
+                notion_bridge.client,
+                "get_page",
+                side_effect=NotionAuthError("no read access"),
+            ),
+            pytest.raises(NotionAuthError, match="no read access"),
+        ):
             await notion_bridge.sync_page_to_local("test_id")
 
         # Teste 2: Sem permissão de escrita
-        with patch.object(
-            notion_bridge.client,
-            "create_page",
-            side_effect=NotionAuthError("no write access"),
-        ), pytest.raises(NotionAuthError, match="no write access"):
+        with (
+            patch.object(
+                notion_bridge.client,
+                "create_page",
+                side_effect=NotionAuthError("no write access"),
+            ),
+            pytest.raises(NotionAuthError, match="no write access"),
+        ):
             await notion_bridge.sync_file_to_notion(str(test_file))
 
         # Teste 3: Permissões inconsistentes

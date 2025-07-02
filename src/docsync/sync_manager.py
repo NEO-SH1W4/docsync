@@ -446,4 +446,6 @@ class SyncManager:
                     await self._sync_directory_pair(source_dir, target_dir, doc_type)
 
         except Exception as e:
-            logger.exception(f"Erro ao sincronizar diretórios {source} -> {target}: {e}")
+            logger.exception(
+                f"Erro ao sincronizar diretórios {source} -> {target}: {e}"
+            )

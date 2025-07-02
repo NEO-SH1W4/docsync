@@ -102,7 +102,8 @@ def test_config(temp_workspace):
         workspace_id="test_workspace",
         mappings=[
             NotionMapping(
-                source_path=temp_workspace / "docs", target_id="test_page_id",
+                source_path=temp_workspace / "docs",
+                target_id="test_page_id",
             ),
         ],
     )

@@ -76,7 +76,9 @@ class NotionBridge:
             )
 
         except Exception as e:
-            logger.exception(f"Erro ao configurar mapeamento {mapping.source_path}: {e}")
+            logger.exception(
+                f"Erro ao configurar mapeamento {mapping.source_path}: {e}"
+            )
             raise
 
     async def _update_sync_index(self, mapping: NotionMapping) -> None:
@@ -149,10 +151,14 @@ class NotionBridge:
             index_file.write_text(json.dumps(sync_data, indent=2))
 
         except Exception as e:
-            logger.exception(f"Erro ao sincronizar mapeamento {mapping.source_path}: {e}")
+            logger.exception(
+                f"Erro ao sincronizar mapeamento {mapping.source_path}: {e}"
+            )
             raise
 
-    async def _sync_local_changes(self, mapping: NotionMapping, sync_data: dict) -> None:
+    async def _sync_local_changes(
+        self, mapping: NotionMapping, sync_data: dict
+    ) -> None:
         """Sincroniza alterações locais para o Notion."""
         for file in mapping.source_path.glob("**/*.md"):
             if file.name.startswith("."):
@@ -181,7 +187,9 @@ class NotionBridge:
                     "notion_id": notion_id,
                 }
 
-    async def _sync_notion_changes(self, mapping: NotionMapping, sync_data: dict) -> None:
+    async def _sync_notion_changes(
+        self, mapping: NotionMapping, sync_data: dict
+    ) -> None:
         """Sincroniza alterações do Notion para local."""
         # Obter todas as páginas do database/página alvo
         pages = await self.client.get_pages_in_database(mapping.target_id)
@@ -237,7 +245,9 @@ class NotionBridge:
 
         return page["id"]
 
-    async def _update_notion_page(self, page_id: str, file: Path, content_hash: str) -> None:
+    async def _update_notion_page(
+        self, page_id: str, file: Path, content_hash: str
+    ) -> None:
         """Atualiza uma página existente no Notion."""
         content = file.read_text()
 

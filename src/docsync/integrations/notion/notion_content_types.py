@@ -44,7 +44,9 @@ class NotionCodeBlock(NotionBlock):
     language: str = "plain_text"
 
     @classmethod
-    def from_markdown(cls, content: str, language: Optional[str] = None) -> "NotionCodeBlock":
+    def from_markdown(
+        cls, content: str, language: Optional[str] = None
+    ) -> "NotionCodeBlock":
         if language and language.startswith("`"):
             language = language[3:]
         return cls(type="code", content=content, language=language or "plain_text")

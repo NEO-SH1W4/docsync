@@ -423,7 +423,9 @@ class DocProcessor:
 class AIEnhancedMonitor(FileSystemEventHandler):
     """Intelligent file monitoring with pattern detection."""
 
-    def __init__(self, processor: DocProcessor, patterns: Optional[set[str]] = None) -> None:
+    def __init__(
+        self, processor: DocProcessor, patterns: Optional[set[str]] = None
+    ) -> None:
         self.processor = processor
         self.patterns = patterns or {".md", ".yaml", ".yml"}
         self.file_history: dict[str, list[float]] = {}
