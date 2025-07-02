@@ -23,8 +23,8 @@ src/docsync/config/template_config.yaml
 src/docsync/core/__init__.py
 src/docsync/core/base.py
 src/docsync/core/sync.py
-src/docsync/templates/guardrive/esg_report.html.j2
-src/docsync/templates/guardrive/esg_report.md.j2
+src/docsync/templates/docsync/esg_report.html.j2
+src/docsync/templates/docsync/esg_report.md.j2
 src/docsync/templates/system/base.md.j2
 tests/conftest.py
 tests/test_ai_processor.py

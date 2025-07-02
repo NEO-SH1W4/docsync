@@ -1,9 +1,9 @@
-# docsync Configuration for GUARDRIVE Project
+# docsync Configuration
 # Quantum-enabled documentation synchronization and validation
 
 directories:
-  guardrive_docs_dev:
-    path: "C:/Users/João/Desktop/PROJETOS/GUARDRIVE/GUARDRIVE_V1/1. GUARDRIVE_DOCS_DEV"
+  docs_repo_dev:
+    path: "C:/Docs/DOCSYNC/DEV"
     sections:
       - name: "TECHNICAL"
         patterns: ["*.md", "*.rst", "*.drawio", "*.py"]
@@ -27,7 +27,7 @@ directories:
         consciousness_sync: true
 
   sdk:
-    path: "C:/Users/João/Desktop/PROJETOS/GUARDRIVE/GUARDRIVE_V1/SDK"
+    path: "C:/Docs/DOCSYNC/SDK"
     sections:
       - name: "core"
         patterns: ["*.py", "*.pyi", "*.rst", "*.md"]

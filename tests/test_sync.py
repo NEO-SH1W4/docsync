@@ -57,15 +57,15 @@ def test_config():
             "sync_interval": 300,
             "real_time_sync": False,
         },
-        "guardrive": {
+        "docs_repo": {
             "enabled": True,
-            "base_path": "/test/guardrive",
-            "docs_path": "GUARDRIVE_DOCS",
-            "dev_path": "AREA_DEV",
+            "base_path": "/test/docs_repo",
+            "docs_path": "DOCSYNC_DOCS",
+            "dev_path": "DEV_AREA",
             "path_mappings": [
                 {
-                    "source_path": "GUARDRIVE_DOCS/technical",
-                    "target_path": "AREA_DEV/dev_docs",
+                    "source_path": "DOCSYNC_DOCS/technical",
+                    "target_path": "DEV_AREA/dev_docs",
                     "doc_type": "technical",
                     "bidirectional": True,
                 }
@@ -114,8 +114,8 @@ class TestConfiguration:
             yaml.dump(test_config, f)
 
         config = load_config(config_path)
-        assert config["guardrive"]["enabled"] is True
-        assert config["guardrive"]["base_path"] == "/test/guardrive"
+        assert config["docs_repo"]["enabled"] is True
+        assert config["docs_repo"]["base_path"] == "/test/docs_repo"
 
     def test_invalid_config_structure(self):
         """Testa validação de estrutura inválida."""
@@ -125,7 +125,7 @@ class TestConfiguration:
     def test_path_mapping_validation(self, test_config):
         """Testa validação de mapeamentos de caminho."""
         config = Config(**test_config)
-        mapping = config.guardrive.path_mappings[0]
+        mapping = config.docs_repo.path_mappings[0]
         assert mapping.doc_type == DocumentType.TECHNICAL
         assert mapping.bidirectional is True
 
@@ -167,7 +167,7 @@ class TestDocumentHandler:
 
     async def test_markdown_handler(self, test_config):
         """Testa manipulação de arquivos markdown."""
-        handler_config = test_config["guardrive"]["doc_handlers"]["markdown"]
+        handler_config = test_config["docs_repo"]["doc_handlers"]["markdown"]
         handler = DocumentHandler(handler_config)
 
         assert handler._is_supported_file(Path("test.md")) is True
@@ -234,8 +234,8 @@ class TestIntegration:
     async def test_full_sync_cycle(self, sync_manager, temp_test_dir):
         """Testa ciclo completo de sincronização."""
         # Prepara estrutura de teste
-        docs_dir = temp_test_dir / "GUARDRIVE_DOCS"
-        dev_dir = temp_test_dir / "AREA_DEV"
+        docs_dir = temp_test_dir / "DOCSYNC_DOCS"
+        dev_dir = temp_test_dir / "DEV_AREA"
         docs_dir.mkdir(parents=True)
         dev_dir.mkdir(parents=True)
 

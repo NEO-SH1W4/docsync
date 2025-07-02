@@ -150,7 +150,7 @@ def test_report_generation_markdown(mock_doc_sync, sample_metrics, sample_object
     }
 
     result = mock_doc_sync.generate_report(
-        template_name="guardrive/esg_report",
+        template_name="docsync/esg_report",
         output_path="output/report.md",
         data=config,
     )
@@ -170,7 +170,7 @@ def test_report_generation_html(mock_doc_sync, sample_metrics, sample_objectives
     }
 
     result = mock_doc_sync.generate_report(
-        template_name="guardrive/esg_report",
+        template_name="docsync/esg_report",
         output_path="output/report.html",
         data=config,
         format="html",
@@ -199,7 +199,7 @@ def test_path_resolution():
     output_path = base_path / "reports"
 
     assert templates_path.exists()
-    assert "guardrive" in [p.name for p in templates_path.iterdir()]
+    assert "docsync" in [p.name for p in templates_path.iterdir()]
 
 
 @pytest.mark.integration
@@ -243,11 +243,11 @@ def test_full_report_generation():
     html_path = output_path / "integration_test.html"
 
     assert doc_sync.generate_report(
-        template_name="guardrive/esg_report", output_path=str(md_path), data=config
+        template_name="docsync/esg_report", output_path=str(md_path), data=config
     )
 
     assert doc_sync.generate_report(
-        template_name="guardrive/esg_report",
+        template_name="docsync/esg_report",
         output_path=str(html_path),
         data=config,
         format="html",

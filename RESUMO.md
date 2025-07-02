@@ -1,8 +1,8 @@
-# DOCSYNC - Sistema de Sincronização GUARDRIVE
+# DOCSYNC - Sistema de Sincronização de Documentação
 
 ## Estrutura Geral
 
-O sistema DOCSYNC foi desenvolvido para gerenciar a sincronização de documentação entre a documentação oficial do GUARDRIVE (GUARDRIVE_DOCS) e a área de desenvolvimento (AREA_DEV). 
+O sistema DOCSYNC foi desenvolvido para gerenciar a sincronização de documentação entre diretórios oficiais (DOCSYNC_DOCS) e a área de desenvolvimento (DEV_AREA).
 
 ### Componentes Principais
 
@@ -73,12 +73,12 @@ python verify_setup.py
 
 1. Copie o arquivo de configuração exemplo:
    ```bash
-   cp guardrive_sync.yaml.example guardrive_sync.yaml
+   cp docsync_sync.yaml.example docsync_sync.yaml
    ```
 
 2. Configure os caminhos no arquivo:
    ```yaml
-   guardrive:
+   docs_repo:
      base_path: "C:/Users/SEU_USUARIO/GUARDRIVE/GUARDRIVE_V1/1. GUARDRIVE_DOCS_DEV"
      docs_path: "GUARDRIVE_DOCS"
      dev_path: "2.AREA_DEV"
@@ -135,8 +135,8 @@ python verify_setup.py
 ## Suporte
 
 Para suporte técnico ou dúvidas:
-- Time DevOps: devops@guardrive.com
-- Suporte: support@guardrive.com
+- Time DevOps: devops@docsync.dev
+- Suporte: support@docsync.dev
 - Documentação: docs/technical/
 
 ## Manutenção

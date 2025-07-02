@@ -2,14 +2,14 @@ Metadata-Version: 2.4
 Name: docsync
 Version: 1.0.0
 Summary: Sistema quântico de sincronização de documentação com Notion
-Home-page: https://github.com/guardrive/docsync
-Author: GUARDRIVE Team
-Author-email: dev@guardrive.com
+Home-page: https://github.com/NEO-SH1W4/docsync
+Author: DocSync Team
+Author-email: dev@docsync.dev
 License: MIT
-Project-URL: Bug Reports, https://github.com/guardrive/docsync/issues
-Project-URL: Source, https://github.com/guardrive/docsync
-Project-URL: Documentation, https://docsync.guardrive.dev
-Project-URL: Changelog, https://github.com/guardrive/docsync/blob/main/CHANGELOG.md
+Project-URL: Bug Reports, https://github.com/NEO-SH1W4/docsync/issues
+Project-URL: Source, https://github.com/NEO-SH1W4/docsync
+Project-URL: Documentation, https://docsync.dev
+Project-URL: Changelog, https://github.com/NEO-SH1W4/docsync/blob/main/CHANGELOG.md
 Keywords: notion sync markdown documentation quantum
 Classifier: Development Status :: 4 - Beta
 Classifier: Intended Audience :: Developers

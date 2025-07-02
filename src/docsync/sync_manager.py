@@ -211,17 +211,17 @@ class SyncManager:
 
     def __init__(self, config: Config):
         self.config = config
-        self.guardrive_config = config.guardrive
+        self.docs_repo_config = config.docs_repo
         self.sync_config = config.sync
 
         # Inicializa handlers de documentos
         self.doc_handlers = {
             doc_type: DocumentHandler(handler_config)
-            for doc_type, handler_config in self.guardrive_config.doc_handlers.items()
+            for doc_type, handler_config in self.docs_repo_config.doc_handlers.items()
         }
 
         # Inicializa controle de versão
-        self.version_control = VersionController(self.guardrive_config.version_control)
+        self.version_control = VersionController(self.docs_repo_config.version_control)
 
         # Caminhos para monitoramento
         self.watch_paths = self._setup_watch_paths()
@@ -238,14 +238,14 @@ class SyncManager:
     def _setup_watch_paths(self) -> Set[Path]:
         """Configura caminhos para monitoramento."""
         paths = set()
-        base_path = Path(self.guardrive_config.base_path)
+        base_path = Path(self.docs_repo_config.base_path)
 
         # Adiciona caminhos da documentação oficial
-        docs_path = base_path / self.guardrive_config.docs_path
+        docs_path = base_path / self.docs_repo_config.docs_path
         paths.add(docs_path)
 
         # Adiciona caminhos da área de desenvolvimento
-        dev_path = base_path / self.guardrive_config.dev_path
+        dev_path = base_path / self.docs_repo_config.dev_path
         paths.add(dev_path)
 
         return paths
@@ -283,7 +283,7 @@ class SyncManager:
         logger.info("Iniciando sincronização completa...")
 
         try:
-            for mapping in self.guardrive_config.path_mappings:
+            for mapping in self.docs_repo_config.path_mappings:
                 await self._sync_directory_pair(
                     Path(mapping.source_path),
                     Path(mapping.target_path),
@@ -317,7 +317,7 @@ class SyncManager:
             )
 
             # Cria backup se necessário
-            if self.guardrive_config.version_control.backup_enabled:
+            if self.docs_repo_config.version_control.backup_enabled:
                 await self.version_control.create_backup(file_path)
 
             # Processa e sincroniza arquivo
@@ -344,7 +344,7 @@ class SyncManager:
     def _find_mapping_for_file(self, file_path: Path) -> Optional[PathMappingConfig]:
         """Encontra mapeamento correspondente para um arquivo."""
         str_path = str(file_path)
-        for mapping in self.guardrive_config.path_mappings:
+        for mapping in self.docs_repo_config.path_mappings:
             if str_path.startswith(mapping.source_path) or str_path.startswith(
                 mapping.target_path
             ):
@@ -385,7 +385,7 @@ class SyncManager:
     def _get_doc_type(self, file_path: Path) -> DocumentType:
         """Determina tipo de documento baseado no caminho."""
         str_path = str(file_path)
-        for mapping in self.guardrive_config.path_mappings:
+        for mapping in self.docs_repo_config.path_mappings:
             if str_path.startswith(mapping.source_path) or str_path.startswith(
                 mapping.target_path
             ):
@@ -397,7 +397,7 @@ class SyncManager:
         try:
             while True:
                 # Verifica próxima execução
-                cron = croniter(self.guardrive_config.sync_schedule)
+                cron = croniter(self.docs_repo_config.sync_schedule)
                 next_run = cron.get_next(datetime)
                 now = datetime.now()
 

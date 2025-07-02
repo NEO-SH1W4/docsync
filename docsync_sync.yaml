@@ -1,4 +1,4 @@
-# Configuração de Sincronização do GUARDRIVE
+# Configuração de Sincronização DocSync
 # Versão: 1.0.0
 # Data: 2025-06-03
 
@@ -38,39 +38,39 @@ sync:
   sync_permissions: true
   max_file_size: 104857600  # 100MB
 
-# Configuração GUARDRIVE
-guardrive:
+# Configuração do repositório de documentação
+docs_repo:
   enabled: true
-  base_path: "C:\\Users\\João\\Desktop\\PROJETOS\\GUARDRIVE\\GUARDRIVE_V1\\1. GUARDRIVE_DOCS_DEV"
-  docs_path: "GUARDRIVE_DOCS"
-  dev_path: "2.AREA_DEV"
+  base_path: "C:\\Docs\\DOCSYNC\\DEV"
+  docs_path: "DOCSYNC_DOCS"
+  dev_path: "DEV_AREA"
   
   # Mapeamentos de Caminhos
   path_mappings:
     # Documentação Técnica
-    - source_path: "GUARDRIVE_DOCS/01_TECHNICAL"
-      target_path: "2.AREA_DEV/04_Material DEV#1 (Criado no Claude)/technical"
+    - source_path: "DOCSYNC_DOCS/01_TECHNICAL"
+      target_path: "DEV_AREA/dev_docs/technical"
       doc_type: "technical"
       bidirectional: true
       ignore_patterns: [".git", "__pycache__", "*.pyc"]
 
     # Documentação de Negócios
-    - source_path: "GUARDRIVE_DOCS/02_BUSINESS"
-      target_path: "2.AREA_DEV/01_Documentos_burocráticos"
+    - source_path: "DOCSYNC_DOCS/02_BUSINESS"
+      target_path: "DEV_AREA/business_docs"
       doc_type: "business"
       bidirectional: true
       ignore_patterns: [".git", "*.tmp"]
 
-    # Documentação de Produto
-    - source_path: "GUARDRIVE_DOCS/03_PRODUCT"
-      target_path: "2.AREA_DEV/00_Sistema Veicular Inteligente com Blockchain e Tokenização ESG"
+  # Documentação de Produto
+  - source_path: "DOCSYNC_DOCS/03_PRODUCT"
+    target_path: "DEV_AREA/produto"
       doc_type: "product"
       bidirectional: true
       ignore_patterns: [".git", "*.tmp"]
 
-    # Assets
-    - source_path: "GUARDRIVE_DOCS/04_ASSETS"
-      target_path: "2.AREA_DEV/02_Protótipo da Marca"
+  # Assets
+  - source_path: "DOCSYNC_DOCS/04_ASSETS"
+    target_path: "DEV_AREA/assets"
       doc_type: "asset"
       bidirectional: true
       ignore_patterns: ["*.psd", "*.ai"]

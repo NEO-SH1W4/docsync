@@ -24,13 +24,13 @@ setup(
     name="docsync",
     version="1.0.0",
     author="GUARDRIVE Team",
-    author_email="dev@guardrive.com",
+    author_email="dev@docsync.dev",
     description="Sistema quântico de sincronização de documentação com Notion",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     license="MIT",
     keywords="notion sync markdown documentation quantum",
-    url="https://github.com/guardrive/docsync",
+    url="https://github.com/NEO-SH1W4/docsync",
     # Configuração do pacote
     packages=find_packages(where="src"),
     package_dir={"": "src"},
@@ -94,9 +94,9 @@ setup(
     ],
     # Informações de projeto
     project_urls={
-        "Bug Reports": "https://github.com/guardrive/docsync/issues",
-        "Source": "https://github.com/guardrive/docsync",
-        "Documentation": "https://docsync.guardrive.dev",
-        "Changelog": "https://github.com/guardrive/docsync/blob/main/CHANGELOG.md",
+        "Bug Reports": "https://github.com/NEO-SH1W4/docsync/issues",
+        "Source": "https://github.com/NEO-SH1W4/docsync",
+        "Documentation": "https://docsync.dev",
+        "Changelog": "https://github.com/NEO-SH1W4/docsync/blob/main/CHANGELOG.md",
     },
 )

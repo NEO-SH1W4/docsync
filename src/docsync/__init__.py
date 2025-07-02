@@ -9,8 +9,8 @@ This package provides tools for:
 """
 
 __version__ = "0.1.0"
-__author__ = "GUARDRIVE Team"
-__email__ = "team@guardrive.io"
+__author__ = "DocSync Team"
+__email__ = "team@docsync.dev"
 
 from .core import (
     DocSync,
