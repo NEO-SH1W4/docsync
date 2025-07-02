@@ -1,0 +1,80 @@
+# Site settings
+title: DocSync
+description: Advanced technical documentation synchronization and management system
+url: https://neo-sh1w4.github.io
+baseurl: /docsync
+author: NEO-SH1W4
+twitter_username: docsync_dev
+github_username: NEO-SH1W4
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Custom variables
+show_downloads: true
+show_github_edit: true
+
+# Navigation
+navigation:
+  - title: Home
+    url: /
+  - title: Documentation
+    url: /docs/
+  - title: API Reference
+    url: /api/
+  - title: Contributing
+    url: /CONTRIBUTING
+  - title: GitHub
+    url: https://github.com/NEO-SH1W4/docsync
+
+# SEO
+lang: en
+logo: /assets/images/logo.png
+
+# Analytics (optional)
+# google_analytics: UA-XXXXXX-X
+
+# Social
+social:
+  name: DocSync
+  links:
+    - https://github.com/NEO-SH1W4/docsync
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "DocSync Team"
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "page"
+
+# Exclude files from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/
+  - .git/
+  - .gitignore
+  - README.md
+

@@ -1,0 +1,215 @@
+---
+layout: default
+---
+
+<div class="home">
+
+  <header class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">{{ site.title }}</h1>
+      <p class="hero-subtitle">{{ site.description }}</p>
+      <div class="hero-badges">
+        <img src="https://img.shields.io/badge/python-v3.9+-blue.svg" alt="Python">
+        <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License">
+        <img src="https://img.shields.io/badge/status-beta-orange.svg" alt="Status">
+        <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg" alt="Contributions">
+      </div>
+      <div class="hero-actions">
+        <a href="https://github.com/NEO-SH1W4/docsync" class="btn btn-primary">View on GitHub</a>
+        <a href="#quick-start" class="btn btn-secondary">Quick Start</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    {{ content }}
+  </main>
+
+  <section class="features-section">
+    <div class="container">
+      <h2>Key Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3>Bidirectional Sync</h3>
+          <p>Keep local files and Notion always in sync</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>AI Processing</h3>
+          <p>Automatic documentation analysis and improvement</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>ESG Templates</h3>
+          <p>Flexible system for professional reports</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Real-time</h3>
+          <p>Live monitoring and synchronization</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Auto Backup</h3>
+          <p>Robust versioning and backup system</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Rich CLI</h3>
+          <p>Intuitive interface with Rich for better UX</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <h2>Ready to Transform Your Documentation?</h2>
+      <p>Join the growing community of developers who trust DocSync for their documentation needs.</p>
+      <div class="cta-actions">
+        <a href="https://github.com/NEO-SH1W4/docsync" class="btn btn-primary">Get Started</a>
+        <a href="#contributing" class="btn btn-outline">Contribute</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<style>
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 80px 0;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.hero-badges {
+  margin-bottom: 2rem;
+}
+
+.hero-badges img {
+  margin: 0 5px;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #28a745;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #218838;
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.features-section {
+  padding: 80px 0;
+  background: #f8f9fa;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.feature-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.cta-section {
+  background: #2c3e50;
+  color: white;
+  padding: 80px 0;
+  text-align: center;
+}
+
+.cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .hero-actions,
+  .cta-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+</style>
+

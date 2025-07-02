@@ -1,0 +1,41 @@
+main:
+  - title: "Home"
+    url: /
+  - title: "Documentation" 
+    url: /docs/
+  - title: "API Reference"
+    url: /api/
+  - title: "Contributing"
+    url: /CONTRIBUTING/
+  - title: "GitHub"
+    url: https://github.com/NEO-SH1W4/docsync
+    external: true
+
+docs:
+  - title: Getting Started
+    children:
+      - title: "Installation"
+        url: /docs/#installation
+      - title: "Quick Setup"
+        url: /docs/#quick-setup
+      - title: "Configuration"
+        url: /docs/#configuration
+        
+  - title: Core Features
+    children:
+      - title: "Synchronization"
+        url: /docs/#file-synchronization
+      - title: "AI Processing"
+        url: /docs/#ai-enhanced-processing
+      - title: "Templates"
+        url: /docs/#template-system
+        
+  - title: Advanced
+    children:
+      - title: "Custom Filters"
+        url: /docs/#custom-filters
+      - title: "Webhooks"
+        url: /docs/#webhooks
+      - title: "Batch Operations"
+        url: /docs/#batch-operations
+
