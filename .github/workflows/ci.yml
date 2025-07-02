@@ -49,8 +49,12 @@ jobs:
           
       - name: 🔍 Linting
         run: |
-          echo "🔍 Running flake8 linting..."
+          echo "🔍 Running linting checks..."
+          echo "Running flake8..."
           flake8 src/ tests/ --count --statistics
+          echo "Running Ruff (advanced linting)..."
+          pip install ruff
+          ruff check .
           
       - name: 🛡️ Type Checking
         run: |
